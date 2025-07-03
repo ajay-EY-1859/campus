@@ -1,0 +1,36 @@
+# ⛔ Build artifacts
+/build/
+/CMakeFiles/
+/cmake_install.cmake
+/CMakeCache.txt
+/*.vcxproj*
+/*.sln
+/*.obj
+/*.exe
+/*.log
+
+# 🧱 Libharu binary
+*.lib
+
+# 📄 Generated PDFs
+*.pdf
+
+# 🗂️ Runtime temp files
+*.bak
+*.temp
+*.dat
+*.db
+
+# 🚀 IDE & editor configs
+.vscode/
+*.code-workspace
+.idea/
+*.DS_Store
+
+# 🧪 Test outputs
+test_output.pdf
+src/tests/*.out
+
+# 🤐 System files
+Thumbs.db
+desktop.ini

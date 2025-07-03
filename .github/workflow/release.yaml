@@ -1,0 +1,45 @@
+name: 🚀 Release AjCampus
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on version tags like v1.0.0
+
+jobs:
+  release:
+    name: 📦 Build & Publish
+    runs-on: windows-latest
+
+    steps:
+    - name: ⬇️ Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🧰 Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: ⚙️ Configure CMake
+      run: cmake -S . -B build
+
+    - name: 🏗️ Build
+      run: cmake --build build --config Release
+
+    - name: 📁 Prepare artifacts
+      run: |
+        mkdir packaged
+        copy build\\Release\\ajcampus.exe packaged\\ajcampus.exe
+        copy README.md packaged\\README.md
+        copy LICENSE packaged\\LICENSE
+
+    - name: 🚀 Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: AjCampus ${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}
+        body_path: docs/RELEASE-DRAFT.md  # Optional release notes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: |
+          packaged/ajcampus.exe
+          packaged/README.md
+          packaged/LICENSE

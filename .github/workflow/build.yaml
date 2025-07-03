@@ -1,0 +1,28 @@
+name: 🔧 Build AjCampus (MSVC)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: 🛠️ MSVC CMake Build
+    runs-on: windows-latest
+
+    steps:
+    - name: ⬇️ Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🧰 Setup MSVC Dev Environment
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: 🧱 Configure CMake
+      run: cmake -S . -B build
+
+    - name: 🏗️ Build project
+      run: cmake --build build --config Debug
+
+    - name: ✅ Verify binary exists
+      run: dir build\ajcampus.exe

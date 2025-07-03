@@ -1,0 +1,44 @@
+# === Cross-Platform Test Makefile ===
+
+CC ?= gcc
+SRC := $(wildcard ../src/*.c)
+TEST := $(wildcard test/*.c)
+INCLUDE := -I../include
+
+OUT := build/tests/ajcampus_tests
+
+# Platform detection
+OS := $(shell uname -s 2>/dev/null || echo Windows_NT)
+
+ifeq ($(OS),Windows_NT)
+    CC := cl
+    OUT := build\\tests\\ajcampus_tests.exe
+    COMPILE = $(CC) $(INCLUDE) test\\*.c ..\\src\\*.c /Fe$(OUT)
+    MKDIR = if not exist build\\tests mkdir build\\tests
+    RM = del /Q $(OUT) 2>nul || exit 0
+else
+    CFLAGS := -Wall -Wextra $(INCLUDE)
+    COMPILE = $(CC) $(CFLAGS) $(TEST) $(SRC) -o $(OUT) -lhpdf
+    MKDIR = mkdir -p build/tests
+    RM = rm -f $(OUT)
+endif
+
+.PHONY: all run clean help
+
+all:
+    @echo 🧪 Building test runner...
+    @$(MKDIR)
+    @$(COMPILE)
+
+run: all
+    @echo ▶️ Running tests...
+    @$(OUT)
+
+clean:
+    @echo 🧹 Cleaning test build...
+    @$(RM)
+
+help:
+    @echo "Test Makefile Usage:"
+    @echo "  make -f Makefile.tests run     → compile & run tests"
+    @echo "  make -f Makefile.tests clean   → delete test binary"

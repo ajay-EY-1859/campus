@@ -1,0 +1,27 @@
+{
+  "project": "AjCampus",
+  "version": "1.0.0",
+  "author": "Ajay",
+  "license": "MIT",
+  "build": {
+    "system": "CMake",
+    "compiler": "MSVC",
+    "output_dir": "build"
+  },
+  "modules": [
+    "auth",
+    "fileio",
+    "utils",
+    "ui",
+    "student",
+    "signup",
+    "signin"
+  ],
+  "features": {
+    "pdf_export": true,
+    "auth_hashing": true,
+    "audit_logging": true
+  },
+  "roadmap": "ROADMAP.md",
+  "repository": "https://github.com/yourusername/ajcampus"
+}

@@ -1,0 +1,360 @@
+MSBuild version 17.14.10+8b8e13593 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule D:/ajay-campus/CMakeLists.txt
+  main.c
+  auth.c
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/main.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/auth.c')
+  
+D:\ajay-campus\src\main\auth.c(9,13): warning C4459: declaration of 'p' hides global declaration [D:\ajay-campus\build\ajcampus.vcxproj]
+  signin.c
+      D:\ajay-campus\include\fileio.h(11,36):
+      see declaration of 'p'
+  
+D:\ajay-campus\src\main\auth.c(11,10): warning C4013: 'readProfile' undefined; assuming extern returning int [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\auth.c(48,10): warning C4013: 'writeProfile' undefined; assuming extern returning int [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signin.c')
+  
+D:\ajay-campus\src\main\signin.c(15,13): warning C4459: declaration of 'p' hides global declaration [D:\ajay-campus\build\ajcampus.vcxproj]
+      D:\ajay-campus\include\fileio.h(11,36):
+      see declaration of 'p'
+  
+  signup.c
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/signup.c')
+  
+D:\ajay-campus\src\main\signup.c(13,33): warning C4459: declaration of 'p' hides global declaration [D:\ajay-campus\build\ajcampus.vcxproj]
+      D:\ajay-campus\include\fileio.h(11,36):
+      see declaration of 'p'
+  
+D:\ajay-campus\src\main\signup.c(15,11): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\signup.c(14,26): warning C4244: 'initializing': conversion from 'int' to 'char', possible loss of data [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\signup.c(14,53): warning C4244: 'initializing': conversion from 'int' to 'char', possible loss of data [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\signup.c(21,13): warning C4459: declaration of 'p' hides global declaration [D:\ajay-campus\build\ajcampus.vcxproj]
+      D:\ajay-campus\include\fileio.h(11,36):
+      see declaration of 'p'
+  
+  ui.c
+D:\ajay-campus\src\main\signup.c(56,10): warning C4013: 'writeProfile' undefined; assuming extern returning int [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/ui.c')
+  
+D:\ajay-campus\src\main\ui.c(7,2): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\ui.c(7,2): error C2371: 'dashboard': redefinition; different basic types [D:\ajay-campus\build\ajcampus.vcxproj]
+  fileio.c
+      D:\ajay-campus\include\ui.h(7,6):
+      see declaration of 'dashboard'
+  
+D:\ajay-campus\src\main\ui.c(34,21): warning C4033: 'dashboard' must return a value [D:\ajay-campus\build\ajcampus.vcxproj]
+  student.c
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(7,25): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(7,26): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(7,35): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(7,50): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,18): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,32): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,33): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,42): error C2059: syntax error: 'type' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(8,57): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,21): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing ')' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,35): error C2143: syntax error: missing '{' before '*' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,37): error C2059: syntax error: ')' [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,36): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\include\fileio.h(11,38): warning C4218: nonstandard extension used: must specify at least a storage class or a type [D:\ajay-campus\build\ajcampus.vcxproj]
+  (compiling source file '../src/main/student.c')
+  
+D:\ajay-campus\src\main\student.c(33,13): warning C4459: declaration of 'p' hides global declaration [D:\ajay-campus\build\ajcampus.vcxproj]
+      D:\ajay-campus\include\fileio.h(11,36):
+      see declaration of 'p'
+  
+D:\ajay-campus\src\main\student.c(34,10): warning C4013: 'readProfile' undefined; assuming extern returning int [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\student.c(43,16): warning C4473: 'printf' : not enough arguments passed for format string [D:\ajay-campus\build\ajcampus.vcxproj]
+      D:\ajay-campus\src\main\student.c(43,16):
+      placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+      D:\ajay-campus\src\main\student.c(43,16):
+      the missing variadic argument 1 is required by format string '%s'
+  
+  utils.c
+D:\ajay-campus\src\main\utils.c(15,14): warning C4244: '=': conversion from 'int' to 'char', possible loss of data [D:\ajay-campus\build\ajcampus.vcxproj]
+D:\ajay-campus\src\main\utils.c(16,14): warning C4244: '=': conversion from 'int' to 'char', possible loss of data [D:\ajay-campus\build\ajcampus.vcxproj]
+  Generating Code...

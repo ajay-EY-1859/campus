@@ -1,0 +1,8 @@
+file(GLOB TEST_SOURCES "*.c")
+
+add_executable(ajcampus_tests ${TEST_SOURCES})
+target_include_directories(ajcampus_tests PRIVATE ../../include)
+target_link_libraries(ajcampus_tests hpdf)
+
+enable_testing()
+add_test(NAME all_tests COMMAND ajcampus_tests)
