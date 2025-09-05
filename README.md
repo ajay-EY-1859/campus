@@ -61,7 +61,7 @@ A comprehensive, secure, and modular C-based command-line application for managi
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/campus.git
+   git clone https://github.com/ajay-EY-1859/campus.git
    cd campus
    ```
 

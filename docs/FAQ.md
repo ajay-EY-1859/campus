@@ -254,15 +254,12 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
 **A:** Yes! Community feedback heavily influences our roadmap. Participate in discussions and vote on feature priorities.
 
 ---
-
-## 📞 Still Need Help?
-
 If your question isn't answered here:
 
-1. **Search GitHub Issues**: https://github.com/yourusername/campus/issues
+1. **Search GitHub Issues**: https://github.com/ajay-EY-1859/campus/issues
 2. **Create New Issue**: Provide detailed information about your question
 3. **Join Discussions**: Participate in community discussions
-4. **Email Support**: support@campus-project.com (for urgent issues)
+4. **Email Support**: raj183576@gmail.com (for urgent issues)
 
 **Remember to include:**
 - Your operating system and version

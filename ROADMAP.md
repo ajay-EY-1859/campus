@@ -320,7 +320,7 @@ This roadmap is reviewed and updated:
 
 ### Contact
 - **GitHub**: Create issues and discussions
-- **Email**: roadmap@campus-project.com
+- **Email**: raj183576@gmail.com
 - **Community**: Join our developer community
 
 ---

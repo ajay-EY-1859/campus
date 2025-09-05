@@ -70,7 +70,7 @@ sudo dnf install cmake git
 ## 📥 Installation Methods
 
 ### Method 1: Download Release (Recommended)
-1. Go to the [Releases page](https://github.com/yourusername/campus/releases)
+1. Go to the [Releases page](https://github.com/ajay-EY-1859/campus/releases)
 2. Download the latest release for your platform
 3. Extract the archive to your desired location
 4. Follow the "Running the Application" section below
@@ -80,10 +80,10 @@ sudo dnf install cmake git
 #### Step 1: Clone Repository
 ```bash
 # Using HTTPS
-git clone https://github.com/yourusername/campus.git
+git clone https://github.com/ajay-EY-1859/campus.git
 
 # Using SSH (if configured)
-git clone git@github.com:yourusername/campus.git
+git clone git@github.com:ajay-EY-1859/campus.git
 
 # Navigate to project directory
 cd campus
@@ -310,8 +310,6 @@ rm -rf campus/
 # Data can be used with future installations
 ```
 
-## 📞 Support
-
 ### Installation Help
 If you encounter issues during installation:
 
@@ -343,10 +341,8 @@ If you encounter issues during installation:
 ```
 
 ### Contact
-- **GitHub Issues**: https://github.com/yourusername/campus/issues
-- **Email**: support@campus-project.com
-- **Documentation**: https://campus-docs.example.com
+- **GitHub Issues**: https://github.com/ajay-EY-1859/campus/issues
+- **Email**: raj183576@gmail.com
 
 ---
-
-**Happy Installing! 🎉**
+```

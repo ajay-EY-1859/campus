@@ -25,7 +25,7 @@ Thank you for your interest in contributing to the Campus Management System! Thi
 ### Development Setup
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/yourusername/campus.git
+   git clone https://github.com/ajay-EY-1859/campus.git
    cd campus
    ```
 
@@ -264,7 +264,7 @@ All contributors will be:
 ### Channels
 - **GitHub Issues**: Bug reports and feature requests
 - **GitHub Discussions**: General questions and ideas
-- **Email**: security@campus-project.com (security issues only)
+- **Email**: raj183576@gmail.com (security issues only)
 
 ### Response Times
 - Issues: Within 48 hours
@@ -275,7 +275,7 @@ All contributors will be:
 
 ### Reporting Security Issues
 - **DO NOT** create public issues for security vulnerabilities
-- Email security@campus-project.com
+- Email raj183576@gmail.com
 - Include detailed description and steps to reproduce
 - Allow time for fix before public disclosure
 

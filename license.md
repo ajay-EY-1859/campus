@@ -71,8 +71,8 @@ represent that you have the right to make such contributions.
 ## Contact
 
 For questions about licensing, please contact:
-- Email: legal@campus-project.com
-- GitHub: https://github.com/yourusername/campus
+- Email: raj183576@gmail.com
+- GitHub: https://github.com/ajay-EY-1859/campus
 
 ---
 

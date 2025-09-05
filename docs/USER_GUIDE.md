@@ -414,7 +414,7 @@ If you lose access to your account:
 
 ### Contact Support
 - **GitHub Issues**: Technical problems and bugs
-- **Email**: support@campus-project.com
+- **Email**: raj183576@gmail.com
 - **Documentation**: Online help and tutorials
 
 ### Reporting Issues
@@ -444,4 +444,4 @@ When reporting problems, include:
 
 ---
 
-**Need more help? Check our [FAQ](FAQ.md) or [contact support](mailto:support@campus-project.com)! 📧**
+**Need more help? Check our [FAQ](FAQ.md) or [contact support](mailto:raj183576@gmail.com)! 📧**
