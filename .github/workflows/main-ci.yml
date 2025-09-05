@@ -1,0 +1,52 @@
+name: Campus Management System CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+
+    - name: Setup MSVC (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build_type }}
+
+    - name: Create runtime directories
+      run: |
+        mkdir -p data credentials logs
+
+    - name: Test build output
+      run: |
+        echo "Build completed successfully"
+        ls -la build/ || dir build\
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-${{ matrix.os }}-${{ matrix.build_type }}
+        path: |
+          build/build/${{ matrix.build_type }}/campus.exe
+          build/campus
+          build/build/${{ matrix.build_type }}/hpdf.dll
