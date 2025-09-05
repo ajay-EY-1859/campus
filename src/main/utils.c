@@ -4,36 +4,47 @@
 #include <time.h>
 #include "../include/utils.h"
 #include "../include/config.h"
-#include"../include/student.h"
-#include"../include/ui.h"
-#include"../include/fileio.h"
-#include"../include/auth.h"
-#include"../include/hpdf.h"
+#include "../include/student.h"
+#include "../include/ui.h"
+#include "../include/fileio.h"
+#include "../include/auth.h"
+#include "../include/hpdf/hpdf.h"
 
 // Helper: build extension from studentID initials
-void buildProfileExt(char *ext, const char *studentID) {
-    ext[0] = tolower(studentID[0]);
-    ext[1] = tolower(studentID[1]);
-    strcpy(&ext[2], "pfx");
+void buildProfileExt(char *ext, const char *userID) {
+    if (strlen(userID) >= 2) {
+        ext[0] = (char)tolower(userID[0]);
+        ext[1] = (char)tolower(userID[1]);
+    } else {
+        ext[0] = 'x';
+        ext[1] = 'x';
+    }
+    strncpy(&ext[2], "pfx", 3);
+    ext[5] = '\0';
 }
 
 // Helper: build full file path from ID
-void getProfilePath(char *path, const char *studentID) {
-    char ext[6];
-    buildProfileExt(ext, studentID);
-    sprintf(path, CRED_DIR "%s.%s", studentID, ext);
+void getProfilePath(char *path, const char *userID) {
+    char ext[6] = {0};
+    buildProfileExt(ext, userID);
+    snprintf(path, 150, CRED_DIR "%s.%s", userID, ext);
 }
 
 // Logging function
-void logEvent(const char *studentID, const char *action) {
+void logEvent(const char *userID, const char *action) {
     FILE *log = fopen(LOG_DIR "login_audit.log", "a");
     if (!log) {
         // Optional fallback: stderr output if logging fails
-        fprintf(stderr, "⚠️ Logging failed for %s [%s]\n", action, studentID);
+        fprintf(stderr, "Logging failed for %s [%s]\n", action, userID);
         return;
     }
     time_t now = time(NULL);
-    fprintf(log, "%s: %s at %s", action, studentID, ctime(&now));
+    char *timeStr = ctime(&now);
+    if (timeStr) {
+        fprintf(log, "%s: %s at %s", action, userID, timeStr);
+    } else {
+        fprintf(log, "%s: %s at [time unavailable]\n", action, userID);
+    }
     fclose(log);
 }
 

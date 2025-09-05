@@ -1,0 +1,50 @@
+# Python dependencies for Campus Management System scripts
+
+# Core utilities
+pathlib2>=2.3.0; python_version < '3.4'
+argparse>=1.4.0; python_version < '2.7'
+
+# File operations and system utilities
+psutil>=5.8.0
+send2trash>=1.8.0
+
+# Build and packaging
+wheel>=0.37.0
+setuptools>=60.0.0
+
+# Documentation generation
+markdown>=3.4.0
+jinja2>=3.1.0
+pygments>=2.12.0
+
+# Code analysis and linting
+flake8>=4.0.0
+pylint>=2.14.0
+black>=22.0.0
+
+# Testing utilities
+pytest>=7.0.0
+pytest-cov>=3.0.0
+coverage>=6.4.0
+
+# Git operations
+gitpython>=3.1.0
+
+# Configuration and data handling
+pyyaml>=6.0.0
+toml>=0.10.0
+configparser>=5.2.0
+
+# Checksum and security
+hashlib2>=1.0.0; python_version < '3.2'
+cryptography>=37.0.0
+
+# Cross-platform utilities
+colorama>=0.4.0
+click>=8.1.0
+tqdm>=4.64.0
+
+# Optional: Advanced features
+requests>=2.28.0  # For future web API integration
+pillow>=9.2.0     # For image processing in docs
+matplotlib>=3.5.0 # For generating charts and graphs

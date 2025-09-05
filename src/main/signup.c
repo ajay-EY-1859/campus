@@ -7,64 +7,128 @@
 #include "../include/utils.h"
 #include "../include/fileio.h"
 #include "../include/config.h"
-#include"../include/student.h"
-#include"../include/ui.h"
+#include "../include/student.h"
+#include "../include/ui.h"
+#include "../include/database.h"
+#include "../include/security.h"
 
-void generateStudentID(Profile *p) {
-    char initials[3] = { tolower(p->schoolName[0]), tolower(p->schoolName[1]), '\0' };
-    srand(time(NULL));
+void generateUserID(Profile *p) {
+    char initials[3] = {0};
+    if (strlen(p->instituteName) >= 2) {
+        initials[0] = (char)tolower(p->instituteName[0]);
+        initials[1] = (char)tolower(p->instituteName[1]);
+    } else {
+        initials[0] = 'x';
+        initials[1] = 'x';
+    }
+    initials[2] = '\0';
+    srand((unsigned int)time(NULL));
     int serial = rand() % 900 + 100;
-    snprintf(p->studentID, sizeof(p->studentID), "%s25%d", initials, serial);
+    snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
 }
 
 void signup() {
-    Profile p;
-    char password[MAX_LEN];
+    Profile p = {0};
+    char password[MAX_LEN] = {0};
 
-    printf("👤 Enter your name: ");
-    scanf(" %[^\n]", p.name);
-
-    printf("🏫 Enter school name: ");
-    scanf(" %[^\n]", p.schoolName);
-
-    printf("🎓 Stream: ");
-    scanf(" %[^\n]", p.stream);
-
-    printf("📘 Number of subjects: ");
-    scanf("%d", &p.subjectCount);
-    if (p.subjectCount > MAX_SUBJECTS) p.subjectCount = MAX_SUBJECTS;
-
-    for (int i = 0; i < p.subjectCount; i++) {
-        printf("   Subject %d: ", i + 1);
-        scanf(" %[^\n]", p.subjects[i]);
-    }
-
-    do {
-        printf("📧 Email: ");
-        scanf(" %s", p.email);
-    } while (!validateEmail(p.email));
-
-    do {
-        printf("📱 Mobile (10-digit): ");
-        scanf(" %s", p.mobile);
-    } while (!validateMobile(p.mobile));
-
-    getHiddenPassword(password);
-    hashPassword(password, p.passwordHash);
-    generateStudentID(&p);
-
-    if (!writeProfile(&p, p.studentID)) {
-        printf("❌ Failed to create profile file.\n");
+    printf("Enter your name: ");
+    if (scanf(" %99[^\n]", p.name) != 1) {
+        printf("Invalid input\n");
         return;
     }
 
-    logEvent(p.studentID, "Signup");
+    p.campusType = selectCampusType();
+
+    printf("Enter %s name: ", getCampusName(p.campusType));
+    if (scanf(" %99[^\n]", p.instituteName) != 1) {
+        printf("Invalid input\n");
+        return;
+    }
+
+    printf("Department/Stream: ");
+    if (scanf(" %49[^\n]", p.department) != 1) {
+        printf("Invalid input\n");
+        return;
+    }
+
+    // Campus-specific data fields
+    switch(p.campusType) {
+        case CAMPUS_SCHOOL:
+            printf("Number of subjects: ");
+            scanf("%d", &p.dataCount);
+            if (p.dataCount > MAX_SUBJECTS) p.dataCount = MAX_SUBJECTS;
+            for (int i = 0; i < p.dataCount; i++) {
+                printf("Subject %d: ", i + 1);
+                scanf(" %99[^\n]", p.dataFields[i]);
+            }
+            break;
+        case CAMPUS_COLLEGE:
+            printf("Number of courses: ");
+            scanf("%d", &p.dataCount);
+            if (p.dataCount > MAX_SUBJECTS) p.dataCount = MAX_SUBJECTS;
+            for (int i = 0; i < p.dataCount; i++) {
+                printf("Course %d: ", i + 1);
+                scanf(" %99[^\n]", p.dataFields[i]);
+            }
+            break;
+        case CAMPUS_HOSPITAL:
+            p.dataCount = 4;
+            strcpy(p.dataFields[0], "Blood Pressure");
+            strcpy(p.dataFields[1], "Temperature");
+            strcpy(p.dataFields[2], "Weight");
+            strcpy(p.dataFields[3], "Diagnosis");
+            break;
+        case CAMPUS_HOSTEL:
+            p.dataCount = 3;
+            strcpy(p.dataFields[0], "Room Number");
+            strcpy(p.dataFields[1], "Floor");
+            strcpy(p.dataFields[2], "Mess Plan");
+            break;
+    }
+
+    do {
+        printf("Email: ");
+        scanf(" %99s", p.email);
+    } while (!validateEmail(p.email));
+
+    do {
+        printf("Mobile: ");
+        scanf(" %14s", p.mobile);
+    } while (!validateMobile(p.mobile));
+
+    printf("Password ");
+    getHiddenPassword(password);
+    
+    // Check password strength
+    int strength = checkPasswordStrength(password);
+    if (strength < 3) {
+        printf("Password is too weak. Please use a stronger password.\n");
+        printf("Requirements: 8+ chars, uppercase, lowercase, digit, special char\n");
+        return;
+    }
+    
+    hashPassword(password, p.passwordHash);
+    generateUserID(&p);
+
+    if (!createUser(&p)) {
+        printf("Registration failed\n");
+        return;
+    }
+
+    logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
 
     FILE *userFile = fopen(USER_STATE_FILE, "w");
     if (userFile) {
-        fprintf(userFile, "%s\n", p.studentID);
+        fprintf(userFile, "%s\n", p.userID);
         fclose(userFile);
     }
 
-    printf("✅ Signup successful! Your Student ID: %s\n", p.studentID);
+    printf("Registration successful! Your ID: %s\n", p.userID);
+    printf("View profile? (y/n): ");
+    char ch;
+    while ((ch = (char)getchar()) != '\n' && ch != EOF);
+    ch = (char)getchar();
+    if (ch == 'y' || ch == 'Y') {
+        viewProfile(p.userID);
+    }
 }

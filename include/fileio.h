@@ -1,13 +1,16 @@
 #ifndef FILEIO_H
 #define FILEIO_H
 
-#include "auth.h"
+#include "config.h"    // for MAX_LEN etc.
+
+#include "auth.h" // for Profile struct
+
 
 // Profile file handling
 int readProfile(Profile *p, const char *studentID);
 int writeProfile(const Profile *p, const char *studentID);
 
-// Subject data handling (optional extension)
-int validateProfile(const Profile *p); // 🔍 validation before write
+// Profile validator
+int validateProfile(const Profile *p);
 
-#endif
+#endif // FILEIO_H

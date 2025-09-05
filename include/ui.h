@@ -1,9 +1,8 @@
-#ifndef DASHBOARD_H
-#define DASHBOARD_H
+#ifndef UI_H
+#define UI_H
 
-#include "config.h"  // 🧩 For constants like MAX_LEN (if needed)
+#include "config.h"
 
-// Main dashboard interface
 void dashboard(const char *studentID);
 
-#endif
+#endif // UI_H

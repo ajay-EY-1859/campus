@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ajcampus C)
+project(campus C)
 
 # 📦 Output binary path
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
@@ -16,12 +16,12 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/W4)
 endif()
 
-# 📥 Manual Libharu setup (no pkg-config)
+# 📥 Manual Libharu setup
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/hpdf)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 # 📁 Source files
-file(GLOB MAIN_SOURCES "src/main/*.c")
 set(MAIN_SOURCES
     src/main/main.c
     src/main/auth.c
@@ -31,14 +31,20 @@ set(MAIN_SOURCES
     src/main/fileio.c
     src/main/student.c
     src/main/utils.c
+    src/main/database.c
+    src/main/security.c
 )
-
-# 🧪 Test subdirectory
-#add_subdirectory(src/tests)
 
 # 🎯 Main executable
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 
-# 🔗 Link PDF library
-target_link_libraries(${PROJECT_NAME} hpdf)
+# 🔗 Link static PDF library
+target_link_libraries(${PROJECT_NAME} PRIVATE hpdf)
+
+# 📦 Copy DLL to output folder after build (for runtime)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/lib/hpdf.dll"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+)

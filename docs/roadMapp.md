@@ -1,10 +1,10 @@
-# 🗺️ AjCampus Project Roadmap
+# AjCampus Project Roadmap
 
 This roadmap outlines planned enhancements, future milestones, and long-term goals for the AjCampus CLI system.
 
 ---
 
-## ✅ v1.0 – Stable Release (Completed)
+## v1.0 - Stable Release (Completed)
 
 - Secure signup/signin system with hashed password storage
 - Student profile generation and validation
@@ -17,7 +17,7 @@ This roadmap outlines planned enhancements, future milestones, and long-term goa
 
 ---
 
-## 🟡 v1.1 – User Experience & Testing
+## v1.1 - User Experience & Testing
 
 > Status: Planned
 
@@ -31,7 +31,7 @@ This roadmap outlines planned enhancements, future milestones, and long-term goa
 
 ---
 
-## 🔵 v2.0 – Admin Expansion
+## v2.0 - Admin Expansion
 
 > Status: Upcoming (Goal-driven)
 
@@ -44,7 +44,7 @@ This roadmap outlines planned enhancements, future milestones, and long-term goa
 
 ---
 
-## 🔴 v3.0 – Cross-Platform & APIs
+## v3.0 - Cross-Platform & APIs
 
 > Status: Ambitious
 
@@ -57,13 +57,13 @@ This roadmap outlines planned enhancements, future milestones, and long-term goa
 
 ---
 
-## 🎯 Milestone Summary
+## Milestone Summary
 
 | Version | Focus           | Status     |
 |---------|------------------|------------|
-| v1.0    | Core system      | ✅ Completed |
-| v1.1    | UX + Testing     | 🟡 Planned |
-| v2.0    | Admin features   | 🔵 Goal     |
-| v3.0    | APIs & GUI       | 🔴 Visionary |
+| v1.0    | Core system      | Completed |
+| v1.1    | UX + Testing     | Planned |
+| v2.0    | Admin features   | Goal     |
+| v3.0    | APIs & GUI       | Visionary |
 
-Stay tuned and keep watching this space! 😄
+Stay tuned and keep watching this space!

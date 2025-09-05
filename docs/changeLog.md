@@ -1,8 +1,8 @@
 
-## ✅ `CHANGELOG.md` – AjCampus v1.0
+## CHANGELOG.md - AjCampus v1.0
 
 ```markdown
-# 📦 CHANGELOG
+# CHANGELOG
 
 All notable changes to this project will be documented in this file.
 
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v1.0] – 2025-07-03
 
-### 🚀 Initial Release
+### Initial Release
 
 - Added student signup with email and mobile validation
 - Implemented secure signin with password hashing (`SHA256`)
