@@ -1,0 +1,19 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force LF for specific files
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=crlf
+*.c text eol=crlf
+*.h text eol=crlf
+
+# Keep gitkeep files as LF
+.gitkeep text eol=lf
+
+# Binary files
+*.exe binary
+*.dll binary
+*.lib binary
+*.obj binary
+*.pdf binary
