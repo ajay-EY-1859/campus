@@ -48,7 +48,10 @@ if(UNIX)
     endif()
 endif()
 
-# Create required directories
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/credentials)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/logs)
+# Create required directories at build time
+add_custom_target(create_dirs ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/data
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/credentials
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/logs
+)
+add_dependencies(campus create_dirs)
