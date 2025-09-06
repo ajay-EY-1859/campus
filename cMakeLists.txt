@@ -1,84 +1,33 @@
 cmake_minimum_required(VERSION 3.10)
 project(campus C)
 
-# 📦 Output binary path
-if(WIN32)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-else()
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-endif()
-
-# 🧠 C standard
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
 
-# ⚠️ Compiler warnings
-if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-    add_compile_options(-Wall -Wextra)
-elseif (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(/W4)
-endif()
+# Source files
+file(GLOB SOURCES "src/main/*.c")
 
-# 📥 Libharu setup
-include_directories(${PROJECT_SOURCE_DIR}/include)
+# Create executable
+add_executable(campus ${SOURCES})
 
+# Include directories
+target_include_directories(campus PRIVATE include)
+
+# Windows-specific setup
 if(WIN32)
-    # Windows: Use bundled libharu
-    include_directories(${PROJECT_SOURCE_DIR}/include/hpdf)
-    link_directories(${PROJECT_SOURCE_DIR}/lib)
-else()
-    # Linux: Use system libharu
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(HPDF libhpdf)
-    if(HPDF_FOUND)
-        include_directories(${HPDF_INCLUDE_DIRS})
-        link_directories(${HPDF_LIBRARY_DIRS})
-    else()
-        # Fallback: try to find manually
-        find_path(HPDF_INCLUDE_DIR hpdf.h)
-        find_library(HPDF_LIBRARY hpdf)
-        if(HPDF_INCLUDE_DIR AND HPDF_LIBRARY)
-            include_directories(${HPDF_INCLUDE_DIR})
-            set(HPDF_LIBRARIES ${HPDF_LIBRARY})
-        endif()
-    endif()
-endif()
-
-# 📁 Source files
-set(MAIN_SOURCES
-    src/main/main.c
-    src/main/auth.c
-    src/main/signin.c
-    src/main/signup.c
-    src/main/ui.c
-    src/main/fileio.c
-    src/main/student.c
-    src/main/utils.c
-    src/main/database.c
-    src/main/security.c
-    src/main/safe_input.c
-    src/main/campus_unified.c
-)
-
-# 🎯 Main executable
-add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
-target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
-
-# 🔗 Link PDF library
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE hpdf)
-    # Copy DLL to output folder after build (for runtime)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    target_include_directories(campus PRIVATE include/hpdf)
+    target_link_directories(campus PRIVATE lib)
+    target_link_libraries(campus PRIVATE hpdf)
+    target_compile_definitions(campus PRIVATE _CRT_SECURE_NO_WARNINGS)
+    
+    # Copy DLL
+    add_custom_command(TARGET campus POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${PROJECT_SOURCE_DIR}/lib/hpdf.dll"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+        "${CMAKE_SOURCE_DIR}/lib/hpdf.dll"
+        "$<TARGET_FILE_DIR:campus>"
     )
-else()
-    if(HPDF_LIBRARIES)
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${HPDF_LIBRARIES})
-    else()
-        # Fallback: link with -lhpdf
-        target_link_libraries(${PROJECT_NAME} PRIVATE hpdf)
-    endif()
+endif()
+
+# Linux-specific setup  
+if(UNIX)
+    target_link_libraries(campus PRIVATE hpdf)
 endif()
