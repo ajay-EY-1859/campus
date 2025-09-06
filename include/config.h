@@ -31,4 +31,25 @@ typedef enum {
 #define APP_NAME        "Campus Management System"
 #define APP_VERSION     "v2.0"
 
+// Error Codes
+typedef enum {
+    SUCCESS = 0,
+    ERROR_GENERAL = 1,
+    ERROR_AUTH_FAILED = 2,
+    ERROR_DATABASE = 3,
+    ERROR_FILE_IO = 4,
+    ERROR_INVALID_INPUT = 5,
+    ERROR_MEMORY = 6,
+    ERROR_NETWORK = 7,
+    ERROR_PERMISSION = 8,
+    ERROR_NOT_FOUND = 9,
+    ERROR_ALREADY_EXISTS = 10
+} ErrorCode;
+
+// Return value constants
+#define RETURN_SUCCESS    0
+#define RETURN_FAILURE    1
+#define RETURN_TRUE       1
+#define RETURN_FALSE      0
+
 #endif // CONFIG_H

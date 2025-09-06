@@ -4,18 +4,19 @@
 #include <stdbool.h>
 #include "../include/utils.h"
 
-void clearInputBuffer(void) {
+ErrorCode clearInputBuffer(void) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+    return SUCCESS;
 }
 
-bool safeGetInt(int *value, int min, int max) {
+ErrorCode safeGetInt(int *value, int min, int max) {
     char buffer[32] = {0};
     char *endptr = NULL;
     long temp = 0;
     
     if (!fgets(buffer, sizeof(buffer), stdin)) {
-        return false;
+        return ERROR_INVALID_INPUT;
     }
     
     // Remove newline if present
@@ -28,25 +29,25 @@ bool safeGetInt(int *value, int min, int max) {
     
     // Check for conversion errors
     if (endptr == buffer || *endptr != '\0') {
-        return false;
+        return ERROR_INVALID_INPUT;
     }
     
     // Check range
     if (temp < min || temp > max) {
-        return false;
+        return ERROR_INVALID_INPUT;
     }
     
     *value = (int)temp;
-    return true;
+    return SUCCESS;
 }
 
-bool safeGetString(char *buffer, size_t size) {
+ErrorCode safeGetString(char *buffer, size_t size) {
     if (!buffer || size == 0) {
-        return false;
+        return ERROR_INVALID_INPUT;
     }
     
-    if (!fgets(buffer, size, stdin)) {
-        return false;
+    if (!fgets(buffer, (int)size, stdin)) {
+        return ERROR_INVALID_INPUT;
     }
     
     // Remove newline if present
@@ -55,5 +56,5 @@ bool safeGetString(char *buffer, size_t size) {
         buffer[len-1] = '\0';
     }
     
-    return true;
+    return SUCCESS;
 }

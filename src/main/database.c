@@ -11,7 +11,7 @@ static const char *DB_PATH = "data/campus.db";
 #define HEADER_SIZE 12
 #define USER_RECORD_HEADER "USER_RECORD"
 
-int initDatabase(void) {
+ErrorCode initDatabase(void) {
     // Create data directory if not exists
 #ifdef _WIN32
     system("if not exist data mkdir data");
@@ -23,28 +23,29 @@ int initDatabase(void) {
     dbFile = fopen(DB_PATH, "a+");
     if (!dbFile) {
         printf("Failed to initialize database\n");
-        return 0;
+        return ERROR_DATABASE;
     }
     fclose(dbFile);
     
     printf("Database initialized successfully\n");
-    return 1;
+    return SUCCESS;
 }
 
-void closeDatabase(void) {
+ErrorCode closeDatabase(void) {
     if (dbFile) {
         fclose(dbFile);
         dbFile = NULL;
     }
+    return SUCCESS;
 }
 
-int createUser(const Profile *profile) {
-    if (!profile) return 0;
+ErrorCode createUser(const Profile *profile) {
+    if (!profile) return ERROR_INVALID_INPUT;
     
     FILE *f = fopen(DB_PATH, "ab");
     if (!f) {
         printf("Error: Cannot open database for writing\n");
-        return 0;
+        return ERROR_FILE_IO;
     }
     
     // Write user record with header
@@ -53,12 +54,12 @@ int createUser(const Profile *profile) {
         fwrite(profile, sizeof(Profile), 1, f) != 1) {
         printf("Error: Failed to write user data\n");
         fclose(f);
-        return 0;
+        return ERROR_FILE_IO;
     }
     
     fclose(f);
     logActivity(profile->userID, "USER_CREATED", "New user registered");
-    return 1;
+    return SUCCESS;
 }
 
 int getUserByID(const char *userID, Profile *profile) {

@@ -19,16 +19,16 @@ void displayMainMenu() {
 
 int main() {
     // Initialize database
-    if (!initDatabase()) {
+    if (initDatabase() != SUCCESS) {
         printf("Failed to initialize database. Exiting.\n");
-        return 1;
+        return ERROR_DATABASE;
     }
     
     int choice = 0;
 
     while (1) {
         displayMainMenu();
-        if (!safeGetInt(&choice, 1, 3)) {
+        if (safeGetInt(&choice, 1, 3) != SUCCESS) {
             printf("Invalid input. Please enter 1, 2, or 3.\n");
             continue;
         }
@@ -45,11 +45,11 @@ int main() {
             case 3:
                 printf("Goodbye! Thanks for using %s.\n", APP_NAME);
                 closeDatabase();
-                return 0;
+                return SUCCESS;
             default:
                 printf("Invalid choice. Please try again.\n");
         }
     }
 
-    return 0;
+    return SUCCESS;
 }
