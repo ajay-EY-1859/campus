@@ -7,10 +7,12 @@
 
 // Campus Types
 typedef enum {
+    CAMPUS_NONE = 0,
     CAMPUS_SCHOOL = 1,
     CAMPUS_COLLEGE = 2,
     CAMPUS_HOSPITAL = 3,
-    CAMPUS_HOSTEL = 4
+    CAMPUS_HOSTEL = 4,
+    CAMPUS_AMOUNT = 5
 } CampusType;
 
 // Paths

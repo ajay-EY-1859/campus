@@ -34,6 +34,7 @@ set(MAIN_SOURCES
     src/main/database.c
     src/main/security.c
     src/main/safe_input.c
+    src/main/campus_unified.c
 )
 
 # 🎯 Main executable

@@ -22,7 +22,7 @@ void exportHospitalPDF(const char *patientID);
 void exportHostelPDF(const char *residentID);
 
 // Utilities
-const char* getGrade(double percent);
+const char* getGrade(float percent);
 void printSummary(int total, int full, CampusType type);
 const char* getCampusName(CampusType type);
 

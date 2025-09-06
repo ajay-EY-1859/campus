@@ -24,17 +24,17 @@ const char* getCampusName(CampusType type) {
     }
 }
 
-const char* getGrade(double percent) {
-    if (percent >= 90.0) return "A+";
-    else if (percent >= 80.0) return "A";
-    else if (percent >= 70.0) return "B";
-    else if (percent >= 60.0) return "C";
-    else if (percent >= 50.0) return "D";
+const char* getGrade(float percent) {
+    if (percent >= 90.0f) return "A+";
+    else if (percent >= 80.0f) return "A";
+    else if (percent >= 70.0f) return "B";
+    else if (percent >= 60.0f) return "C";
+    else if (percent >= 50.0f) return "D";
     else return "F";
 }
 
 void printSummary(int total, int full, CampusType type) {
-    double percentage = (full == 0) ? 0.0 : (total * 100.0 / full);
+    float percentage = (full == 0) ? 0.0f : (total * 100.0f / full);
     printf("Total: %d / %d\n", total, full);
     printf("Percentage: %.2f%%\n", percentage);
     if (type == CAMPUS_SCHOOL || type == CAMPUS_COLLEGE) {
