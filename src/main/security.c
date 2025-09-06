@@ -266,7 +266,8 @@ int logSecurityEvent(const char *userID, const char *event, const char *details)
     }
     
     fprintf(f, "[%s] SECURITY | User: %s | Event: %s | Details: %s\n", 
-            timeStr ? timeStr : "Unknown", userID, event, details);
+            timeStr ? timeStr : "Unknown", userID ? userID : "UNKNOWN", 
+            event ? event : "NO_EVENT", details ? details : "NO_DETAILS");
     fclose(f);
     return 1;
 }
@@ -285,7 +286,9 @@ int generateSecurityReport(const char *reportPath) {
     if (!report) return 0;
     
     fprintf(report, "Campus Security Report\n");
-    fprintf(report, "Generated: %s\n", ctime(&(time_t){time(NULL)}));
+    time_t now = time(NULL);
+    char *timeStr = ctime(&now);
+    fprintf(report, "Generated: %s\n", timeStr ? timeStr : "Unknown time");
     fprintf(report, "Active Sessions: %d\n", sessionCount);
     
     // Add more security metrics here

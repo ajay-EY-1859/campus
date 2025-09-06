@@ -28,17 +28,18 @@ int main() {
 
     while (1) {
         displayMainMenu();
-        if (scanf("%d", &choice) != 1) {
-            printf("Invalid input. Please enter a number.\n");
-            while (getchar() != '\n'); // Clear buffer
+        if (!safeGetInt(&choice, 1, 3)) {
+            printf("Invalid input. Please enter 1, 2, or 3.\n");
             continue;
         }
 
         switch (choice) {
             case 1: 
+                printf("Starting registration...\n");
                 signup(); 
                 break;
             case 2: 
+                printf("Starting login...\n");
                 signin(); 
                 break;
             case 3:

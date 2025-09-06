@@ -8,6 +8,8 @@
 // Simple file-based database simulation (SQLite alternative)
 static FILE *dbFile = NULL;
 static const char *DB_PATH = "data/campus.db";
+#define HEADER_SIZE 12
+#define USER_RECORD_HEADER "USER_RECORD"
 
 int initDatabase(void) {
     // Create data directory if not exists
@@ -37,15 +39,24 @@ void closeDatabase(void) {
 }
 
 int createUser(const Profile *profile) {
+    if (!profile) return 0;
+    
     FILE *f = fopen(DB_PATH, "ab");
-    if (!f) return 0;
+    if (!f) {
+        printf("Error: Cannot open database for writing\n");
+        return 0;
+    }
     
     // Write user record with header
-    char header[] = "USER_RECORD";
-    fwrite(header, sizeof(header), 1, f);
-    fwrite(profile, sizeof(Profile), 1, f);
-    fclose(f);
+    char header[] = USER_RECORD_HEADER;
+    if (fwrite(header, sizeof(header), 1, f) != 1 ||
+        fwrite(profile, sizeof(Profile), 1, f) != 1) {
+        printf("Error: Failed to write user data\n");
+        fclose(f);
+        return 0;
+    }
     
+    fclose(f);
     logActivity(profile->userID, "USER_CREATED", "New user registered");
     return 1;
 }
@@ -54,11 +65,11 @@ int getUserByID(const char *userID, Profile *profile) {
     FILE *f = fopen(DB_PATH, "rb");
     if (!f) return 0;
     
-    char header[12];
-    Profile temp;
+    char header[HEADER_SIZE] = {0};
+    Profile temp = {0};
     
     while (fread(header, sizeof(header), 1, f) == 1) {
-        if (strcmp(header, "USER_RECORD") == 0) {
+        if (strcmp(header, USER_RECORD_HEADER) == 0) {
             if (fread(&temp, sizeof(Profile), 1, f) == 1) {
                 if (strcmp(temp.userID, userID) == 0) {
                     *profile = temp;
@@ -77,10 +88,17 @@ int getUserByID(const char *userID, Profile *profile) {
 }
 
 int updateUser(const Profile *profile) {
+    if (!profile) return 0;
+    
     // Simple implementation: delete old, add new
     FILE *f = fopen(DB_PATH, "rb");
     FILE *temp = fopen("data/temp.db", "wb");
-    if (!f || !temp) return 0;
+    if (!f || !temp) {
+        if (f) fclose(f);
+        if (temp) fclose(temp);
+        printf("Error: Cannot open database files for update\n");
+        return 0;
+    }
     
     char header[12];
     Profile tempProfile;
@@ -141,33 +159,61 @@ int authenticateUser(const char *userID, const char *mobile, const char *passwor
 }
 
 int saveUserData(const char *userID, const char *dataType, const void *data, size_t dataSize) {
-    char filename[200];
+    if (!userID || !dataType || !data || dataSize == 0) return 0;
+    
+    char filename[200] = {0};
     snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
     
     FILE *f = fopen(filename, "wb");
-    if (!f) return 0;
+    if (!f) {
+        printf("Error: Cannot save data to %s\n", filename);
+        return 0;
+    }
     
-    fwrite(data, dataSize, 1, f);
+    if (fwrite(data, dataSize, 1, f) != 1) {
+        printf("Error: Failed to write data\n");
+        fclose(f);
+        return 0;
+    }
+    
     fclose(f);
-    
     logActivity(userID, "DATA_SAVED", dataType);
     return 1;
 }
 
 int loadUserData(const char *userID, const char *dataType, void *data, size_t *dataSize) {
-    char filename[200];
+    if (!userID || !dataType || !data || !dataSize) return 0;
+    
+    char filename[200] = {0};
     snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
     
     FILE *f = fopen(filename, "rb");
     if (!f) return 0;
     
-    fseek(f, 0, SEEK_END);
-    *dataSize = ftell(f);
-    fseek(f, 0, SEEK_SET);
+    if (fseek(f, 0, SEEK_END) != 0) {
+        fclose(f);
+        return 0;
+    }
     
-    fread(data, *dataSize, 1, f);
+    long fileSize = ftell(f);
+    if (fileSize < 0) {
+        fclose(f);
+        return 0;
+    }
+    
+    *dataSize = (size_t)fileSize;
+    
+    if (fseek(f, 0, SEEK_SET) != 0) {
+        fclose(f);
+        return 0;
+    }
+    
+    if (fread(data, *dataSize, 1, f) != 1) {
+        fclose(f);
+        return 0;
+    }
+    
     fclose(f);
-    
     return 1;
 }
 

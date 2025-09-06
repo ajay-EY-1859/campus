@@ -41,9 +41,11 @@ void logEvent(const char *userID, const char *action) {
     time_t now = time(NULL);
     char *timeStr = ctime(&now);
     if (timeStr) {
-        fprintf(log, "%s: %s at %s", action, userID, timeStr);
+        fprintf(log, "%s: %s at %s", action ? action : "UNKNOWN_ACTION", 
+                userID ? userID : "UNKNOWN_USER", timeStr);
     } else {
-        fprintf(log, "%s: %s at [time unavailable]\n", action, userID);
+        fprintf(log, "%s: %s at [time unavailable]\n", 
+                action ? action : "UNKNOWN_ACTION", userID ? userID : "UNKNOWN_USER");
     }
     fclose(log);
 }
