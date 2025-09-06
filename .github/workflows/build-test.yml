@@ -26,10 +26,13 @@ jobs:
       
     - name: Verify Build
       run: |
-        if (Test-Path "build\build\Release\campus.exe") {
+        if (Test-Path "build\Release\campus.exe") {
           Write-Host "✅ Build successful - campus.exe found"
+        } elseif (Test-Path "build\campus.exe") {
+          Write-Host "✅ Build successful - campus.exe found in root"
         } else {
           Write-Host "❌ Build failed - campus.exe not found"
+          Get-ChildItem build -Recurse -Name "*.exe" -ErrorAction SilentlyContinue
           exit 1
         }
       
@@ -38,7 +41,8 @@ jobs:
       with:
         name: campus-windows
         path: |
-          build/build/Release/campus.exe
+          build/Release/campus.exe
+          build/campus.exe
           lib/hpdf.dll
 
   ubuntu-build:

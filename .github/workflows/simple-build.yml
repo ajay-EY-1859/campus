@@ -24,17 +24,22 @@ jobs:
     - name: List Build Output
       run: |
         echo "Build directory contents:"
-        dir build\build\Release\
+        dir build\ 2>nul || echo "Build dir not found"
+        dir build\Release\ 2>nul || echo "Release dir not found"
+        dir build\Debug\ 2>nul || echo "Debug dir not found"
         
     - name: Verify Build
       run: |
-        if (Test-Path "build\build\Release\campus.exe") {
-          Write-Host "✅ SUCCESS: campus.exe found"
-          Get-Item "build\build\Release\campus.exe" | Select-Object Name, Length, LastWriteTime
+        if (Test-Path "build\Release\campus.exe") {
+          Write-Host "✅ SUCCESS: campus.exe found in Release"
+          Get-Item "build\Release\campus.exe" | Select-Object Name, Length, LastWriteTime
+        } elseif (Test-Path "build\campus.exe") {
+          Write-Host "✅ SUCCESS: campus.exe found in root"
+          Get-Item "build\campus.exe" | Select-Object Name, Length, LastWriteTime
         } else {
           Write-Host "❌ FAILED: campus.exe not found"
-          Write-Host "Available files:"
-          Get-ChildItem "build\build\Release\" -ErrorAction SilentlyContinue
+          Write-Host "Build directory contents:"
+          Get-ChildItem "build" -Recurse -ErrorAction SilentlyContinue | Select-Object Name, FullName
           exit 1
         }
       
@@ -43,5 +48,6 @@ jobs:
       with:
         name: campus-windows-simple
         path: |
-          build/build/Release/campus.exe
+          build/Release/campus.exe
+          build/campus.exe
           lib/hpdf.dll
