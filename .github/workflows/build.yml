@@ -2,84 +2,86 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-        build_type: [Release]
+  windows-build:
+    name: Windows Build
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install Dependencies (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Create Directories
       run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential cmake pkg-config
-        sudo apt-get install -y libhpdf-dev || echo "libhpdf-dev not available, using fallback"
-
-    - name: Setup MSVC (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Create Required Directories
-      run: |
-        mkdir -p data credentials logs
+        mkdir data
+        mkdir credentials
+        mkdir logs
 
     - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      run: cmake -B build
 
     - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      run: cmake --build build --config Release
 
-    - name: Verify Build (Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Verify Build
       run: |
-        if (Test-Path "build\${{ matrix.build_type }}\campus.exe") {
-          Write-Host "✅ Build successful - campus.exe found in ${{ matrix.build_type }}"
-          Get-Item "build\${{ matrix.build_type }}\campus.exe" | Select-Object Name, Length
-        } elseif (Test-Path "build\campus.exe") {
-          Write-Host "✅ Build successful - campus.exe found in root"
-          Get-Item "build\campus.exe" | Select-Object Name, Length
+        if (Test-Path "build\Release\campus.exe") {
+          Write-Host "✅ Build successful"
+          Get-Item "build\Release\campus.exe"
         } else {
-          Write-Host "❌ Build failed - campus.exe not found"
-          Get-ChildItem build -Recurse -Name "*.exe" -ErrorAction SilentlyContinue
+          Write-Host "❌ Build failed"
+          Get-ChildItem build -Recurse -Name "*.exe"
           exit 1
         }
 
-    - name: Verify Build (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-windows
+        path: |
+          build/Release/campus.exe
+          lib/hpdf.dll
+
+  ubuntu-build:
+    name: Ubuntu Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+        sudo apt-get install -y libhpdf-dev || echo "Using fallback"
+
+    - name: Create Directories
+      run: mkdir -p data credentials logs
+
+    - name: Configure CMake
+      run: cmake -B build
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Verify Build
       run: |
         if [ -f "build/campus" ]; then
-          echo "✅ Build successful - campus binary found"
+          echo "✅ Build successful"
           ls -la build/campus
         else
-          echo "❌ Build failed - campus binary not found"
-          find build -name "*campus*" -type f 2>/dev/null || echo "No campus binary found"
+          echo "❌ Build failed"
+          find build -name "*campus*" 2>/dev/null || echo "No binary found"
           exit 1
         fi
 
-    - name: Upload Artifacts (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v4
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
       with:
-        name: campus-windows-${{ matrix.build_type }}
-        path: |
-          build/${{ matrix.build_type }}/campus.exe
-          build/campus.exe
-          lib/hpdf.dll
-
-    - name: Upload Artifacts (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v4
-      with:
-        name: campus-ubuntu-${{ matrix.build_type }}
+        name: campus-ubuntu
         path: build/campus
