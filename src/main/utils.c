@@ -24,19 +24,24 @@ void buildProfileExt(char *ext, const char *userID) {
 }
 
 // Helper: build full file path from ID
-void getProfilePath(char *path, const char *userID) {
+ErrorCode getProfilePath(char *path, const char *userID) {
+    if (!path || !userID) return ERROR_INVALID_INPUT;
+    
     char ext[6] = {0};
     buildProfileExt(ext, userID);
     snprintf(path, 150, CRED_DIR "%s.%s", userID, ext);
+    return SUCCESS;
 }
 
 // Logging function
-void logEvent(const char *userID, const char *action) {
+ErrorCode logEvent(const char *userID, const char *action) {
+    if (!userID || !action) return ERROR_INVALID_INPUT;
+    
     FILE *log = fopen(LOG_DIR "login_audit.log", "a");
     if (!log) {
         // Optional fallback: stderr output if logging fails
         fprintf(stderr, "Logging failed for %s [%s]\n", action, userID);
-        return;
+        return ERROR_FILE_IO;
     }
     time_t now = time(NULL);
     char *timeStr = ctime(&now);
@@ -48,51 +53,55 @@ void logEvent(const char *userID, const char *action) {
                 action ? action : "UNKNOWN_ACTION", userID ? userID : "UNKNOWN_USER");
     }
     fclose(log);
+    return SUCCESS;
 }
 
 // Optional utility: sanitize filename (for backups etc.)
-void sanitizeFilename(char *str) {
+ErrorCode sanitizeFilename(char *str) {
+    if (!str) return ERROR_INVALID_INPUT;
+    
     for (int i = 0; str[i]; i++) {
         if (!isalnum(str[i]) && str[i] != '_' && str[i] != '-') {
             str[i] = '_';  // Replace unsupported chars
         }
     }
+    return SUCCESS;
 }
 
 // Email validation function
-bool isValidEmail(const char *email) {
-    if (!email || strlen(email) < 5) return false;
+ErrorCode isValidEmail(const char *email) {
+    if (!email || strlen(email) < 5) return ERROR_INVALID_INPUT;
     
     const char *at = strchr(email, '@');
-    if (!at || at == email) return false;
+    if (!at || at == email) return ERROR_INVALID_INPUT;
     
     const char *dot = strchr(at, '.');
-    if (!dot || dot == at + 1 || dot[1] == '\0') return false;
+    if (!dot || dot == at + 1 || dot[1] == '\0') return ERROR_INVALID_INPUT;
     
-    return true;
+    return SUCCESS;
 }
 
 // Mobile validation function
-bool isValidMobile(const char *mobile) {
-    if (!mobile) return false;
+ErrorCode isValidMobile(const char *mobile) {
+    if (!mobile) return ERROR_INVALID_INPUT;
     
     size_t len = strlen(mobile);
-    if (len < 10 || len > 15) return false;
+    if (len < 10 || len > 15) return ERROR_INVALID_INPUT;
     
     for (size_t i = 0; i < len; i++) {
         if (!isdigit(mobile[i]) && mobile[i] != '+' && mobile[i] != '-' && mobile[i] != ' ') {
-            return false;
+            return ERROR_INVALID_INPUT;
         }
     }
     
-    return true;
+    return SUCCESS;
 }
 
 
 
 // Get current time as string
-void getCurrentTime(char *buffer, size_t size) {
-    if (!buffer || size == 0) return;
+ErrorCode getCurrentTime(char *buffer, size_t size) {
+    if (!buffer || size == 0) return ERROR_INVALID_INPUT;
     
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
@@ -101,5 +110,7 @@ void getCurrentTime(char *buffer, size_t size) {
         strftime(buffer, size, "%Y-%m-%d %H:%M:%S", tm_info);
     } else {
         snprintf(buffer, size, "Unknown time");
+        return ERROR_GENERAL;
     }
+    return SUCCESS;
 }
