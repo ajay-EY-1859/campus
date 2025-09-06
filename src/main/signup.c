@@ -42,7 +42,7 @@ ErrorCode signup() {
     printf("Enter %s name: ", getCampusName(p.campusType));
     if (safeGetString(p.instituteName, sizeof(p.instituteName)) != SUCCESS) {
         printf("Invalid input\n");
-        return;
+        return ERROR_INVALID_INPUT;
     }
 
     // Campus-specific department/stream prompt
@@ -63,7 +63,7 @@ ErrorCode signup() {
     
     if (safeGetString(p.department, sizeof(p.department)) != SUCCESS) {
         printf("Invalid input\n");
-        return;
+        return ERROR_INVALID_INPUT;
     }
 
     // Campus-specific data fields
@@ -72,13 +72,13 @@ ErrorCode signup() {
             printf("Number of subjects: ");
             if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
                 printf("Invalid number of subjects\n");
-                return;
+                return ERROR_INVALID_INPUT;
             }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Subject %d: ", i + 1);
                 if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
                     printf("Invalid subject name\n");
-                    return;
+                    return ERROR_INVALID_INPUT;
                 }
             }
             break;
@@ -86,13 +86,13 @@ ErrorCode signup() {
             printf("Number of courses: ");
             if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
                 printf("Invalid number of courses\n");
-                return;
+                return ERROR_INVALID_INPUT;
             }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Course %d: ", i + 1);
                 if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
                     printf("Invalid course name\n");
-                    return;
+                    return ERROR_INVALID_INPUT;
                 }
             }
             break;
@@ -135,7 +135,7 @@ ErrorCode signup() {
     if (strength < 3) {
         printf("Password is too weak. Please use a stronger password.\n");
         printf("Requirements: 8+ chars, uppercase, lowercase, digit, special char\n");
-        return;
+        return ERROR_AUTH_FAILED;
     }
     
     hashPassword(password, p.passwordHash);
@@ -143,7 +143,7 @@ ErrorCode signup() {
 
     if (createUser(&p) != SUCCESS) {
         printf("Registration failed\n");
-        return;
+        return ERROR_DATABASE;
     }
 
     logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
