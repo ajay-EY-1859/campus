@@ -13,7 +13,7 @@
 #include "../include/database.h"
 #include "../include/security.h"
 
-void signin() {
+ErrorCode signin() {
     Profile p = {0};
     char userID[MAX_LEN] = {0}, mobileInput[15] = {0}, inputPassword[MAX_LEN] = {0}, hashedInput[MAX_LEN] = {0};
     char otp[7] = {0}, inputOTP[7] = {0};
@@ -23,13 +23,13 @@ void signin() {
     printf("User ID: ");
     if (scanf(" %99s", userID) != 1) {
         printf("Invalid input\n");
-        return;
+        return ERROR_INVALID_INPUT;
     }
     
     // Check if account is locked
     if (isAccountLocked(userID)) {
         printf("Account is temporarily locked due to security reasons.\n");
-        return;
+        return ERROR_PERMISSION;
     }
 
     char filename[150] = {0};
@@ -38,7 +38,7 @@ void signin() {
     FILE *fp = fopen(filename, "rb");
     if (!fp) {
         printf("Login failed! Profile not found for ID: %s\n", userID);
-        return;
+        return ERROR_NOT_FOUND;
     }
 
     fread(&p, sizeof(Profile), 1, fp);
@@ -48,7 +48,7 @@ void signin() {
         printf("Mobile Number: ");
         if (scanf(" %14s", mobileInput) != 1) {
             printf("Invalid input\n");
-            return;
+            return ERROR_INVALID_INPUT;
         }
 
         printf("Password ");
@@ -76,14 +76,14 @@ void signin() {
                     
                     dashboard(p.userID);
                     destroySession(session.sessionToken);
-                    return;
+                    return SUCCESS;
                 } else {
                     printf("Invalid OTP. Login failed.\n");
                     attempts++;
                 }
             } else {
                 printf("Failed to generate OTP. Please try again.\n");
-                return;
+                return ERROR_NETWORK;
             }
 
         } else {
@@ -93,4 +93,5 @@ void signin() {
 
     printf("Too many failed attempts. Account will be locked.\n");
     lockAccount(userID, 15); // Lock for 15 minutes
+    return ERROR_AUTH_FAILED;
 }
