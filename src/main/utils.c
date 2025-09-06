@@ -56,3 +56,48 @@ void sanitizeFilename(char *str) {
         }
     }
 }
+
+// Email validation function
+bool isValidEmail(const char *email) {
+    if (!email || strlen(email) < 5) return false;
+    
+    const char *at = strchr(email, '@');
+    if (!at || at == email) return false;
+    
+    const char *dot = strchr(at, '.');
+    if (!dot || dot == at + 1 || dot[1] == '\0') return false;
+    
+    return true;
+}
+
+// Mobile validation function
+bool isValidMobile(const char *mobile) {
+    if (!mobile) return false;
+    
+    size_t len = strlen(mobile);
+    if (len < 10 || len > 15) return false;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit(mobile[i]) && mobile[i] != '+' && mobile[i] != '-' && mobile[i] != ' ') {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
+
+// Get current time as string
+void getCurrentTime(char *buffer, size_t size) {
+    if (!buffer || size == 0) return;
+    
+    time_t now = time(NULL);
+    struct tm *tm_info = localtime(&now);
+    
+    if (tm_info) {
+        strftime(buffer, size, "%Y-%m-%d %H:%M:%S", tm_info);
+    } else {
+        snprintf(buffer, size, "Unknown time");
+    }
+}

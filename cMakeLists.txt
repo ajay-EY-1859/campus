@@ -33,6 +33,7 @@ set(MAIN_SOURCES
     src/main/utils.c
     src/main/database.c
     src/main/security.c
+    src/main/safe_input.c
 )
 
 # 🎯 Main executable

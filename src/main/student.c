@@ -56,9 +56,15 @@ void saveSchoolData(const char *studentID) {
     printf("\nEnter marks for subjects:\n");
     for (int i = 0; i < p.dataCount; i++) {
         printf("%s - Marks: ", p.dataFields[i]);
-        scanf("%d", &marks[i]);
+        if (!safeGetInt(&marks[i], 0, 100)) {
+            printf("Invalid marks entered\n");
+            return;
+        }
         printf("Full marks: ");
-        scanf("%d", &fullMarks[i]);
+        if (!safeGetInt(&fullMarks[i], 1, 100)) {
+            printf("Invalid full marks entered\n");
+            return;
+        }
     }
     
     char datafile[150];
@@ -92,8 +98,8 @@ void loadSchoolData(const char *studentID) {
         return;
     }
     
-    int count, marks[MAX_SUBJECTS], fullMarks[MAX_SUBJECTS];
-    char subjects[MAX_SUBJECTS][MAX_LEN];
+    int count = 0, marks[MAX_SUBJECTS] = {0}, fullMarks[MAX_SUBJECTS] = {0};
+    char subjects[MAX_SUBJECTS][MAX_LEN] = {0};
     int total = 0, totalFull = 0;
     
     fread(&count, sizeof(int), 1, f);
@@ -121,9 +127,15 @@ void saveCollegeData(const char *studentID) {
     printf("\nEnter semester marks:\n");
     for (int i = 0; i < p.dataCount; i++) {
         printf("%s - Marks: ", p.dataFields[i]);
-        scanf("%d", &marks[i]);
+        if (!safeGetInt(&marks[i], 0, 100)) {
+            printf("Invalid marks entered\n");
+            return;
+        }
         printf("Credits: ");
-        scanf("%d", &credits[i]);
+        if (!safeGetInt(&credits[i], 1, 10)) {
+            printf("Invalid credits entered\n");
+            return;
+        }
     }
     
     char datafile[150];
@@ -157,8 +169,8 @@ void loadCollegeData(const char *studentID) {
         return;
     }
     
-    int count, marks[MAX_SUBJECTS], credits[MAX_SUBJECTS];
-    char subjects[MAX_SUBJECTS][MAX_LEN];
+    int count = 0, marks[MAX_SUBJECTS] = {0}, credits[MAX_SUBJECTS] = {0};
+    char subjects[MAX_SUBJECTS][MAX_LEN] = {0};
     int totalMarks = 0, totalCredits = 0;
     
     fread(&count, sizeof(int), 1, f);
@@ -184,11 +196,14 @@ void saveHospitalData(const char *patientID) {
         return;
     }
     
-    char values[MAX_SUBJECTS][MAX_LEN];
+    char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter medical data:\n");
     for (int i = 0; i < p.dataCount; i++) {
         printf("%s: ", p.dataFields[i]);
-        scanf(" %99[^\n]", values[i]);
+        if (!safeGetString(values[i], sizeof(values[i]))) {
+            printf("Invalid input entered\n");
+            return;
+        }
     }
     
     char datafile[150];
@@ -221,8 +236,8 @@ void loadHospitalData(const char *patientID) {
         return;
     }
     
-    int count;
-    char fields[MAX_SUBJECTS][MAX_LEN], values[MAX_SUBJECTS][MAX_LEN];
+    int count = 0;
+    char fields[MAX_SUBJECTS][MAX_LEN] = {0}, values[MAX_SUBJECTS][MAX_LEN] = {0};
     
     fread(&count, sizeof(int), 1, f);
     for (int i = 0; i < count; i++) {
@@ -241,11 +256,14 @@ void saveHostelData(const char *residentID) {
         return;
     }
     
-    char values[MAX_SUBJECTS][MAX_LEN];
+    char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter hostel data:\n");
     for (int i = 0; i < p.dataCount; i++) {
         printf("%s: ", p.dataFields[i]);
-        scanf(" %99[^\n]", values[i]);
+        if (!safeGetString(values[i], sizeof(values[i]))) {
+            printf("Invalid input entered\n");
+            return;
+        }
     }
     
     char datafile[150];
@@ -278,8 +296,8 @@ void loadHostelData(const char *residentID) {
         return;
     }
     
-    int count;
-    char fields[MAX_SUBJECTS][MAX_LEN], values[MAX_SUBJECTS][MAX_LEN];
+    int count = 0;
+    char fields[MAX_SUBJECTS][MAX_LEN] = {0}, values[MAX_SUBJECTS][MAX_LEN] = {0};
     
     fread(&count, sizeof(int), 1, f);
     for (int i = 0; i < count; i++) {

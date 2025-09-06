@@ -32,7 +32,7 @@ void signup() {
     char password[MAX_LEN] = {0};
 
     printf("Enter your name: ");
-    if (scanf(" %99[^\n]", p.name) != 1) {
+    if (!safeGetString(p.name, sizeof(p.name))) {
         printf("Invalid input\n");
         return;
     }
@@ -40,13 +40,13 @@ void signup() {
     p.campusType = selectCampusType();
 
     printf("Enter %s name: ", getCampusName(p.campusType));
-    if (scanf(" %99[^\n]", p.instituteName) != 1) {
+    if (!safeGetString(p.instituteName, sizeof(p.instituteName))) {
         printf("Invalid input\n");
         return;
     }
 
     printf("Department/Stream: ");
-    if (scanf(" %49[^\n]", p.department) != 1) {
+    if (!safeGetString(p.department, sizeof(p.department))) {
         printf("Invalid input\n");
         return;
     }
@@ -55,20 +55,30 @@ void signup() {
     switch(p.campusType) {
         case CAMPUS_SCHOOL:
             printf("Number of subjects: ");
-            scanf("%d", &p.dataCount);
-            if (p.dataCount > MAX_SUBJECTS) p.dataCount = MAX_SUBJECTS;
+            if (!safeGetInt(&p.dataCount, 1, MAX_SUBJECTS)) {
+                printf("Invalid number of subjects\n");
+                return;
+            }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Subject %d: ", i + 1);
-                scanf(" %99[^\n]", p.dataFields[i]);
+                if (!safeGetString(p.dataFields[i], sizeof(p.dataFields[i]))) {
+                    printf("Invalid subject name\n");
+                    return;
+                }
             }
             break;
         case CAMPUS_COLLEGE:
             printf("Number of courses: ");
-            scanf("%d", &p.dataCount);
-            if (p.dataCount > MAX_SUBJECTS) p.dataCount = MAX_SUBJECTS;
+            if (!safeGetInt(&p.dataCount, 1, MAX_SUBJECTS)) {
+                printf("Invalid number of courses\n");
+                return;
+            }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Course %d: ", i + 1);
-                scanf(" %99[^\n]", p.dataFields[i]);
+                if (!safeGetString(p.dataFields[i], sizeof(p.dataFields[i]))) {
+                    printf("Invalid course name\n");
+                    return;
+                }
             }
             break;
         case CAMPUS_HOSPITAL:
@@ -88,13 +98,19 @@ void signup() {
 
     do {
         printf("Email: ");
-        scanf(" %99s", p.email);
-    } while (!validateEmail(p.email));
+        if (!safeGetString(p.email, sizeof(p.email))) {
+            printf("Invalid input\n");
+            continue;
+        }
+    } while (!isValidEmail(p.email));
 
     do {
         printf("Mobile: ");
-        scanf(" %14s", p.mobile);
-    } while (!validateMobile(p.mobile));
+        if (!safeGetString(p.mobile, sizeof(p.mobile))) {
+            printf("Invalid input\n");
+            continue;
+        }
+    } while (!isValidMobile(p.mobile));
 
     printf("Password ");
     getHiddenPassword(password);
