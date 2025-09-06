@@ -290,119 +290,7 @@ int restoreDatabase(const char *backupPath) {
     return system(command) == 0;
 }
 
-ErrorCode recoverUserID(void) {
-    char searchInput[MAX_LEN] = {0};
-    int searchType = 0;
-    
-    printf("\nUser ID Recovery\n");
-    printf("Search by:\n");
-    printf("1. Mobile Number\n");
-    printf("2. Email Address\n");
-    printf("Enter choice: ");
-    
-    do {
-        if (safeGetInt(&searchType, 1, 2) == SUCCESS) {
-            break;
-        }
-        printf("Invalid choice. Please enter 1 or 2: ");
-    } while (1);
-    
-    if (searchType == 1) {
-        do {
-            printf("Enter your mobile number: ");
-            if (safeGetString(searchInput, sizeof(searchInput)) == SUCCESS && validateMobile(searchInput) == SUCCESS) {
-                break;
-            }
-            printf("Invalid mobile format. Please try again: ");
-        } while (1);
-    } else {
-        do {
-            printf("Enter your email address: ");
-            if (safeGetString(searchInput, sizeof(searchInput)) == SUCCESS && validateEmail(searchInput) == SUCCESS) {
-                break;
-            }
-            printf("Invalid email format. Please try again: ");
-        } while (1);
-    }
-    
-    FILE *f = fopen(DB_PATH, "rb");
-    if (!f) {
-        printf("Database not found. No users registered yet.\n");
-        return ERROR_NOT_FOUND;
-    }
-    
-    char header[HEADER_SIZE] = {0};
-    Profile temp = {0};
-    int found = 0;
-    
-    while (fread(header, sizeof(header), 1, f) == 1) {
-        if (strcmp(header, USER_RECORD_HEADER) == 0) {
-            if (fread(&temp, sizeof(Profile), 1, f) == 1) {
-                if ((searchType == 1 && strcmp(temp.mobile, searchInput) == 0) ||
-                    (searchType == 2 && strcmp(temp.email, searchInput) == 0)) {
-                    printf("\nUser Found!\n");
-                    printf("Name: %s\n", temp.name);
-                    printf("User ID: %s\n", temp.userID);
-                    printf("%s: %s\n", getCampusName(temp.campusType), temp.instituteName);
-                    printf("Department: %s\n", temp.department);
-                    found = 1;
-                    break;
-                }
-            }
-        } else {
-            fseek(f, sizeof(Profile), SEEK_CUR);
-        }
-    }
-    
-    fclose(f);
-    
-    if (!found) {
-        printf("No user found with the provided %s.\n", 
-               searchType == 1 ? "mobile number" : "email address");
-        return ERROR_NOT_FOUND;
-    }
-    
-    // Ask if user wants to export profile
-    char exportChoice[10] = {0};
-    printf("\nWould you like to export your profile details? (y/n): ");
-    if (safeGetString(exportChoice, sizeof(exportChoice)) == SUCCESS) {
-        if (exportChoice[0] == 'y' || exportChoice[0] == 'Y') {
-            printf("\nSelect Export Format:\n");
-            printf("1. PDF\n");
-            printf("2. Text File\n");
-            printf("3. CSV\n");
-            printf("Enter choice: ");
-            
-            int format = 0;
-            do {
-                if (safeGetInt(&format, 1, 3) == SUCCESS) {
-                    break;
-                }
-                printf("Invalid choice. Please enter 1, 2, or 3: ");
-            } while (1);
-            
-            char filename[200] = {0};
-            
-            switch(format) {
-                case 1: // PDF
-                    snprintf(filename, sizeof(filename), "data/%s_recovered_profile.pdf", temp.userID);
-                    exportRecoveredProfilePDF(&temp, filename);
-                    break;
-                case 2: // Text
-                    snprintf(filename, sizeof(filename), "data/%s_recovered_profile.txt", temp.userID);
-                    exportRecoveredProfileTXT(&temp, filename);
-                    break;
-                case 3: // CSV
-                    snprintf(filename, sizeof(filename), "data/%s_recovered_profile.csv", temp.userID);
-                    exportRecoveredProfileCSV(&temp, filename);
-                    break;
-            }
-        }
-    }
-    
-    logActivity(temp.userID, "USER_ID_RECOVERED", "User ID recovered successfully");
-    return SUCCESS;
-}
+
 
 int isEmailAlreadyRegistered(const char *email) {
     if (!email) return 0;
@@ -454,4 +342,32 @@ int isMobileAlreadyRegistered(const char *mobile) {
     
     fclose(f);
     return 0; // Mobile not found
+}
+
+int searchUserByContact(const char *contact, const char *type, char *foundUserID) {
+    if (!contact || !type || !foundUserID) return 0;
+    
+    FILE *f = fopen(DB_PATH, "rb");
+    if (!f) return 0;
+    
+    char header[HEADER_SIZE] = {0};
+    Profile temp = {0};
+    
+    while (fread(header, sizeof(header), 1, f) == 1) {
+        if (strcmp(header, USER_RECORD_HEADER) == 0) {
+            if (fread(&temp, sizeof(Profile), 1, f) == 1) {
+                if ((strcmp(type, "mobile") == 0 && strcmp(temp.mobile, contact) == 0) ||
+                    (strcmp(type, "email") == 0 && strcmp(temp.email, contact) == 0)) {
+                    strcpy(foundUserID, temp.userID);
+                    fclose(f);
+                    return 1; // Found
+                }
+            }
+        } else {
+            fseek(f, sizeof(Profile), SEEK_CUR);
+        }
+    }
+    
+    fclose(f);
+    return 0; // Not found
 }

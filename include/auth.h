@@ -19,6 +19,7 @@ typedef struct {
 // Auth and Profile actions
 ErrorCode signup(void);
 ErrorCode signin(void);
+ErrorCode recoverUserID(void);
 ErrorCode editProfile(const char *userID);
 ErrorCode changePassword(const char *userID);
 ErrorCode viewProfile(const char *userID);

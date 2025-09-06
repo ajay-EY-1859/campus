@@ -1,0 +1,35 @@
+name: Quick Test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Create Directories
+      run: |
+        mkdir data
+        mkdir credentials  
+        mkdir logs
+        
+    - name: Configure CMake
+      run: cmake -B build
+      
+    - name: Build
+      run: cmake --build build --config Release
+      
+    - name: Check Build
+      run: |
+        if (Test-Path "build\Release\campus.exe") {
+          Write-Host "✅ SUCCESS: campus.exe built successfully"
+          Get-Item "build\Release\campus.exe"
+        } else {
+          Write-Host "❌ FAILED: campus.exe not found"
+          exit 1
+        }

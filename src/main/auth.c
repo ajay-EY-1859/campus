@@ -311,3 +311,63 @@ ErrorCode exportProfile(const char *userID) {
     logEvent(userID, "Profile exported");
     return SUCCESS;
 }
+
+ErrorCode recoverUserID(void) {
+    printf("\nUser ID Recovery\n");
+    printf("1. Search by Mobile Number\n");
+    printf("2. Search by Email\n");
+    printf("Enter choice: ");
+    
+    int choice = 0;
+    if (scanf("%d", &choice) != 1 || (choice != 1 && choice != 2)) {
+        printf("Invalid choice.\n");
+        while (getchar() != '\n');
+        return ERROR_INVALID_INPUT;
+    }
+    while (getchar() != '\n');
+    
+    char searchTerm[MAX_LEN] = {0};
+    
+    if (choice == 1) {
+        printf("Enter mobile number: ");
+        if (fgets(searchTerm, sizeof(searchTerm), stdin) == NULL) {
+            return ERROR_INVALID_INPUT;
+        }
+        searchTerm[strcspn(searchTerm, "\n")] = '\0';
+        
+        if (validateMobile(searchTerm) != SUCCESS) {
+            printf("Invalid mobile number format.\n");
+            return ERROR_INVALID_INPUT;
+        }
+    } else {
+        printf("Enter email address: ");
+        if (fgets(searchTerm, sizeof(searchTerm), stdin) == NULL) {
+            return ERROR_INVALID_INPUT;
+        }
+        searchTerm[strcspn(searchTerm, "\n")] = '\0';
+        
+        if (validateEmail(searchTerm) != SUCCESS) {
+            printf("Invalid email format.\n");
+            return ERROR_INVALID_INPUT;
+        }
+    }
+    
+    // Search for user ID in database
+    char foundUserID[20] = {0};
+    if (searchUserByContact(searchTerm, choice == 1 ? "mobile" : "email", foundUserID)) {
+        printf("\nUser ID found: %s\n", foundUserID);
+        printf("\nWould you like to export this information? (y/n): ");
+        
+        char exportChoice = 0;
+        if (scanf(" %c", &exportChoice) == 1 && (exportChoice == 'y' || exportChoice == 'Y')) {
+            exportProfile(foundUserID);
+        }
+        while (getchar() != '\n');
+        
+        logEvent(foundUserID, "User ID recovered successfully");
+        return SUCCESS;
+    } else {
+        printf("No user found with the provided %s.\n", choice == 1 ? "mobile number" : "email");
+        return ERROR_NOT_FOUND;
+    }
+}

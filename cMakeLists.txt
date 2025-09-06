@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(campus C)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Source files
 file(GLOB SOURCES "src/main/*.c")
@@ -19,7 +20,7 @@ if(WIN32)
     target_link_libraries(campus PRIVATE hpdf)
     target_compile_definitions(campus PRIVATE _CRT_SECURE_NO_WARNINGS)
     
-    # Copy DLL
+    # Copy DLL to output directory
     add_custom_command(TARGET campus POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/lib/hpdf.dll"
@@ -29,5 +30,25 @@ endif()
 
 # Linux-specific setup  
 if(UNIX)
-    target_link_libraries(campus PRIVATE hpdf)
+    # Try to find libharu using pkg-config first
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(HPDF QUIET libharu)
+        if(HPDF_FOUND)
+            target_link_libraries(campus PRIVATE ${HPDF_LIBRARIES})
+            target_include_directories(campus PRIVATE ${HPDF_INCLUDE_DIRS})
+            target_compile_options(campus PRIVATE ${HPDF_CFLAGS_OTHER})
+        else()
+            # Fallback to system library
+            target_link_libraries(campus PRIVATE hpdf)
+        endif()
+    else()
+        # Direct linking as fallback
+        target_link_libraries(campus PRIVATE hpdf)
+    endif()
 endif()
+
+# Create required directories
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/credentials)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/logs)

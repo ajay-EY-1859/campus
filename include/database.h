@@ -14,7 +14,7 @@ ErrorCode getUserByID(const char *userID, Profile *profile);
 ErrorCode updateUser(const Profile *profile);
 ErrorCode deleteUser(const char *userID);
 ErrorCode authenticateUser(const char *userID, const char *mobile, const char *passwordHash);
-ErrorCode recoverUserID(void);
+int searchUserByContact(const char *contact, const char *type, char *foundUserID);
 int isEmailAlreadyRegistered(const char *email);
 int isMobileAlreadyRegistered(const char *mobile);
 
