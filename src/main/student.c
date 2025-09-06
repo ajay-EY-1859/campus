@@ -184,7 +184,7 @@ void loadCollegeData(const char *studentID) {
     }
     fclose(f);
     
-    double cgpa = totalCredits > 0 ? (double)totalMarks / (totalCredits * 10.0) : 0.0;
+    float cgpa = totalCredits > 0 ? (float)totalMarks / (totalCredits * 10.0f) : 0.0f;
     printf("CGPA: %.2f\n", cgpa);
 }
 
@@ -338,7 +338,7 @@ void exportSchoolPDF(const char *studentID) {
         return;
     }
     
-    double percentage = (totalFull == 0) ? 0.0 : (total * 100.0 / totalFull);
+    float percentage = (totalFull == 0) ? 0.0f : (total * 100.0f / totalFull);
     const char *grade = getGrade(percentage);
     
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
@@ -431,7 +431,7 @@ void exportCollegePDF(const char *studentID) {
         return;
     }
     
-    double cgpa = totalCredits > 0 ? (double)totalMarks / (totalCredits * 10.0) : 0.0;
+    float cgpa = totalCredits > 0 ? (float)totalMarks / (totalCredits * 10.0f) : 0.0f;
     
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
     if (!pdf) {
