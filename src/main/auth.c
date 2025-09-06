@@ -7,6 +7,7 @@
 #include "../include/config.h"
 #include "../include/ui.h"
 #include "../include/student.h"
+#include "../include/database.h"
 
 CampusType selectCampusType(void) {
     int choice = 0;
