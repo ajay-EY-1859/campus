@@ -27,26 +27,41 @@ void generateUserID(Profile *p) {
     snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
 }
 
-void signup() {
+ErrorCode signup() {
     Profile p = {0};
     char password[MAX_LEN] = {0};
 
     printf("Enter your name: ");
-    if (!safeGetString(p.name, sizeof(p.name))) {
+    if (safeGetString(p.name, sizeof(p.name)) != SUCCESS) {
         printf("Invalid input\n");
-        return;
+        return ERROR_INVALID_INPUT;
     }
 
     p.campusType = selectCampusType();
 
     printf("Enter %s name: ", getCampusName(p.campusType));
-    if (!safeGetString(p.instituteName, sizeof(p.instituteName))) {
+    if (safeGetString(p.instituteName, sizeof(p.instituteName)) != SUCCESS) {
         printf("Invalid input\n");
         return;
     }
 
-    printf("Department/Stream: ");
-    if (!safeGetString(p.department, sizeof(p.department))) {
+    // Campus-specific department/stream prompt
+    switch(p.campusType) {
+        case CAMPUS_SCHOOL:
+            printf("Stream (Science/Commerce/Arts): ");
+            break;
+        case CAMPUS_COLLEGE:
+            printf("Department (CSE/ECE/Mechanical/etc): ");
+            break;
+        case CAMPUS_HOSPITAL:
+            printf("Department (Cardiology/Neurology/etc): ");
+            break;
+        case CAMPUS_HOSTEL:
+            printf("Block/Wing: ");
+            break;
+    }
+    
+    if (safeGetString(p.department, sizeof(p.department)) != SUCCESS) {
         printf("Invalid input\n");
         return;
     }
@@ -55,13 +70,13 @@ void signup() {
     switch(p.campusType) {
         case CAMPUS_SCHOOL:
             printf("Number of subjects: ");
-            if (!safeGetInt(&p.dataCount, 1, MAX_SUBJECTS)) {
+            if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
                 printf("Invalid number of subjects\n");
                 return;
             }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Subject %d: ", i + 1);
-                if (!safeGetString(p.dataFields[i], sizeof(p.dataFields[i]))) {
+                if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
                     printf("Invalid subject name\n");
                     return;
                 }
@@ -69,13 +84,13 @@ void signup() {
             break;
         case CAMPUS_COLLEGE:
             printf("Number of courses: ");
-            if (!safeGetInt(&p.dataCount, 1, MAX_SUBJECTS)) {
+            if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
                 printf("Invalid number of courses\n");
                 return;
             }
             for (int i = 0; i < p.dataCount; i++) {
                 printf("Course %d: ", i + 1);
-                if (!safeGetString(p.dataFields[i], sizeof(p.dataFields[i]))) {
+                if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
                     printf("Invalid course name\n");
                     return;
                 }
@@ -98,19 +113,19 @@ void signup() {
 
     do {
         printf("Email: ");
-        if (!safeGetString(p.email, sizeof(p.email))) {
+        if (safeGetString(p.email, sizeof(p.email)) != SUCCESS) {
             printf("Invalid input\n");
             continue;
         }
-    } while (!isValidEmail(p.email));
+    } while (isValidEmail(p.email) != SUCCESS);
 
     do {
         printf("Mobile: ");
-        if (!safeGetString(p.mobile, sizeof(p.mobile))) {
+        if (safeGetString(p.mobile, sizeof(p.mobile)) != SUCCESS) {
             printf("Invalid input\n");
             continue;
         }
-    } while (!isValidMobile(p.mobile));
+    } while (isValidMobile(p.mobile) != SUCCESS);
 
     printf("Password ");
     getHiddenPassword(password);
@@ -126,7 +141,7 @@ void signup() {
     hashPassword(password, p.passwordHash);
     generateUserID(&p);
 
-    if (!createUser(&p)) {
+    if (createUser(&p) != SUCCESS) {
         printf("Registration failed\n");
         return;
     }
@@ -147,4 +162,5 @@ void signup() {
     if (ch == 'y' || ch == 'Y') {
         viewProfile(p.userID);
     }
+    return SUCCESS;
 }
