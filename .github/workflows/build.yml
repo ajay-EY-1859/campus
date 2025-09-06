@@ -29,12 +29,15 @@ jobs:
 
     - name: Verify Build
       run: |
+        echo "Checking build output..."
+        dir build\Release
         if (Test-Path "build\Release\campus.exe") {
           Write-Host "✅ Build successful"
           Get-Item "build\Release\campus.exe"
         } else {
-          Write-Host "❌ Build failed"
-          Get-ChildItem build -Recurse -Name "*.exe"
+          Write-Host "❌ Build failed - EXE not found"
+          echo "Build directory contents:"
+          Get-ChildItem build -Recurse
           exit 1
         }
 
