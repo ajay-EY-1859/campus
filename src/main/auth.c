@@ -6,6 +6,7 @@
 #include "../include/utils.h"
 #include "../include/config.h"
 #include "../include/ui.h"
+#include "../include/student.h"
 
 CampusType selectCampusType(void) {
     int choice = 0;
@@ -24,7 +25,8 @@ CampusType selectCampusType(void) {
 }
 
 // Simple password hash using XOR and hex encoding (for demo only)
-void hashPassword(const char *password, char *hashOut) {
+ErrorCode hashPassword(const char *password, char *hashOut) {
+    if (!password || !hashOut) return ERROR_INVALID_INPUT;
     unsigned char key = 0x5A;
     int i = 0;
     size_t len = strlen(password);
@@ -35,13 +37,16 @@ void hashPassword(const char *password, char *hashOut) {
         snprintf(hashOut + i * 2, 3, "%02X", c);
     }
     hashOut[i * 2] = '\0';
+    return SUCCESS;
 }
 
 // Hide password input (Windows only, fallback to normal input)
 #ifdef _WIN32
 #include <conio.h>
 #endif
-void getHiddenPassword(char *password) {
+ErrorCode getHiddenPassword(char *password) {
+    if (!password) return ERROR_INVALID_INPUT;
+    
     printf("(input hidden): ");
     int i = 0;
 #ifdef _WIN32
@@ -59,39 +64,44 @@ void getHiddenPassword(char *password) {
         password[strcspn(password, "\n")] = '\0';
     } else {
         password[0] = '\0';
+        return ERROR_INVALID_INPUT;
     }
 #endif
+    return SUCCESS;
 }
 
 // Basic email validation
 // Strong email validation
-int validateEmail(const char *email) {
+ErrorCode validateEmail(const char *email) {
+    if (!email) return ERROR_INVALID_INPUT;
+    
     // Must have one '@', at least one '.', and valid chars
     int atCount = 0, dotCount = 0;
     size_t len = strlen(email);
-    if (len < 6 || len > 64) return 0;
+    if (len < 6 || len > 64) return ERROR_INVALID_INPUT;
     for (int i = 0; i < (int)len; i++) {
         if (email[i] == '@') atCount++;
         if (email[i] == '.') dotCount++;
-        if (!(isalnum(email[i]) || email[i] == '@' || email[i] == '.' || email[i] == '_' || email[i] == '-')) return 0;
+        if (!(isalnum(email[i]) || email[i] == '@' || email[i] == '.' || email[i] == '_' || email[i] == '-')) return ERROR_INVALID_INPUT;
     }
-    if (atCount != 1 || dotCount < 1) return 0;
+    if (atCount != 1 || dotCount < 1) return ERROR_INVALID_INPUT;
     const char *at = strchr(email, '@');
     const char *dot = strrchr(email, '.');
-    if (!at || !dot || at > dot) return 0;
-    if (at == email || dot == email + len - 1) return 0;
-    return 1;
+    if (!at || !dot || at > dot) return ERROR_INVALID_INPUT;
+    if (at == email || dot == email + len - 1) return ERROR_INVALID_INPUT;
+    return SUCCESS;
 }
 
 // Basic mobile validation (10 digits)
 // Strong mobile validation (10 digits, starts with 6-9)
-int validateMobile(const char *mobile) {
-    if (strlen(mobile) != 10) return 0;
-    if (mobile[0] < '6' || mobile[0] > '9') return 0;
+ErrorCode validateMobile(const char *mobile) {
+    if (!mobile) return ERROR_INVALID_INPUT;
+    if (strlen(mobile) != 10) return ERROR_INVALID_INPUT;
+    if (mobile[0] < '6' || mobile[0] > '9') return ERROR_INVALID_INPUT;
     for (int i = 0; i < 10; i++) {
-        if (!isdigit(mobile[i])) return 0;
+        if (!isdigit(mobile[i])) return ERROR_INVALID_INPUT;
     }
-    return 1;
+    return SUCCESS;
 }
 
 // Strong password validation (min 8 chars, upper, lower, digit, special)
@@ -120,12 +130,13 @@ int validateStudentID(const char *studentID) {
 }
 
 // Edit profile (simple demo: just print message)
-int editProfile(const char *userID) {
+ErrorCode editProfile(const char *userID) {
+    if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
     if (!readProfile(&p, userID)) {
         printf("Cannot open profile for editing.\n");
         logEvent(userID, "Failed to open profile for editing");
-        return 1;
+        return ERROR_FILE_IO;
     }
 
     printf("\nEdit Profile\n");
@@ -181,20 +192,21 @@ int editProfile(const char *userID) {
     if (!writeProfile(&p, userID)) {
         printf("Failed to save updated profile.\n");
         logEvent(userID, "Profile edit failed during write");
-        return 1;
+        return ERROR_FILE_IO;
     }
     logEvent(userID, "Profile edited successfully");
     printf("Profile updated successfully!\n");
-    return 0;
+    return SUCCESS;
 }
 
 // View profile (simple demo: just print message)
-void viewProfile(const char *userID) {
+ErrorCode viewProfile(const char *userID) {
+    if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
     if (!readProfile(&p, userID)) {
         printf("Cannot open profile for viewing.\n");
         logEvent(userID, "Failed to open profile for viewing");
-        return;
+        return ERROR_FILE_IO;
     }
     printf("\n%s Profile\n", getCampusName(p.campusType));
     printf("Name: %s\n", p.name);
@@ -208,14 +220,16 @@ void viewProfile(const char *userID) {
         printf("  %d. %s\n", i + 1, p.dataFields[i]);
     }
     logEvent(userID, "Viewed profile");
+    return SUCCESS;
 }
 
-int changePassword(const char *userID) {
+ErrorCode changePassword(const char *userID) {
+    if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
     if (!readProfile(&p, userID)) {
         printf("Cannot open profile for password change.\n");
         logEvent(userID, "Failed to open profile for password change");
-        return 1;
+        return ERROR_FILE_IO;
     }
     char oldPass[MAX_LEN] = {0}, oldHash[MAX_LEN] = {0};
     printf("Enter current password: ");
@@ -224,20 +238,20 @@ int changePassword(const char *userID) {
     if (strcmp(p.passwordHash, oldHash) != 0) {
         printf("Incorrect current password. Try again.\n");
         logEvent(userID, "Incorrect current password attempt");
-        return 1;
+        return ERROR_AUTH_FAILED;
     }
     char newPass[MAX_LEN] = {0}, confirmPass[MAX_LEN] = {0}, newHash[MAX_LEN] = {0};
     printf("Enter new password: ");
     getHiddenPassword(newPass);
     if (strlen(newPass) < 6) {
         printf("Password too short. Minimum 6 characters.\n");
-        return 1;
+        return ERROR_INVALID_INPUT;
     }
     printf("Confirm new password: ");
     getHiddenPassword(confirmPass);
     if (strcmp(newPass, confirmPass) != 0) {
         printf("Passwords do not match.\n");
-        return 1;
+        return ERROR_INVALID_INPUT;
     }
     hashPassword(newPass, newHash);
     strncpy(p.passwordHash, newHash, 63);
@@ -245,9 +259,9 @@ int changePassword(const char *userID) {
     if (!writeProfile(&p, userID)) {
         printf("Failed to write updated profile.\n");
         logEvent(userID, "Password change failed during write");
-        return 1;
+        return ERROR_FILE_IO;
     }
     logEvent(userID, "Password changed successfully");
     printf("Password changed successfully!\n");
-    return 0;
+    return SUCCESS;
 }
