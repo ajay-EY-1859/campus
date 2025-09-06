@@ -1,0 +1,12 @@
+D:\campus\src\main\main.c;D:\campus\test-build\campus.dir\Release\main.obj
+D:\campus\src\main\auth.c;D:\campus\test-build\campus.dir\Release\auth.obj
+D:\campus\src\main\signin.c;D:\campus\test-build\campus.dir\Release\signin.obj
+D:\campus\src\main\signup.c;D:\campus\test-build\campus.dir\Release\signup.obj
+D:\campus\src\main\ui.c;D:\campus\test-build\campus.dir\Release\ui.obj
+D:\campus\src\main\fileio.c;D:\campus\test-build\campus.dir\Release\fileio.obj
+D:\campus\src\main\student.c;D:\campus\test-build\campus.dir\Release\student.obj
+D:\campus\src\main\utils.c;D:\campus\test-build\campus.dir\Release\utils.obj
+D:\campus\src\main\database.c;D:\campus\test-build\campus.dir\Release\database.obj
+D:\campus\src\main\security.c;D:\campus\test-build\campus.dir\Release\security.obj
+D:\campus\src\main\safe_input.c;D:\campus\test-build\campus.dir\Release\safe_input.obj
+D:\campus\src\main\campus_unified.c;D:\campus\test-build\campus.dir\Release\campus_unified.obj

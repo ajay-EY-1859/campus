@@ -1,0 +1,47 @@
+name: Simple Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  windows-only:
+    name: Windows Build Only
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Configure CMake
+      run: cmake -B build
+      
+    - name: Build
+      run: cmake --build build --config Release
+      
+    - name: List Build Output
+      run: |
+        echo "Build directory contents:"
+        dir build\build\Release\
+        
+    - name: Verify Build
+      run: |
+        if (Test-Path "build\build\Release\campus.exe") {
+          Write-Host "✅ SUCCESS: campus.exe found"
+          Get-Item "build\build\Release\campus.exe" | Select-Object Name, Length, LastWriteTime
+        } else {
+          Write-Host "❌ FAILED: campus.exe not found"
+          Write-Host "Available files:"
+          Get-ChildItem "build\build\Release\" -ErrorAction SilentlyContinue
+          exit 1
+        }
+      
+    - name: Upload Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-windows-simple
+        path: |
+          build/build/Release/campus.exe
+          lib/hpdf.dll
