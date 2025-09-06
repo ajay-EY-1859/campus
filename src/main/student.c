@@ -24,7 +24,7 @@ const char* getCampusName(CampusType type) {
     }
 }
 
-const char* getGrade(float percent) {
+const char* getGrade(double percent) {
     if (percent >= 90.0) return "A+";
     else if (percent >= 80.0) return "A";
     else if (percent >= 70.0) return "B";
@@ -34,13 +34,15 @@ const char* getGrade(float percent) {
 }
 
 void printSummary(int total, int full, CampusType type) {
-    float percentage = (full == 0) ? 0 : (total * 100.0f / full);
+    double percentage = (full == 0) ? 0.0 : (total * 100.0 / full);
     printf("Total: %d / %d\n", total, full);
     printf("Percentage: %.2f%%\n", percentage);
     if (type == CAMPUS_SCHOOL || type == CAMPUS_COLLEGE) {
         printf("Grade: %s\n", getGrade(percentage));
     }
 }
+
+
 
 // School Data Management
 void saveSchoolData(const char *studentID) {
@@ -170,7 +172,7 @@ void loadCollegeData(const char *studentID) {
     }
     fclose(f);
     
-    float cgpa = totalCredits > 0 ? (float)totalMarks / (totalCredits * 10) : 0;
+    double cgpa = totalCredits > 0 ? (double)totalMarks / (totalCredits * 10.0) : 0.0;
     printf("CGPA: %.2f\n", cgpa);
 }
 
@@ -318,7 +320,7 @@ void exportSchoolPDF(const char *studentID) {
         return;
     }
     
-    float percentage = (totalFull == 0) ? 0 : (total * 100.0f / totalFull);
+    double percentage = (totalFull == 0) ? 0.0 : (total * 100.0 / totalFull);
     const char *grade = getGrade(percentage);
     
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
@@ -411,7 +413,7 @@ void exportCollegePDF(const char *studentID) {
         return;
     }
     
-    float cgpa = totalCredits > 0 ? (float)totalMarks / (totalCredits * 10) : 0;
+    double cgpa = totalCredits > 0 ? (double)totalMarks / (totalCredits * 10.0) : 0.0;
     
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
     if (!pdf) {

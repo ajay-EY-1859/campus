@@ -1,7 +1,9 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
+#include <stdbool.h>
 #include "config.h"
+#include "auth.h"
 
 // Campus-specific data management
 void saveSchoolData(const char *studentID);
@@ -20,8 +22,10 @@ void exportHospitalPDF(const char *patientID);
 void exportHostelPDF(const char *residentID);
 
 // Utilities
-const char* getGrade(float percent);
+const char* getGrade(double percent);
 void printSummary(int total, int full, CampusType type);
 const char* getCampusName(CampusType type);
+
+
 
 #endif // STUDENT_H
