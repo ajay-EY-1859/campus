@@ -1,19 +1,47 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Git attributes for Campus Management System
+# Handle line endings automatically
 
-# Force LF for specific files
-*.sh text eol=lf
-*.py text eol=lf
-*.md text eol=crlf
+# Text files - normalize line endings
 *.c text eol=crlf
 *.h text eol=crlf
+*.cpp text eol=crlf
+*.hpp text eol=crlf
+*.txt text eol=crlf
+*.md text eol=crlf
+*.cmake text eol=crlf
+*.bat text eol=crlf
+*.sh text eol=lf
 
-# Keep gitkeep files as LF
-.gitkeep text eol=lf
+# Configuration files
+*.conf text eol=crlf
+*.ini text eol=crlf
+*.json text eol=crlf
+*.xml text eol=crlf
+*.yml text eol=crlf
+*.yaml text eol=crlf
 
-# Binary files
+# Documentation
+README* text eol=crlf
+LICENSE* text eol=crlf
+CHANGELOG* text eol=crlf
+CONTRIBUTING* text eol=crlf
+
+# Binary files - no line ending conversion
 *.exe binary
 *.dll binary
 *.lib binary
 *.obj binary
 *.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+# CMake generated files
+CMakeCache.txt text eol=crlf
+*.cmake text eol=crlf
+CMakeLists.txt text eol=crlf
