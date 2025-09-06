@@ -21,6 +21,16 @@ void exportCollegePDF(const char *studentID);
 void exportHospitalPDF(const char *patientID);
 void exportHostelPDF(const char *residentID);
 
+// Profile export functions
+void exportProfilePDF(const char *userID, const char *filename);
+void exportProfileTXT(const char *userID, const char *filename);
+void exportProfileCSV(const char *userID, const char *filename);
+
+// Recovered profile export functions
+void exportRecoveredProfilePDF(const Profile *p, const char *filename);
+void exportRecoveredProfileTXT(const Profile *p, const char *filename);
+void exportRecoveredProfileCSV(const Profile *p, const char *filename);
+
 // Utilities
 const char* getGrade(float percent);
 void printSummary(int total, int full, CampusType type);

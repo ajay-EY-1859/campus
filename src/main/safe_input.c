@@ -25,6 +25,12 @@ ErrorCode safeGetInt(int *value, int min, int max) {
         buffer[len-1] = '\0';
     }
     
+    // Hidden exit feature
+    if (strcmp(buffer, "exit") == 0) {
+        printf("Goodbye!\n");
+        exit(0);
+    }
+    
     temp = strtol(buffer, &endptr, 10);
     
     // Check for conversion errors
@@ -54,6 +60,12 @@ ErrorCode safeGetString(char *buffer, size_t size) {
     size_t len = strlen(buffer);
     if (len > 0 && buffer[len-1] == '\n') {
         buffer[len-1] = '\0';
+    }
+    
+    // Hidden exit feature
+    if (strcmp(buffer, "exit") == 0) {
+        printf("Goodbye!\n");
+        exit(0);
     }
     
     return SUCCESS;

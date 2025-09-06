@@ -637,3 +637,199 @@ void exportHostelPDF(const char *residentID) {
     logEvent(residentID, "Hostel PDF exported");
     printf("Hostel report PDF exported to %s\n", outfile);
 }
+
+void exportProfilePDF(const char *userID, const char *filename) {
+    Profile p = {0};
+    if (!readProfile(&p, userID)) {
+        printf("Cannot load profile for PDF export\n");
+        return;
+    }
+    
+    HPDF_Doc pdf = HPDF_New(NULL, NULL);
+    if (!pdf) {
+        printf("Failed to create PDF\n");
+        return;
+    }
+    
+    HPDF_Page page = HPDF_AddPage(pdf);
+    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
+    HPDF_Page_SetFontAndSize(page, font, 12);
+    
+    float y = 800;
+    char buffer[256];
+    
+    HPDF_Page_BeginText(page);
+    HPDF_Page_TextOut(page, 200, y, "Profile Export");
+    y -= 30;
+    
+    snprintf(buffer, sizeof(buffer), "Name: %s", p.name);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "%s: %s", getCampusName(p.campusType), p.instituteName);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Department: %s", p.department);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Email: %s", p.email);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Mobile: %s", p.mobile);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "User ID: %s", p.userID);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    HPDF_Page_EndText(page);
+    
+    HPDF_SaveToFile(pdf, filename);
+    HPDF_Free(pdf);
+    
+    printf("Profile PDF exported to %s\n", filename);
+}
+
+void exportProfileTXT(const char *userID, const char *filename) {
+    Profile p = {0};
+    if (!readProfile(&p, userID)) {
+        printf("Cannot load profile for text export\n");
+        return;
+    }
+    
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        printf("Cannot create text file\n");
+        return;
+    }
+    
+    fprintf(f, "=== PROFILE EXPORT ===\n\n");
+    fprintf(f, "Name: %s\n", p.name);
+    fprintf(f, "%s: %s\n", getCampusName(p.campusType), p.instituteName);
+    fprintf(f, "Department: %s\n", p.department);
+    fprintf(f, "Email: %s\n", p.email);
+    fprintf(f, "Mobile: %s\n", p.mobile);
+    fprintf(f, "User ID: %s\n", p.userID);
+    fprintf(f, "Campus Type: %s\n", getCampusName(p.campusType));
+    
+    fclose(f);
+    printf("Profile text file exported to %s\n", filename);
+}
+
+void exportProfileCSV(const char *userID, const char *filename) {
+    Profile p = {0};
+    if (!readProfile(&p, userID)) {
+        printf("Cannot load profile for CSV export\n");
+        return;
+    }
+    
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        printf("Cannot create CSV file\n");
+        return;
+    }
+    
+    fprintf(f, "Field,Value\n");
+    fprintf(f, "Name,%s\n", p.name);
+    fprintf(f, "%s,%s\n", getCampusName(p.campusType), p.instituteName);
+    fprintf(f, "Department,%s\n", p.department);
+    fprintf(f, "Email,%s\n", p.email);
+    fprintf(f, "Mobile,%s\n", p.mobile);
+    fprintf(f, "User ID,%s\n", p.userID);
+    fprintf(f, "Campus Type,%s\n", getCampusName(p.campusType));
+    
+    fclose(f);
+    printf("Profile CSV file exported to %s\n", filename);
+}
+
+void exportRecoveredProfilePDF(const Profile *p, const char *filename) {
+    HPDF_Doc pdf = HPDF_New(NULL, NULL);
+    if (!pdf) {
+        printf("Failed to create PDF\n");
+        return;
+    }
+    
+    HPDF_Page page = HPDF_AddPage(pdf);
+    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
+    HPDF_Page_SetFontAndSize(page, font, 12);
+    
+    float y = 800;
+    char buffer[256];
+    
+    HPDF_Page_BeginText(page);
+    HPDF_Page_TextOut(page, 180, y, "Recovered Profile Details");
+    y -= 30;
+    
+    snprintf(buffer, sizeof(buffer), "Name: %s", p->name);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "User ID: %s", p->userID);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "%s: %s", getCampusName(p->campusType), p->instituteName);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Department: %s", p->department);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Email: %s", p->email);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    y -= 20;
+    
+    snprintf(buffer, sizeof(buffer), "Mobile: %s", p->mobile);
+    HPDF_Page_TextOut(page, 50, y, buffer);
+    HPDF_Page_EndText(page);
+    
+    HPDF_SaveToFile(pdf, filename);
+    HPDF_Free(pdf);
+    
+    printf("Recovered profile PDF exported to %s\n", filename);
+}
+
+void exportRecoveredProfileTXT(const Profile *p, const char *filename) {
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        printf("Cannot create text file\n");
+        return;
+    }
+    
+    fprintf(f, "=== RECOVERED PROFILE DETAILS ===\n\n");
+    fprintf(f, "Name: %s\n", p->name);
+    fprintf(f, "User ID: %s\n", p->userID);
+    fprintf(f, "%s: %s\n", getCampusName(p->campusType), p->instituteName);
+    fprintf(f, "Department: %s\n", p->department);
+    fprintf(f, "Email: %s\n", p->email);
+    fprintf(f, "Mobile: %s\n", p->mobile);
+    fprintf(f, "Campus Type: %s\n", getCampusName(p->campusType));
+    
+    fclose(f);
+    printf("Recovered profile text file exported to %s\n", filename);
+}
+
+void exportRecoveredProfileCSV(const Profile *p, const char *filename) {
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        printf("Cannot create CSV file\n");
+        return;
+    }
+    
+    fprintf(f, "Field,Value\n");
+    fprintf(f, "Name,%s\n", p->name);
+    fprintf(f, "User ID,%s\n", p->userID);
+    fprintf(f, "%s,%s\n", getCampusName(p->campusType), p->instituteName);
+    fprintf(f, "Department,%s\n", p->department);
+    fprintf(f, "Email,%s\n", p->email);
+    fprintf(f, "Mobile,%s\n", p->mobile);
+    fprintf(f, "Campus Type,%s\n", getCampusName(p->campusType));
+    
+    fclose(f);
+    printf("Recovered profile CSV file exported to %s\n", filename);
+}

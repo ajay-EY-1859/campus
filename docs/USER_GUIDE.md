@@ -2,7 +2,7 @@
 
 A comprehensive guide for using the Campus Management System effectively.
 
-## 🎯 Getting Started
+## Getting Started
 
 ### First Time Users
 1. **Launch the application**
@@ -13,12 +13,12 @@ A comprehensive guide for using the Campus Management System effectively.
 
 ### System Overview
 The Campus Management System supports four types of campuses:
-- 🏫 **School**: Student marks and grade management
-- 🎓 **College**: Course credits and CGPA tracking
-- 🏥 **Hospital**: Patient records and medical data
-- 🏠 **Hostel**: Resident information and accommodation
+- **School**: Student marks and grade management
+- **College**: Course credits and CGPA tracking
+- **Hospital**: Patient records and medical data
+- **Hostel**: Resident information and accommodation
 
-## 📝 Registration Process
+## Registration Process
 
 ### Step 1: Personal Information
 ```
@@ -107,7 +107,7 @@ View profile? (y/n): y
 - Your User ID is automatically generated
 - Save this ID for future logins
 
-## 🔐 Login Process
+## Login Process
 
 ### Step 1: User Identification
 ```
@@ -144,7 +144,7 @@ OTP sent to your mobile and email. Enter OTP: 123456
 Login successful! Welcome, John Doe [dp25123]
 ```
 
-## 🏠 Dashboard Navigation
+## Dashboard Navigation
 
 ### Main Menu Options
 ```
@@ -160,7 +160,7 @@ School Dashboard
 Select option: 
 ```
 
-## 👤 Profile Management
+## Profile Management
 
 ### View Profile
 ```
@@ -196,7 +196,7 @@ Enter new School (or press Enter to keep): [Enter]
 Profile updated successfully!
 ```
 
-## 📊 Data Management
+## Data Management
 
 ### Adding Data
 
@@ -264,7 +264,7 @@ Grade: A
 CGPA: 8.64
 ```
 
-## 📄 Report Generation
+## Report Generation
 
 ### PDF Export Process
 ```
@@ -298,7 +298,7 @@ School report PDF exported to data/dp25123_school_report.pdf
 - Accommodation information
 - Room and facility details
 
-## 🔒 Security Features
+## Security Features
 
 ### Password Management
 ```
@@ -329,7 +329,7 @@ Password changed successfully!
    - Check for suspicious login attempts
    - Report unusual activity immediately
 
-## 🚨 Error Handling
+## Error Handling
 
 ### Common Errors and Solutions
 
@@ -360,7 +360,7 @@ If you lose access to your account:
 3. Ensure mobile number is correct
 4. Contact support with proof of identity
 
-## 💡 Tips and Best Practices
+## Tips and Best Practices
 
 ### Efficient Usage
 1. **Regular Data Entry**: Update marks/data regularly
@@ -378,7 +378,7 @@ If you lose access to your account:
 2. **Regular Cleanup**: Clear old temporary files
 3. **System Maintenance**: Keep system updated
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Application Won't Start
 1. Check if all files are present
@@ -404,7 +404,7 @@ If you lose access to your account:
 3. Verify PDF library files
 4. Check file permissions
 
-## 📞 Getting Help
+## Getting Help
 
 ### Self-Help Resources
 1. **This User Guide**: Comprehensive usage instructions
@@ -425,7 +425,7 @@ When reporting problems, include:
 - Screenshots if helpful
 - Your User ID (for account-specific issues)
 
-## 📚 Advanced Features
+## Advanced Features
 
 ### Keyboard Shortcuts
 - **Ctrl+C**: Cancel current operation
@@ -444,4 +444,4 @@ When reporting problems, include:
 
 ---
 
-**Need more help? Check our [FAQ](FAQ.md) or [contact support](mailto:raj183576@gmail.com)! 📧**
+**Need more help? Check our [FAQ](FAQ.md) or [contact support](mailto:raj183576@gmail.com)!**

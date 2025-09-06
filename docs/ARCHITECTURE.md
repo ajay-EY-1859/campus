@@ -1,6 +1,6 @@
-# 🏗️ Campus Management System v2.0 - Architecture Documentation
+# Campus Management System v2.0 - Architecture Documentation
 
-## 🎯 **System Architecture Overview**
+## **System Architecture Overview**
 
 ### **Design Philosophy**
 The Campus Management System follows a **modular, extensible architecture** with emphasis on:
@@ -11,7 +11,7 @@ The Campus Management System follows a **modular, extensible architecture** with
 
 ---
 
-## 📊 **High-Level Architecture**
+## **High-Level Architecture**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -41,7 +41,7 @@ The Campus Management System follows a **modular, extensible architecture** with
 
 ---
 
-## 🧩 **Module Architecture**
+## **Module Architecture**
 
 ### **Core Modules**
 
@@ -72,7 +72,7 @@ main.c
 
 ---
 
-## 🎯 **Design Patterns Implemented**
+## **Design Patterns Implemented**
 
 ### **1. Lego Bricking Pattern (Unified Data)**
 ```c
@@ -158,7 +158,7 @@ ErrorCode functionName(parameters) {
 
 ---
 
-## 🔧 **Data Architecture**
+## **Data Architecture**
 
 ### **Data Flow Diagram**
 ```
@@ -198,7 +198,7 @@ Raw Input → Sanitization → Type Validation → Business Rules → Storage
 
 ---
 
-## 🔒 **Security Architecture**
+## **Security Architecture**
 
 ### **Security Layers**
 
@@ -229,7 +229,7 @@ User Request → Input Validation → Authentication → Authorization → Actio
 
 ---
 
-## ⚡ **Performance Architecture**
+## **Performance Architecture**
 
 ### **Optimization Strategies**
 
@@ -260,7 +260,7 @@ File I/O           O(1)               O(1)
 
 ---
 
-## 🔄 **Error Handling Architecture**
+## **Error Handling Architecture**
 
 ### **Error Propagation Model**
 ```c
@@ -300,7 +300,7 @@ ErrorCode highLevelFunction() {
 
 ---
 
-## 🧪 **Testing Architecture**
+## **Testing Architecture**
 
 ### **Test Pyramid**
 ```
@@ -330,7 +330,7 @@ ErrorCode highLevelFunction() {
 
 ---
 
-## 🚀 **Deployment Architecture**
+## **Deployment Architecture**
 
 ### **Deployment Models**
 
@@ -355,7 +355,7 @@ Environment Variables → Config Files → Runtime Settings
 
 ---
 
-## 🔮 **Future Architecture Considerations**
+## **Future Architecture Considerations**
 
 ### **Extensibility Points**
 1. **New Campus Types:** Add to enum + config
@@ -380,7 +380,7 @@ Phase 4: Cloud-native deployment  → 1,000,000 users
 
 ---
 
-## 📊 **Architecture Metrics**
+## **Architecture Metrics**
 
 ### **Code Quality Metrics**
 - **Cyclomatic Complexity:** Average 3.2 (Excellent)
@@ -402,25 +402,33 @@ Phase 4: Cloud-native deployment  → 1,000,000 users
 
 ---
 
-## 🏆 **Architecture Assessment**
+## **Architecture Assessment**
 
-### **✅ Strengths**
+### **Strengths**
 - **Modular Design:** Easy to maintain and extend
 - **Performance Optimized:** Sub-second response times
 - **Security Hardened:** Enterprise-grade protection
 - **Well Documented:** Complete API and user docs
 - **Test Coverage:** Comprehensive test suite
 
-### **🔧 Areas for Enhancement**
+### **Areas for Enhancement**
 - **Database Integration:** For better concurrency
 - **Caching Layer:** For improved performance
 - **API Layer:** For web/mobile integration
 - **Monitoring:** Real-time system monitoring
 - **Containerization:** For easier deployment
 
-### **🎯 Architecture Grade: A+**
+### **Architecture Grade: A+**
 The Campus Management System demonstrates **enterprise-grade architecture** with excellent design patterns, performance characteristics, and security implementation.
 
 ---
 
-**🏗️ Campus Management System v2.0 - Architecture Documentation Complete! 📐**
+**Campus Management System v2.0 - Architecture Documentation Complete!**
+
+---
+
+## **Support & Repository**
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

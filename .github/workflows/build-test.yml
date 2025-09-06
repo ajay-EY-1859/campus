@@ -1,0 +1,76 @@
+name: Build Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  windows-build:
+    name: Windows Build
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup MSVC
+      uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Configure CMake
+      run: cmake -B build
+      
+    - name: Build
+      run: cmake --build build --config Release
+      
+    - name: Verify Build
+      run: |
+        if (Test-Path "build\build\Release\campus.exe") {
+          Write-Host "✅ Build successful - campus.exe found"
+        } else {
+          Write-Host "❌ Build failed - campus.exe not found"
+          exit 1
+        }
+      
+    - name: Upload Windows Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-windows
+        path: |
+          build/build/Release/campus.exe
+          lib/hpdf.dll
+
+  ubuntu-build:
+    name: Ubuntu Build  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake pkg-config libhpdf-dev
+        
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+      
+    - name: Build
+      run: cmake --build build
+      
+    - name: Verify Build
+      run: |
+        if [ -f "build/campus" ]; then
+          echo "✅ Build successful - campus binary found"
+        else
+          echo "❌ Build failed - campus binary not found"
+          exit 1
+        fi
+        
+    - name: Upload Ubuntu Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-ubuntu
+        path: build/campus

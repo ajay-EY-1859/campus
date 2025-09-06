@@ -1,55 +1,62 @@
 # Campus Management System v2.0
 
+[![Build Test](https://github.com/ajay-EY-1859/campus/actions/workflows/build-test.yml/badge.svg)](https://github.com/ajay-EY-1859/campus/actions/workflows/build-test.yml)
+[![CI](https://github.com/ajay-EY-1859/campus/actions/workflows/ci.yml/badge.svg)](https://github.com/ajay-EY-1859/campus/actions/workflows/ci.yml)
+
 A comprehensive, secure, and modular C-based command-line application for managing multiple types of campuses including Schools, Colleges, Hospitals, and Hostels.
 
-## 🌟 Features
+## Features
 
 ### Core Functionality
 - **Multi-Campus Support**: School, College, Hospital, Hostel management
 - **Secure Authentication**: Two-factor authentication with OTP
 - **User Management**: Registration, login, profile management
+- **User ID Recovery**: Forgot User ID feature with mobile/email search
+- **Profile Export**: Multiple format export (PDF, TXT, CSV)
+- **Duplicate Prevention**: Prevents multiple registrations with same email/mobile
 - **Data Management**: Campus-specific data entry and retrieval
 - **PDF Reports**: Professional report generation using Libharu
 - **Database Integration**: File-based database with backup/restore
 - **Session Management**: Secure sessions with timeout
 - **Audit Logging**: Comprehensive activity tracking
+- **Hidden Features**: Secret exit commands for quick termination
 
 ### Security Features
-- 🔐 Two-Factor Authentication (2FA) with OTP
-- 🛡️ Account lockout after failed attempts
-- 🔑 Password strength validation
-- 📊 Session management with timeout
-- 🔍 Suspicious activity detection
-- 📝 Security event logging
-- 🔒 Data encryption utilities
+- Two-Factor Authentication (2FA) with OTP
+- Account lockout after failed attempts
+- Password strength validation
+- Session management with timeout
+- Suspicious activity detection
+- Security event logging
+- Data encryption utilities
 
 ### Campus-Specific Features
 
-#### 🏫 School Management
+#### School Management
 - Student registration and profiles
 - Subject-wise marks management
 - Grade calculation (A+, A, B, C, D, F)
 - Report cards with percentage
 
-#### 🎓 College Management
+#### College Management
 - Course registration system
 - Credit-based marking system
 - CGPA calculation
 - Academic transcripts
 
-#### 🏥 Hospital Management
+#### Hospital Management
 - Patient registration
 - Medical data tracking
 - Health records management
 - Medical reports
 
-#### 🏠 Hostel Management
+#### Hostel Management
 - Resident registration
 - Room allocation tracking
 - Accommodation details
 - Hostel reports
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Windows 10/11 or Linux
@@ -81,7 +88,7 @@ A comprehensive, secure, and modular C-based command-line application for managi
    ./build/campus
    ```
 
-## 📖 Usage Guide
+## Usage Guide
 
 ### First Time Setup
 1. Run the application
@@ -98,17 +105,24 @@ A comprehensive, secure, and modular C-based command-line application for managi
 5. Enter the OTP sent to your mobile/email
 6. Access your dashboard
 
+### Main Menu Options
+1. **Register New User**: Create new account with duplicate prevention
+2. **Login**: Secure 2FA login with OTP verification
+3. **Forgot User ID**: Recover User ID using mobile/email with export option
+4. **Exit**: Close application
+
 ### Dashboard Options
 - **View Profile**: See your complete profile information
 - **Edit Profile**: Update your personal details
 - **Add Data**: Enter campus-specific data (marks, medical info, etc.)
 - **View Data**: Display your stored data with calculations
 - **Change Password**: Update your password securely
-- **Export Report**: Generate PDF reports
+- **Export Report**: Generate campus-specific PDF reports
+- **Export Profile**: Export profile in PDF/TXT/CSV formats
 - **Logout**: Return to main menu
 - **Exit Application**: Close the program
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 campus/
@@ -146,7 +160,7 @@ campus/
 └── LICENSE.md             # License information
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Database Configuration
 - Database files are stored in `data/` directory
@@ -160,7 +174,7 @@ campus/
 - Password requirements: 8+ characters, mixed case, numbers, symbols
 - Session timeout: 30 minutes
 
-## 📊 Data Storage
+## Data Storage
 
 ### File Structure
 ```
@@ -175,7 +189,14 @@ data/
 └── *.pdf                  # Generated reports
 ```
 
-## 🛠️ Development
+## Development
+
+### CI/CD Pipeline
+The project uses GitHub Actions for continuous integration:
+- **Windows Build**: MSVC with bundled libharu
+- **Ubuntu Build**: GCC with system libharu
+- **Automated Testing**: Build verification and artifact upload
+- **Code Quality**: Static analysis with cppcheck
 
 ### Building from Source
 ```bash
@@ -189,6 +210,17 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 
+### Platform-Specific Notes
+**Windows:**
+- Uses bundled libharu from `lib/` directory
+- Requires MSVC or MinGW
+- DLL automatically copied to output
+
+**Linux:**
+- Requires system libharu: `sudo apt-get install libhpdf-dev`
+- Uses pkg-config for library detection
+- GCC recommended
+
 ### Adding New Campus Types
 1. Update `CampusType` enum in `config.h`
 2. Add campus-specific functions in `student.c`
@@ -196,7 +228,7 @@ cmake --build .
 4. Add PDF export functionality
 5. Update documentation
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -222,7 +254,7 @@ cmake --build .
 - `3`: Database error
 - `4`: File I/O error
 
-## 📈 Performance
+## Performance
 
 ### System Requirements
 - **RAM**: Minimum 512MB, Recommended 1GB
@@ -235,7 +267,7 @@ cmake --build .
 - Use strong passwords to avoid lockouts
 - Regular data backups
 
-## 🔒 Security Best Practices
+## Security Best Practices
 
 ### For Users
 - Use strong, unique passwords
@@ -249,7 +281,7 @@ cmake --build .
 - Keep backups secure
 - Update system regularly
 
-## 📞 Support
+## Support
 
 ### Getting Help
 1. Check this README first
@@ -265,22 +297,26 @@ Please include:
 - Error messages or logs
 - Screenshots if applicable
 
-## 📄 License
+### Contact Support
+- **Email:** raj183576@gmail.com
+- **GitHub Issues:** https://github.com/ajay-EY-1859/campus/issues
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## 👥 Contributors
+## Contributors
 
 - **Ajay Kumar** - Initial development and architecture
 - See [CONTRIBUTORS.md](CONTRIBUTORS.md) for full list
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Libharu](https://github.com/libharu/libharu) for PDF generation
 - CMake community for build system
 - All contributors and testers
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [API Documentation](docs/API.md)
 - [Architecture Guide](docs/ARCHITECTURE.md)
@@ -289,4 +325,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ---
 
-**Made with ❤️ for educational and institutional management**
+**Made with care for educational and institutional management**

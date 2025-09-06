@@ -2,7 +2,7 @@
 
 This guide provides detailed installation instructions for the Campus Management System on different platforms.
 
-## 📋 System Requirements
+## System Requirements
 
 ### Minimum Requirements
 - **Operating System**: Windows 10/11, Ubuntu 18.04+, macOS 10.14+
@@ -15,7 +15,7 @@ This guide provides detailed installation instructions for the Campus Management
 - **Storage**: 500 MB free space (for data and reports)
 - **Network**: Internet connection for OTP delivery simulation
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 ### Windows
 1. **Visual Studio 2019/2022** (Community Edition is sufficient)
@@ -67,7 +67,7 @@ sudo dnf install cmake git
    brew install cmake
    ```
 
-## 📥 Installation Methods
+## Installation Methods
 
 ### Method 1: Download Release (Recommended)
 1. Go to the [Releases page](https://github.com/ajay-EY-1859/campus/releases)
@@ -131,7 +131,7 @@ cmake --build . -j$(nproc)
 ./build/campus --version
 ```
 
-## 🚀 Running the Application
+## Running the Application
 
 ### Windows
 ```cmd
@@ -151,7 +151,7 @@ cd build
 ./campus
 ```
 
-## 📁 Directory Structure After Installation
+## Directory Structure After Installation
 
 ```
 campus/
@@ -169,7 +169,7 @@ campus/
 └── include/               # Header files
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables (Optional)
 ```bash
@@ -201,7 +201,7 @@ audit_enabled=true
 security_log_enabled=true
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Build Issues
 
@@ -265,7 +265,7 @@ brew install cmake
 - This is normal for the current file-based implementation
 - Future versions will include memory optimizations
 
-## 🔄 Updating
+## Updating
 
 ### From Release
 1. Download new release
@@ -287,7 +287,7 @@ cmake ..
 cmake --build .
 ```
 
-## 🗑️ Uninstallation
+## Uninstallation
 
 ### Complete Removal
 ```bash

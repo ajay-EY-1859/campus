@@ -1,6 +1,6 @@
-# 🔧 Campus Management System v2.0 - API Documentation
+# Campus Management System v2.0 - API Documentation
 
-## 📋 **API Overview**
+## **API Overview**
 
 ### **Core Functions**
 The Campus Management System provides a comprehensive C API for managing multi-campus educational institutions.
@@ -24,7 +24,7 @@ typedef enum {
 
 ---
 
-## 👤 **Authentication API**
+## **Authentication API**
 
 ### **User Registration**
 ```c
@@ -85,7 +85,7 @@ ErrorCode result = getHiddenPassword(password);
 
 ---
 
-## 📊 **Profile Management API**
+## **Profile Management API**
 
 ### **View Profile**
 ```c
@@ -128,7 +128,7 @@ ErrorCode result = changePassword("sa25123");
 
 ---
 
-## 🏫 **Campus Management API**
+## **Campus Management API**
 
 ### **Campus Type Selection**
 ```c
@@ -161,7 +161,7 @@ printf("Campus: %s\n", name); // Output: "Campus: School"
 
 ---
 
-## 📈 **Data Management API**
+## **Data Management API**
 
 ### **School Data Management**
 ```c
@@ -198,7 +198,7 @@ loadSchoolData("sa25123");
 
 ---
 
-## 🎯 **Grade Calculation API**
+## **Grade Calculation API**
 
 ### **Grade Assignment**
 ```c
@@ -234,7 +234,7 @@ printSummary(433, 500, CAMPUS_SCHOOL);
 
 ---
 
-## 📄 **PDF Export API**
+## **PDF Export API**
 
 ### **School Report Export**
 ```c
@@ -265,7 +265,7 @@ exportSchoolPDF("sa25123");
 
 ---
 
-## 🔧 **Utility API**
+## **Utility API**
 
 ### **Email Validation**
 ```c
@@ -330,7 +330,7 @@ ErrorCode result = getProfilePath(filepath, "sa25123");
 
 ---
 
-## 🏗️ **Unified Campus API**
+## **Unified Campus API**
 
 ### **Campus Configuration**
 ```c
@@ -369,7 +369,7 @@ ErrorCode result = loadCampusData("sa25123");
 
 ---
 
-## 🔒 **Security API**
+## **Security API**
 
 ### **Account Lockout Management**
 ```c
@@ -393,7 +393,7 @@ void destroySession(const char *sessionToken);
 
 ---
 
-## 📊 **Data Structures**
+## **Data Structures**
 
 ### **Profile Structure**
 ```c
@@ -449,7 +449,7 @@ typedef struct {
 
 ---
 
-## 🎯 **Usage Examples**
+## **Usage Examples**
 
 ### **Complete Registration Flow**
 ```c
@@ -498,7 +498,7 @@ if (emailResult == SUCCESS && mobileResult == SUCCESS) {
 
 ---
 
-## 📞 **API Support**
+## **API Support**
 
 ### **Error Handling Best Practices**
 ```c
@@ -527,4 +527,12 @@ switch(result) {
 
 ---
 
-**🔧 Campus Management System v2.0 - API Documentation Complete! 📚**
+**Campus Management System v2.0 - API Documentation Complete!**
+
+---
+
+## **Support & Repository**
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

@@ -22,6 +22,7 @@ ErrorCode signin(void);
 ErrorCode editProfile(const char *userID);
 ErrorCode changePassword(const char *userID);
 ErrorCode viewProfile(const char *userID);
+ErrorCode exportProfile(const char *userID);
 CampusType selectCampusType(void);
 
 // Security utilities

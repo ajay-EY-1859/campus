@@ -31,19 +31,23 @@ ErrorCode signup() {
     Profile p = {0};
     char password[MAX_LEN] = {0};
 
-    printf("Enter your name: ");
-    if (safeGetString(p.name, sizeof(p.name)) != SUCCESS) {
-        printf("Invalid input\n");
-        return ERROR_INVALID_INPUT;
-    }
+    do {
+        printf("Enter your name: ");
+        if (safeGetString(p.name, sizeof(p.name)) == SUCCESS && strlen(p.name) > 0) {
+            break;
+        }
+        printf("Invalid input. Please try again.\n");
+    } while (1);
 
     p.campusType = selectCampusType();
 
-    printf("Enter %s name: ", getCampusName(p.campusType));
-    if (safeGetString(p.instituteName, sizeof(p.instituteName)) != SUCCESS) {
-        printf("Invalid input\n");
-        return ERROR_INVALID_INPUT;
-    }
+    do {
+        printf("Enter %s name: ", getCampusName(p.campusType));
+        if (safeGetString(p.instituteName, sizeof(p.instituteName)) == SUCCESS && strlen(p.instituteName) > 0) {
+            break;
+        }
+        printf("Invalid input. Please try again.\n");
+    } while (1);
 
     // Campus-specific department/stream prompt
     switch(p.campusType) {
@@ -61,39 +65,49 @@ ErrorCode signup() {
             break;
     }
     
-    if (safeGetString(p.department, sizeof(p.department)) != SUCCESS) {
-        printf("Invalid input\n");
-        return ERROR_INVALID_INPUT;
-    }
+    do {
+        if (safeGetString(p.department, sizeof(p.department)) == SUCCESS && strlen(p.department) > 0) {
+            break;
+        }
+        printf("Invalid input. Please try again: ");
+    } while (1);
 
     // Campus-specific data fields
     switch(p.campusType) {
         case CAMPUS_SCHOOL:
-            printf("Number of subjects: ");
-            if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
-                printf("Invalid number of subjects\n");
-                return ERROR_INVALID_INPUT;
-            }
-            for (int i = 0; i < p.dataCount; i++) {
-                printf("Subject %d: ", i + 1);
-                if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
-                    printf("Invalid subject name\n");
-                    return ERROR_INVALID_INPUT;
+            do {
+                printf("Number of subjects: ");
+                if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) == SUCCESS) {
+                    break;
                 }
+                printf("Invalid number. Please enter 1-%d: ", MAX_SUBJECTS);
+            } while (1);
+            for (int i = 0; i < p.dataCount; i++) {
+                do {
+                    printf("Subject %d: ", i + 1);
+                    if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) == SUCCESS && strlen(p.dataFields[i]) > 0) {
+                        break;
+                    }
+                    printf("Invalid subject name. Please try again: ");
+                } while (1);
             }
             break;
         case CAMPUS_COLLEGE:
-            printf("Number of courses: ");
-            if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) != SUCCESS) {
-                printf("Invalid number of courses\n");
-                return ERROR_INVALID_INPUT;
-            }
-            for (int i = 0; i < p.dataCount; i++) {
-                printf("Course %d: ", i + 1);
-                if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) != SUCCESS) {
-                    printf("Invalid course name\n");
-                    return ERROR_INVALID_INPUT;
+            do {
+                printf("Number of courses: ");
+                if (safeGetInt(&p.dataCount, 1, MAX_SUBJECTS) == SUCCESS) {
+                    break;
                 }
+                printf("Invalid number. Please enter 1-%d: ", MAX_SUBJECTS);
+            } while (1);
+            for (int i = 0; i < p.dataCount; i++) {
+                do {
+                    printf("Course %d: ", i + 1);
+                    if (safeGetString(p.dataFields[i], sizeof(p.dataFields[i])) == SUCCESS && strlen(p.dataFields[i]) > 0) {
+                        break;
+                    }
+                    printf("Invalid course name. Please try again: ");
+                } while (1);
             }
             break;
         case CAMPUS_HOSPITAL:
@@ -117,7 +131,16 @@ ErrorCode signup() {
             printf("Invalid input\n");
             continue;
         }
-    } while (isValidEmail(p.email) != SUCCESS);
+        if (isValidEmail(p.email) != SUCCESS) {
+            printf("Invalid email format. Please try again.\n");
+            continue;
+        }
+        if (isEmailAlreadyRegistered(p.email)) {
+            printf("This email is already registered. Please use a different email.\n");
+            continue;
+        }
+        break;
+    } while (1);
 
     do {
         printf("Mobile: ");
@@ -125,18 +148,29 @@ ErrorCode signup() {
             printf("Invalid input\n");
             continue;
         }
-    } while (isValidMobile(p.mobile) != SUCCESS);
+        if (isValidMobile(p.mobile) != SUCCESS) {
+            printf("Invalid mobile format. Please try again.\n");
+            continue;
+        }
+        if (isMobileAlreadyRegistered(p.mobile)) {
+            printf("This mobile number is already registered. Please use a different number.\n");
+            continue;
+        }
+        break;
+    } while (1);
 
-    printf("Password ");
-    getHiddenPassword(password);
-    
-    // Check password strength
-    int strength = checkPasswordStrength(password);
-    if (strength < 3) {
-        printf("Password is too weak. Please use a stronger password.\n");
+    do {
+        printf("Password ");
+        getHiddenPassword(password);
+        
+        // Check password strength
+        int strength = checkPasswordStrength(password);
+        if (strength >= 3) {
+            break;
+        }
+        printf("Password is too weak. Please try again.\n");
         printf("Requirements: 8+ chars, uppercase, lowercase, digit, special char\n");
-        return ERROR_AUTH_FAILED;
-    }
+    } while (1);
     
     hashPassword(password, p.passwordHash);
     generateUserID(&p);
@@ -144,6 +178,11 @@ ErrorCode signup() {
     if (createUser(&p) != SUCCESS) {
         printf("Registration failed\n");
         return ERROR_DATABASE;
+    }
+
+    // Also save profile for dashboard access
+    if (!writeProfile(&p, p.userID)) {
+        printf("Warning: Profile file creation failed\n");
     }
 
     logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
@@ -155,12 +194,7 @@ ErrorCode signup() {
     }
 
     printf("Registration successful! Your ID: %s\n", p.userID);
-    printf("View profile? (y/n): ");
-    char ch;
-    while ((ch = (char)getchar()) != '\n' && ch != EOF);
-    ch = (char)getchar();
-    if (ch == 'y' || ch == 'Y') {
-        viewProfile(p.userID);
-    }
+    printf("Welcome to your dashboard!\n");
+    dashboard(p.userID);
     return SUCCESS;
 }

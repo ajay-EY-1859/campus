@@ -1,10 +1,10 @@
-# 🛠️ Scripts - Campus Management System Automation
+# Scripts - Campus Management System Automation
 
 This directory contains automation scripts and utilities for maintaining, building, and deploying the Campus Management System.
 
-## 📜 Available Scripts
+## Available Scripts
 
-### 🔍 `lint_headers.py`
+### `lint_headers.py`
 **Purpose**: Code quality analysis for header files
 - Checks for missing include guards
 - Validates function declarations
@@ -16,7 +16,7 @@ This directory contains automation scripts and utilities for maintaining, buildi
 python scripts/lint_headers.py
 ```
 
-### 🔧 `fix_headers.py`
+### `fix_headers.py`
 **Purpose**: Automatic header file corrections
 - Fixes missing include statements
 - Adds proper include guards
@@ -28,7 +28,7 @@ python scripts/lint_headers.py
 python scripts/fix_headers.py
 ```
 
-### 🚀 `build.py` (New)
+### `build.py` (New)
 **Purpose**: Cross-platform build automation
 - Automated CMake configuration
 - Multi-platform compilation
@@ -40,7 +40,7 @@ python scripts/fix_headers.py
 python scripts/build.py [--release|--debug] [--clean]
 ```
 
-### 📦 `package.py` (New)
+### `package.py` (New)
 **Purpose**: Release packaging automation
 - Creates distribution packages
 - Generates checksums
@@ -52,7 +52,7 @@ python scripts/build.py [--release|--debug] [--clean]
 python scripts/package.py --version 2.0.0
 ```
 
-### 🧪 `test_runner.py` (New)
+### `test_runner.py` (New)
 **Purpose**: Automated testing framework
 - Runs unit tests
 - Integration testing
@@ -64,7 +64,7 @@ python scripts/package.py --version 2.0.0
 python scripts/test_runner.py [--unit|--integration|--all]
 ```
 
-### 📊 `generate_docs.py` (New)
+### `generate_docs.py` (New)
 **Purpose**: Documentation generation
 - API documentation from headers
 - Code metrics and statistics
@@ -76,7 +76,7 @@ python scripts/test_runner.py [--unit|--integration|--all]
 python scripts/generate_docs.py
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 scripts/
@@ -94,7 +94,7 @@ scripts/
 └── README.md           # This file
 ```
 
-## 🔧 Development Workflow
+## Development Workflow
 
 ### Daily Development
 ```bash
@@ -121,7 +121,7 @@ python scripts/generate_docs.py
 python scripts/package.py --version x.y.z
 ```
 
-## 📋 Requirements
+## Requirements
 
 ### Python Dependencies
 ```bash
@@ -141,7 +141,7 @@ pip install -r scripts/requirements.txt
 - Git (for version control operations)
 - Platform-specific build tools
 
-## ⚙️ Configuration
+## Configuration
 
 ### `config.json`
 ```json
@@ -163,7 +163,7 @@ pip install -r scripts/requirements.txt
 }
 ```
 
-## 🚀 CI/CD Integration
+## CI/CD Integration
 
 ### GitHub Actions
 These scripts integrate with GitHub Actions workflows:
@@ -178,7 +178,7 @@ These scripts integrate with GitHub Actions workflows:
 python scripts/install_hooks.py
 ```
 
-## 🧪 Testing Scripts
+## Testing Scripts
 
 ### Unit Testing
 - Individual function testing
@@ -192,7 +192,7 @@ python scripts/install_hooks.py
 - File I/O testing
 - Security validation
 
-## 📈 Metrics & Analytics
+## Metrics & Analytics
 
 ### Code Quality Metrics
 - Lines of code
@@ -206,7 +206,7 @@ python scripts/install_hooks.py
 - Dependency analysis
 - Performance profiling
 
-## 🔒 Security Scripts
+## Security Scripts
 
 ### Security Scanning
 - Static code analysis
@@ -220,7 +220,7 @@ python scripts/install_hooks.py
 - Documentation requirements
 - Security best practices
 
-## 🌐 Platform Support
+## Platform Support
 
 ### Windows
 - PowerShell integration
@@ -237,7 +237,7 @@ python scripts/install_hooks.py
 - Homebrew compatibility
 - App bundle creation
 
-## 📚 Adding New Scripts
+## Adding New Scripts
 
 ### Script Template
 ```python
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 - Follow PEP 8 style guidelines
 - Include docstrings and comments
 
-## 🤝 Contributing
+## Contributing
 
 ### Script Contributions
 1. Follow the existing code style
@@ -284,7 +284,7 @@ python scripts/your_script.py --help
 python scripts/your_script.py --test-mode
 ```
 
-## 📞 Support
+## Support
 
 ### Script Issues
 - Check script logs in `logs/scripts/`
@@ -300,4 +300,12 @@ python scripts/your_script.py --test-mode
 
 ---
 
-**These scripts help maintain code quality and automate development workflows for the Campus Management System project! 🚀**
+**These scripts help maintain code quality and automate development workflows for the Campus Management System project!**
+
+---
+
+## **Repository & Support**
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

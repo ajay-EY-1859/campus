@@ -2,19 +2,19 @@
 
 Thank you for your interest in contributing to the Campus Management System! This document provides guidelines and information for contributors.
 
-## 🤝 How to Contribute
+## How to Contribute
 
 ### Ways to Contribute
-- 🐛 Report bugs and issues
-- 💡 Suggest new features
-- 📝 Improve documentation
-- 🔧 Fix bugs and implement features
-- 🧪 Write tests
-- 🎨 Improve UI/UX
-- 🌐 Add translations
-- 📊 Performance optimizations
+- Report bugs and issues
+- Suggest new features
+- Improve documentation
+- Fix bugs and implement features
+- Write tests
+- Improve UI/UX
+- Add translations
+- Performance optimizations
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Basic knowledge of C programming
@@ -47,7 +47,7 @@ Thank you for your interest in contributing to the Campus Management System! Thi
    ./build/Debug/campus.exe
    ```
 
-## 📋 Contribution Guidelines
+## Contribution Guidelines
 
 ### Code Style
 - **Indentation**: 4 spaces (no tabs)
@@ -85,7 +85,7 @@ git commit -m "Fix memory leak in database operations"
 git commit -m "Update documentation for new API endpoints"
 ```
 
-## 🐛 Bug Reports
+## Bug Reports
 
 ### Before Reporting
 - Check existing issues
@@ -118,7 +118,7 @@ What actually happened.
 Screenshots, logs, or other relevant information.
 ```
 
-## 💡 Feature Requests
+## Feature Requests
 
 ### Feature Request Template
 ```markdown
@@ -138,7 +138,7 @@ Other solutions you've considered.
 Any other context, mockups, or examples.
 ```
 
-## 🔧 Development Areas
+## Development Areas
 
 ### High Priority
 - [ ] Database optimization
@@ -161,7 +161,7 @@ Any other context, mockups, or examples.
 - [ ] Cloud storage support
 - [ ] Automated testing
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### Manual Testing
 - Test all user workflows
@@ -188,7 +188,7 @@ Any other context, mockups, or examples.
    - Audit logging
    - Access control
 
-## 📚 Documentation
+## Documentation
 
 ### Documentation Standards
 - Clear and concise language
@@ -203,7 +203,7 @@ Any other context, mockups, or examples.
 - Architecture documentation
 - Security guidelines
 
-## 🔄 Pull Request Process
+## Pull Request Process
 
 ### Before Submitting
 1. Ensure code follows style guidelines
@@ -243,7 +243,7 @@ Brief description of changes made.
 4. Feedback incorporation
 5. Final approval and merge
 
-## 🏆 Recognition
+## Recognition
 
 ### Contributors
 All contributors will be:
@@ -252,14 +252,14 @@ All contributors will be:
 - Credited in documentation
 
 ### Contribution Types
-- 🐛 Bug fixes
-- ✨ New features
-- 📝 Documentation
-- 🎨 Design improvements
-- 🔧 Maintenance
-- 🌐 Translations
+- Bug fixes
+- New features
+- Documentation
+- Design improvements
+- Maintenance
+- Translations
 
-## 📞 Communication
+## Communication
 
 ### Channels
 - **GitHub Issues**: Bug reports and feature requests
@@ -271,7 +271,7 @@ All contributors will be:
 - Pull requests: Within 72 hours
 - Security issues: Within 24 hours
 
-## 🔒 Security
+## Security
 
 ### Reporting Security Issues
 - **DO NOT** create public issues for security vulnerabilities
@@ -286,7 +286,7 @@ All contributors will be:
 - Implement proper access controls
 - Keep dependencies updated
 
-## 📋 Code of Conduct
+## Code of Conduct
 
 ### Our Standards
 - Be respectful and inclusive
@@ -302,11 +302,11 @@ All contributors will be:
 - Publishing private information
 - Spam or off-topic content
 
-## 🎯 Development Roadmap
+## Development Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for detailed development plans and priorities.
 
-## ❓ Questions?
+## Questions?
 
 If you have questions about contributing:
 1. Check existing documentation
@@ -316,4 +316,4 @@ If you have questions about contributing:
 
 ---
 
-**Thank you for contributing to Campus Management System! 🙏**
+**Thank you for contributing to Campus Management System!**

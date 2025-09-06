@@ -19,3 +19,8 @@ cmake --build .
 Tested on:
 - MSVC 2022
 - Windows 11
+
+---
+
+**Repository:** https://github.com/ajay-EY-1859/campus  
+**Support:** raj183576@gmail.com

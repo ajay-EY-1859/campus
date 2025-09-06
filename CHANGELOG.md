@@ -170,3 +170,11 @@ See [ROADMAP.md](ROADMAP.md) for detailed future plans.
 ---
 
 *This changelog is updated with each release. For the latest information, check the GitHub releases page.*
+
+---
+
+## Repository & Support
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

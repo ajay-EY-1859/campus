@@ -1,21 +1,21 @@
-# 📚 Campus Management System v2.0 - User Manual
+# Campus Management System v2.0 - User Manual
 
-## 🎯 **Getting Started**
+## **Getting Started**
 
 ### **System Overview**
 Campus Management System is a comprehensive solution for managing different types of educational and institutional campuses including Schools, Colleges, Hospitals, and Hostels.
 
 ### **Key Features**
-- ✅ Multi-campus support (4 types)
-- ✅ Secure user authentication with 2FA
-- ✅ Campus-specific data management
-- ✅ Professional PDF report generation
-- ✅ Grade and CGPA calculations
-- ✅ Comprehensive audit logging
+- Multi-campus support (4 types)
+- Secure user authentication with 2FA
+- Campus-specific data management
+- Professional PDF report generation
+- Grade and CGPA calculations
+- Comprehensive audit logging
 
 ---
 
-## 🚀 **Quick Start Guide**
+## **Quick Start Guide**
 
 ### **First Time Setup**
 1. **Launch Application**
@@ -39,7 +39,7 @@ Campus Management System is a comprehensive solution for managing different type
 
 ---
 
-## 👤 **User Registration Process**
+## **User Registration Process**
 
 ### **Step 1: Personal Information**
 ```
@@ -65,7 +65,7 @@ Enter choice: 1
 
 ### **Step 3: Campus-Specific Information**
 
-#### **🏫 For School:**
+#### **For School:**
 ```
 Enter School Name: Delhi Public School
 Enter Stream (Science/Commerce/Arts): Science
@@ -77,7 +77,7 @@ Subject 4: Biology
 Subject 5: English
 ```
 
-#### **🎓 For College:**
+#### **For College:**
 ```
 Enter College Name: IIT Delhi
 Enter Department: Computer Science Engineering
@@ -88,14 +88,14 @@ Course 3: Database Systems
 Course 4: Computer Networks
 ```
 
-#### **🏥 For Hospital:**
+#### **For Hospital:**
 ```
 Enter Hospital Name: AIIMS Delhi
 Enter Department: Cardiology
 Medical data fields will be: Blood Pressure, Temperature, Weight, Diagnosis
 ```
 
-#### **🏠 For Hostel:**
+#### **For Hostel:**
 ```
 Enter Hostel Name: Boys Hostel Block A
 Enter Block/Wing: Block A
@@ -124,7 +124,7 @@ Please save this ID for login.
 
 ---
 
-## 🔐 **Login Process**
+## **Login Process**
 
 ### **Step 1: Basic Authentication**
 ```
@@ -151,7 +151,7 @@ Login successful! Welcome, John Doe [sa25123]
 
 ---
 
-## 🏠 **Dashboard Overview**
+## **Dashboard Overview**
 
 ### **Main Dashboard Menu**
 ```
@@ -170,11 +170,11 @@ Dashboard - John Doe [sa25123]
 
 ---
 
-## 📊 **Data Management**
+## **Data Management**
 
 ### **Adding Data (Option 3)**
 
-#### **🏫 School - Enter Marks**
+#### **School - Enter Marks**
 ```
 Enter marks for subjects:
 Physics - Marks: 85
@@ -189,7 +189,7 @@ English - Marks: 90
 Full marks: 100
 ```
 
-#### **🎓 College - Enter Semester Data**
+#### **College - Enter Semester Data**
 ```
 Enter semester marks:
 Data Structures - Marks: 88
@@ -202,7 +202,7 @@ Computer Networks - Marks: 90
 Credits: 3
 ```
 
-#### **🏥 Hospital - Enter Medical Data**
+#### **Hospital - Enter Medical Data**
 ```
 Enter medical data:
 Blood Pressure: 120/80 mmHg
@@ -211,7 +211,7 @@ Weight: 70 kg
 Diagnosis: Hypertension - Stage 1, medication required
 ```
 
-#### **🏠 Hostel - Enter Accommodation Data**
+#### **Hostel - Enter Accommodation Data**
 ```
 Enter hostel data:
 Room Number: A-101
@@ -221,7 +221,7 @@ Mess Plan: Vegetarian - Full Meal Plan (Breakfast, Lunch, Dinner)
 
 ### **Viewing Data (Option 4)**
 
-#### **🏫 School Results Display**
+#### **School Results Display**
 ```
 School Data for sa25123:
 1. Physics - 85/100
@@ -235,7 +235,7 @@ Percentage: 86.60%
 Grade: A
 ```
 
-#### **🎓 College Results Display**
+#### **College Results Display**
 ```
 College Data for ii25124:
 1. Data Structures - 88 marks (4 credits)
@@ -248,7 +248,7 @@ CGPA: 8.76
 
 ---
 
-## 📄 **PDF Report Generation**
+## **PDF Report Generation**
 
 ### **Export Report (Option 6)**
 ```
@@ -258,7 +258,7 @@ School report PDF exported to data/sa25123_school_report.pdf
 
 ### **Report Contents**
 
-#### **🏫 School Report Card**
+#### **School Report Card**
 - Student name and details
 - School information
 - Subject-wise marks breakdown
@@ -266,21 +266,21 @@ School report PDF exported to data/sa25123_school_report.pdf
 - Grade assignment
 - Professional formatting
 
-#### **🎓 College Transcript**
+#### **College Transcript**
 - Student information
 - College and department details
 - Course-wise marks and credits
 - CGPA calculation
 - Academic summary
 
-#### **🏥 Medical Report**
+#### **Medical Report**
 - Patient information
 - Hospital and department
 - Complete medical data
 - Health assessment
 - Professional medical format
 
-#### **🏠 Hostel Report**
+#### **Hostel Report**
 - Resident information
 - Hostel details
 - Accommodation information
@@ -289,7 +289,7 @@ School report PDF exported to data/sa25123_school_report.pdf
 
 ---
 
-## ⚙️ **Profile Management**
+## **Profile Management**
 
 ### **View Profile (Option 1)**
 ```
@@ -335,9 +335,9 @@ Password changed successfully!
 
 ---
 
-## 🎯 **Grade System Guide**
+## **Grade System Guide**
 
-### **🏫 School Grading**
+### **School Grading**
 | Percentage | Grade | Status |
 |---|---|---|
 | 90% - 100% | A+ | Excellent |
@@ -347,7 +347,7 @@ Password changed successfully!
 | 50% - 59% | D | Pass |
 | Below 50% | F | Fail |
 
-### **🎓 College CGPA System**
+### **College CGPA System**
 | CGPA Range | Grade | Status |
 |---|---|---|
 | 9.0 - 10.0 | A+ | Outstanding |
@@ -364,7 +364,7 @@ CGPA = (Sum of (Marks × Credits)) / (Total Credits × 10)
 
 ---
 
-## 🔒 **Security Features**
+## **Security Features**
 
 ### **Account Security**
 - **Password Protection:** Strong password requirements
@@ -380,7 +380,7 @@ CGPA = (Sum of (Marks × Credits)) / (Total Credits × 10)
 
 ---
 
-## ❗ **Troubleshooting**
+## **Troubleshooting**
 
 ### **Common Issues**
 
@@ -427,7 +427,7 @@ Solution: Check input format, verify permissions, free disk space
 
 ---
 
-## 📞 **Support Information**
+## **Support Information**
 
 ### **Getting Help**
 1. **Check this manual first**
@@ -442,16 +442,16 @@ Solution: Check input format, verify permissions, free disk space
 
 ---
 
-## 🎉 **Tips for Best Experience**
+## **Tips for Best Experience**
 
-### **✅ Best Practices**
+### **Best Practices**
 - Use strong, unique passwords
 - Log out after each session
 - Keep your User ID secure
 - Regular data backups
 - Update contact information
 
-### **✅ Performance Tips**
+### **Performance Tips**
 - Close application when not in use
 - Regular system maintenance
 - Keep sufficient disk space
@@ -459,4 +459,12 @@ Solution: Check input format, verify permissions, free disk space
 
 ---
 
-**📚 Campus Management System v2.0 - User Manual Complete! 🎓**
+**Campus Management System v2.0 - User Manual Complete!**
+
+---
+
+## **Support & Repository**
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

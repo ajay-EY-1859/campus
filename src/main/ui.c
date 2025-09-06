@@ -22,8 +22,9 @@ void dashboard(const char *userID) {
         printf("4. View Data\n");
         printf("5. Change Password\n");
         printf("6. Export Report\n");
-        printf("7. Logout\n");
-        printf("8. Exit Application\n");
+        printf("7. Export Profile\n");
+        printf("8. Logout\n");
+        printf("9. Exit Application\n");
         printf("Select option: ");
         
         if (scanf("%d", &choice) != 1) {
@@ -60,10 +61,11 @@ void dashboard(const char *userID) {
                     case CAMPUS_HOSTEL: exportHostelPDF(userID); break;
                 }
                 break;
-            case 7:
+            case 7: exportProfile(userID); break;
+            case 8:
                 printf("Logged out\n");
                 return;
-            case 8:
+            case 9:
                 printf("Goodbye! Thanks for using %s.\n", APP_NAME);
                 exit(0);
             default:

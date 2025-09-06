@@ -21,6 +21,8 @@ CampusType selectCampusType(void) {
         printf("Invalid choice. Enter 1-4: ");
         while (getchar() != '\n');
     }
+    // Clear the input buffer after successful input
+    while (getchar() != '\n');
     return (CampusType)choice;
 }
 
@@ -263,5 +265,49 @@ ErrorCode changePassword(const char *userID) {
     }
     logEvent(userID, "Password changed successfully");
     printf("Password changed successfully!\n");
+    return SUCCESS;
+}
+
+ErrorCode exportProfile(const char *userID) {
+    if (!userID) return ERROR_INVALID_INPUT;
+    
+    Profile p = {0};
+    if (!readProfile(&p, userID)) {
+        printf("Cannot load profile for export.\n");
+        return ERROR_FILE_IO;
+    }
+    
+    printf("\nSelect Export Format:\n");
+    printf("1. PDF\n");
+    printf("2. Text File\n");
+    printf("3. CSV\n");
+    printf("Enter choice: ");
+    
+    int format = 0;
+    if (scanf("%d", &format) != 1 || format < 1 || format > 3) {
+        printf("Invalid format selection.\n");
+        while (getchar() != '\n');
+        return ERROR_INVALID_INPUT;
+    }
+    while (getchar() != '\n');
+    
+    char filename[200] = {0};
+    
+    switch(format) {
+        case 1: // PDF
+            snprintf(filename, sizeof(filename), "data/%s_profile.pdf", userID);
+            exportProfilePDF(userID, filename);
+            break;
+        case 2: // Text
+            snprintf(filename, sizeof(filename), "data/%s_profile.txt", userID);
+            exportProfileTXT(userID, filename);
+            break;
+        case 3: // CSV
+            snprintf(filename, sizeof(filename), "data/%s_profile.csv", userID);
+            exportProfileCSV(userID, filename);
+            break;
+    }
+    
+    logEvent(userID, "Profile exported");
     return SUCCESS;
 }

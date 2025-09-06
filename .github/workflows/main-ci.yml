@@ -21,7 +21,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake
+        sudo apt-get install -y build-essential cmake libhpdf-dev
 
     - name: Setup MSVC (Windows)
       if: matrix.os == 'windows-latest'
@@ -37,16 +37,33 @@ jobs:
       run: |
         mkdir -p data credentials logs
 
-    - name: Test build output
+    - name: Test build output (Windows)
+      if: matrix.os == 'windows-latest'
       run: |
         echo "Build completed successfully"
-        ls -la build/ || dir build\
+        dir build\build\${{ matrix.build_type }}\
+        if exist "build\build\${{ matrix.build_type }}\campus.exe" echo "✅ campus.exe found"
 
-    - name: Upload artifacts
+    - name: Test build output (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo "Build completed successfully"
+        ls -la build/
+        if [ -f "build/campus" ]; then echo "✅ campus binary found"; fi
+
+    - name: Upload artifacts (Windows)
+      if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v3
       with:
         name: campus-${{ matrix.os }}-${{ matrix.build_type }}
         path: |
           build/build/${{ matrix.build_type }}/campus.exe
+          lib/hpdf.dll
+
+    - name: Upload artifacts (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: campus-${{ matrix.os }}-${{ matrix.build_type }}
+        path: |
           build/campus
-          build/build/${{ matrix.build_type }}/hpdf.dll

@@ -67,3 +67,10 @@ This roadmap outlines planned enhancements, future milestones, and long-term goa
 | v3.0    | APIs & GUI       | Visionary |
 
 Stay tuned and keep watching this space!
+
+---
+
+## Repository & Contact
+
+- **GitHub:** https://github.com/ajay-EY-1859/campus
+- **Email:** raj183576@gmail.com

@@ -9,11 +9,15 @@
 #include "security.h"
 #include "hpdf/hpdf.h"
 
+// Function declarations
+ErrorCode recoverUserID(void);
+
 void displayMainMenu() {
     printf("\n%s (%s)\n", APP_NAME, APP_VERSION);
     printf("1. Register New User\n");
     printf("2. Login\n");
-    printf("3. Exit\n");
+    printf("3. Forgot User ID\n");
+    printf("4. Exit\n");
     printf("Select option: ");
 }
 
@@ -28,8 +32,8 @@ int main() {
 
     while (1) {
         displayMainMenu();
-        if (safeGetInt(&choice, 1, 3) != SUCCESS) {
-            printf("Invalid input. Please enter 1, 2, or 3.\n");
+        if (safeGetInt(&choice, 1, 4) != SUCCESS) {
+            printf("Invalid input. Please enter 1, 2, 3, or 4.\n");
             continue;
         }
 
@@ -43,6 +47,10 @@ int main() {
                 signin(); 
                 break;
             case 3:
+                printf("Starting User ID recovery...\n");
+                recoverUserID();
+                break;
+            case 4:
                 printf("Goodbye! Thanks for using %s.\n", APP_NAME);
                 closeDatabase();
                 return SUCCESS;

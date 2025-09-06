@@ -1,6 +1,6 @@
 # Frequently Asked Questions (FAQ)
 
-## 🔍 General Questions
+## General Questions
 
 ### Q: What is Campus Management System?
 **A:** Campus Management System is a secure, multi-platform C-based application designed to manage different types of educational and institutional campuses including Schools, Colleges, Hospitals, and Hostels.
@@ -14,7 +14,7 @@
 ### Q: Do I need internet connection to use it?
 **A:** No, the core functionality works offline. Internet is only simulated for OTP delivery in the current version.
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Q: What are the system requirements?
 **A:** Minimum requirements:
@@ -38,7 +38,7 @@ See the [Installation Guide](INSTALLATION.md) for detailed instructions.
 ### Q: Can I install it on a server?
 **A:** Yes, but it's currently a command-line application. A web interface is planned for future versions.
 
-## 👤 User Account & Authentication
+## User Account & Authentication
 
 ### Q: How do I create an account?
 **A:** Run the application and select "1. Register New User". Follow the step-by-step registration process.
@@ -62,7 +62,7 @@ See the [Installation Guide](INSTALLATION.md) for detailed instructions.
 ### Q: Can I change my User ID?
 **A:** No, User IDs are permanent and cannot be changed. You would need to create a new account.
 
-## 📊 Data Management
+## Data Management
 
 ### Q: What types of data can I store?
 **A:** Depends on your campus type:
@@ -86,7 +86,7 @@ See the [Installation Guide](INSTALLATION.md) for detailed instructions.
 ### Q: Can multiple users share the same computer?
 **A:** Yes, each user has a separate account with their own data. However, all data is stored on the same computer.
 
-## 📄 Reports & PDF Generation
+## Reports & PDF Generation
 
 ### Q: How do I generate reports?
 **A:** From your dashboard, select "6. Export Report". The system will generate a PDF based on your campus type and stored data.
@@ -107,7 +107,7 @@ See the [Installation Guide](INSTALLATION.md) for detailed instructions.
 ### Q: Can I print the reports?
 **A:** Yes, the generated PDF files can be opened with any PDF viewer and printed normally.
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
 ### Q: How secure is my data?
 **A:** Your data is:
@@ -135,7 +135,7 @@ See the [Installation Guide](INSTALLATION.md) for detailed instructions.
 ### Q: Is my personal information shared?
 **A:** No, all data remains on your local computer. No information is transmitted to external servers.
 
-## 🛠️ Technical Issues
+## Technical Issues
 
 ### Q: The application crashes on startup. What should I do?
 **A:** Try:
@@ -168,7 +168,7 @@ Create the required directories manually: `data/`, `credentials/`, `logs/`
 - Checking your system's locale settings
 - Running in compatibility mode (Windows)
 
-## 🔄 Updates & Versions
+## Updates & Versions
 
 ### Q: How do I update to a new version?
 **A:** 
@@ -189,7 +189,7 @@ Create the required directories manually: `data/`, `credentials/`, `logs/`
 ### Q: Where can I see what's new in each version?
 **A:** Check the [CHANGELOG.md](../CHANGELOG.md) file or the releases page on GitHub.
 
-## 🤝 Contributing & Support
+## Contributing & Support
 
 ### Q: How can I contribute to the project?
 **A:** You can:
@@ -220,7 +220,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
 ### Q: Is commercial support available?
 **A:** Currently, only community support is available. Commercial support options may be added in the future.
 
-## 🎓 Educational Use
+## Educational Use
 
 ### Q: Can schools and colleges use this for free?
 **A:** Yes, educational institutions can use this software completely free under the MIT License.
@@ -234,7 +234,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
 ### Q: Can I modify the software for my institution's needs?
 **A:** Yes, you can modify the software under the MIT License terms. Consider contributing improvements back to the community.
 
-## 🔮 Future Plans
+## Future Plans
 
 ### Q: What features are planned for future versions?
 **A:** See our [ROADMAP.md](../ROADMAP.md) for detailed future plans including:

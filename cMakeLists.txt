@@ -16,10 +16,20 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/W4)
 endif()
 
-# 📥 Manual Libharu setup
+# 📥 Libharu setup
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include/hpdf)
-link_directories(${PROJECT_SOURCE_DIR}/lib)
+
+if(WIN32)
+    # Windows: Use bundled libharu
+    include_directories(${PROJECT_SOURCE_DIR}/include/hpdf)
+    link_directories(${PROJECT_SOURCE_DIR}/lib)
+else()
+    # Linux: Use system libharu
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(HPDF REQUIRED libhpdf)
+    include_directories(${HPDF_INCLUDE_DIRS})
+    link_directories(${HPDF_LIBRARY_DIRS})
+endif()
 
 # 📁 Source files
 set(MAIN_SOURCES
@@ -41,12 +51,15 @@ set(MAIN_SOURCES
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 
-# 🔗 Link static PDF library
-target_link_libraries(${PROJECT_NAME} PRIVATE hpdf)
-
-# 📦 Copy DLL to output folder after build (for runtime)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/lib/hpdf.dll"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-)
+# 🔗 Link PDF library
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hpdf)
+    # Copy DLL to output folder after build (for runtime)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${PROJECT_SOURCE_DIR}/lib/hpdf.dll"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${HPDF_LIBRARIES})
+endif()

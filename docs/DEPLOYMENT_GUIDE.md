@@ -1,15 +1,15 @@
-# 🚀 Campus Management System v2.0 - Deployment Guide
+# Campus Management System v2.0 - Deployment Guide
 
-## 📋 **Quick Deployment Checklist**
+## **Quick Deployment Checklist**
 
-### **✅ Pre-Deployment Requirements**
+### **Pre-Deployment Requirements**
 - [ ] Windows 10/11 or Linux system
 - [ ] CMake 3.10+ installed
 - [ ] C Compiler (GCC/MSVC) available
 - [ ] 50MB disk space minimum
 - [ ] Administrator privileges for installation
 
-### **✅ System Requirements**
+### **System Requirements**
 | Component | Minimum | Recommended |
 |---|---|---|
 | **OS** | Windows 10 | Windows 11 |
@@ -19,7 +19,7 @@
 
 ---
 
-## 🎯 **Deployment Methods**
+## **Deployment Methods**
 
 ### **Method 1: Quick Deploy (Recommended)**
 ```bash
@@ -53,7 +53,7 @@ campus.exe --service
 
 ---
 
-## 📁 **Directory Structure**
+## **Directory Structure**
 ```
 campus/
 ├── bin/                    # Executable files
@@ -73,7 +73,7 @@ campus/
 
 ---
 
-## ⚙️ **Configuration Setup**
+## **Configuration Setup**
 
 ### **Basic Configuration**
 ```ini
@@ -110,7 +110,7 @@ RetentionDays=30
 
 ---
 
-## 🔒 **Security Setup**
+## **Security Setup**
 
 ### **File Permissions**
 ```bash
@@ -135,7 +135,7 @@ iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
 
 ---
 
-## 📊 **Database Setup**
+## **Database Setup**
 
 ### **File-Based Database (Default)**
 ```bash
@@ -153,7 +153,7 @@ BackupEnabled=true
 
 ---
 
-## 🎯 **Service Installation**
+## **Service Installation**
 
 ### **Windows Service**
 ```batch
@@ -173,7 +173,7 @@ sudo systemctl start campus
 
 ---
 
-## 📋 **Post-Deployment Verification**
+## **Post-Deployment Verification**
 
 ### **System Health Check**
 ```bash
@@ -205,7 +205,7 @@ run_performance_tests.bat
 
 ---
 
-## 🔧 **Troubleshooting**
+## **Troubleshooting**
 
 ### **Common Issues**
 
@@ -236,7 +236,7 @@ campus.exe --reset-db
 
 ---
 
-## 📈 **Monitoring & Maintenance**
+## **Monitoring & Maintenance**
 
 ### **Log Monitoring**
 ```bash
@@ -269,41 +269,41 @@ schtasks /create /tn "Campus Backup" /tr "campus.exe --backup" /sc daily
 
 ---
 
-## 🚀 **Production Deployment Steps**
+## **Production Deployment Steps**
 
 ### **Step 1: Environment Preparation**
-1. ✅ Verify system requirements
-2. ✅ Install dependencies
-3. ✅ Create directory structure
-4. ✅ Set file permissions
+1. Verify system requirements
+2. Install dependencies
+3. Create directory structure
+4. Set file permissions
 
 ### **Step 2: Application Installation**
-1. ✅ Deploy application files
-2. ✅ Configure system settings
-3. ✅ Initialize database
-4. ✅ Test basic functionality
+1. Deploy application files
+2. Configure system settings
+3. Initialize database
+4. Test basic functionality
 
 ### **Step 3: Security Configuration**
-1. ✅ Configure firewall rules
-2. ✅ Set up user permissions
-3. ✅ Enable audit logging
-4. ✅ Test security features
+1. Configure firewall rules
+2. Set up user permissions
+3. Enable audit logging
+4. Test security features
 
 ### **Step 4: Service Setup**
-1. ✅ Install as system service
-2. ✅ Configure auto-start
-3. ✅ Set up monitoring
-4. ✅ Create backup schedule
+1. Install as system service
+2. Configure auto-start
+3. Set up monitoring
+4. Create backup schedule
 
 ### **Step 5: Validation & Go-Live**
-1. ✅ Run full system tests
-2. ✅ Perform load testing
-3. ✅ Validate all features
-4. ✅ Deploy to production
+1. Run full system tests
+2. Perform load testing
+3. Validate all features
+4. Deploy to production
 
 ---
 
-## 📞 **Support & Maintenance**
+## **Support & Maintenance**
 
 ### **Support Contacts**
 - **Technical Support:** support@campus-system.com
@@ -318,22 +318,22 @@ schtasks /create /tn "Campus Backup" /tr "campus.exe --backup" /sc daily
 
 ---
 
-## 🏆 **Deployment Success Criteria**
+## **Deployment Success Criteria**
 
-### **✅ Functional Validation**
+### **Functional Validation**
 - [ ] All campus types working (School/College/Hospital/Hostel)
 - [ ] User registration and login functional
 - [ ] Data entry and calculations accurate
 - [ ] PDF generation working
 - [ ] Security features active
 
-### **✅ Performance Validation**
+### **Performance Validation**
 - [ ] Response times meet targets (< 2 sec registration)
 - [ ] System handles expected load (100+ users)
 - [ ] Memory usage within limits (< 10 MB)
 - [ ] No performance bottlenecks
 
-### **✅ Security Validation**
+### **Security Validation**
 - [ ] Authentication working (2FA with OTP)
 - [ ] Account lockout functional
 - [ ] Input validation active
@@ -341,4 +341,12 @@ schtasks /create /tn "Campus Backup" /tr "campus.exe --backup" /sc daily
 
 ---
 
-**🎉 Campus Management System v2.0 - Ready for Production Deployment! 🚀**
+**Campus Management System v2.0 - Ready for Production Deployment!**
+
+---
+
+## **Support & Repository**
+
+- **GitHub Repository:** https://github.com/ajay-EY-1859/campus
+- **Email Support:** raj183576@gmail.com
+- **Issues & Bug Reports:** https://github.com/ajay-EY-1859/campus/issues

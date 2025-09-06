@@ -24,3 +24,10 @@ All notable changes to this project will be documented in this file.
 - `config.h` centralization for constants and file paths
 - CMake build system with compiler warnings
 - Included `.gitignore` and GitHub-ready `README.md`
+
+---
+
+## Repository & Support
+
+- **GitHub:** https://github.com/ajay-EY-1859/campus
+- **Email:** raj183576@gmail.com
