@@ -67,7 +67,7 @@ ErrorCode createUser(const Profile *profile) {
     return SUCCESS;
 }
 
-int getUserByID(const char *userID, Profile *profile) {
+ErrorCode getUserByID(const char *userID, Profile *profile) {
     FILE *f = fopen(DB_PATH, "rb");
     if (!f) return 0;
     
