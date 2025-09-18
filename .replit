@@ -6,3 +6,26 @@ packages = ["cmake", "pkg-config", "libharu"]
 
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Campus Management System"
+
+[[workflows.workflow]]
+name = "Campus Management System"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./simple_campus"
+
+[workflows.workflow.metadata]
+outputType = "console"
