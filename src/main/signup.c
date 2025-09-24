@@ -181,11 +181,11 @@ ErrorCode signup() {
     }
 
     // Also save profile for dashboard access
-    if (!writeProfile(&p, p.userID)) {
+    /*if (!writeProfile(&p, p.userID)) {
         printf("Warning: Profile file creation failed\n");
     }
 
-    logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
+*/    logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
 
     FILE *userFile = fopen(USER_STATE_FILE, "w");
     if (userFile) {

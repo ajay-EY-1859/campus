@@ -136,11 +136,13 @@ int validateStudentID(const char *studentID) {
 ErrorCode editProfile(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    if (!getUserByID(userID, &p))
+    
+    /*if (!readProfile(&p, userID)) {
         printf("Cannot open profile for editing.\n");
         logEvent(userID, "Failed to open profile for editing");
         return ERROR_FILE_IO;
-    }
+    }*/
 
     printf("\nEdit Profile\n");
     printf("Current Name: %s\n", p.name);
@@ -192,7 +194,7 @@ ErrorCode editProfile(const char *userID) {
         }
     }
 
-    if (!writeProfile(&p, userID)) {
+    if (!updateUser( &p)) {
         printf("Failed to save updated profile.\n");
         logEvent(userID, "Profile edit failed during write");
         return ERROR_FILE_IO;
@@ -206,7 +208,7 @@ ErrorCode editProfile(const char *userID) {
 ErrorCode viewProfile(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    if (!getUserByID(userID, &p)) {
         printf("Cannot open profile for viewing.\n");
         logEvent(userID, "Failed to open profile for viewing");
         return ERROR_FILE_IO;
@@ -229,11 +231,11 @@ ErrorCode viewProfile(const char *userID) {
 ErrorCode changePassword(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    /*if (!readProfile(&p, userID)) {
         printf("Cannot open profile for password change.\n");
         logEvent(userID, "Failed to open profile for password change");
         return ERROR_FILE_IO;
-    }
+    }*/
     char oldPass[MAX_LEN] = {0}, oldHash[MAX_LEN] = {0};
     printf("Enter current password: ");
     getHiddenPassword(oldPass);
@@ -273,10 +275,10 @@ ErrorCode exportProfile(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    /*if (!readProfile(&p, userID)) {
         printf("Cannot load profile for export.\n");
         return ERROR_FILE_IO;
-    }
+    }*/
     
     printf("\nSelect Export Format:\n");
     printf("1. PDF\n");

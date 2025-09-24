@@ -12,6 +12,7 @@
 #include "../include/ui.h"
 #include "../include/auth.h"
 #include "../include/student.h"
+#include"../include/database.h"
 
 int validateProfile(const Profile *p) {
     if (strlen(p->userID) == 0) return 0;
@@ -21,7 +22,7 @@ int validateProfile(const Profile *p) {
     return 1;
 }
 
-int readProfile(Profile *p, const char *userID) {
+/*ErrorCode getUserByID(const char* userID, Profile* profile) {
     char path[150] = {0};
     getProfilePath(path, userID);
 
@@ -34,7 +35,7 @@ int readProfile(Profile *p, const char *userID) {
     size_t result = fread(p, sizeof(Profile), 1, fp);
     fclose(fp);
     return (result == 1) ? 1 : 0;
-}
+}*/
 
 int writeProfile(const Profile *p, const char *userID) {
     if (!validateProfile(p)) {

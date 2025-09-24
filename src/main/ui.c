@@ -5,12 +5,18 @@
 #include "../include/config.h"
 #include "../include/ui.h"
 #include "../include/fileio.h"
+#include "../include/database.h"
 
 void dashboard(const char *userID) {
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
-        printf("Cannot load profile\n");
-        return;
+    
+    // Try database first, then file-based profile
+    if (!getUserByID(userID, &p)) {
+        /*if (!readProfile(&p, userID)) {
+            printf("Error: Cannot load user profile for ID: %s\n", userID);
+            printf("Please contact support or try registering again.\n");
+            return;
+        }*/
     }
     
     int choice = 0;

@@ -13,6 +13,7 @@
 #include "../include/utils.h"
 #include "../include/hpdf/hpdf.h"
 #include "../include/ui.h"
+#include"../include/database.h"
 
 const char* getCampusName(CampusType type) {
     switch(type) {
@@ -47,7 +48,7 @@ void printSummary(int total, int full, CampusType type) {
 // School Data Management
 void saveSchoolData(const char *studentID) {
     Profile p = {0};
-    if (!readProfile(&p, studentID)) {
+    if (!getUserByID(studentID, &p)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -56,7 +57,9 @@ void saveSchoolData(const char *studentID) {
     printf("\nEnter marks for subjects:\n");
     for (int i = 0; i < p.dataCount; i++) {
         printf("%s - Marks: ", p.dataFields[i]);
-        if (!safeGetInt(&marks[i], 0, 100)) {
+        if (!safeGetInt(&marks[i], 0, 100)) 
+            
+        {
             printf("Invalid marks entered\n");
             return;
         }
@@ -118,7 +121,7 @@ void loadSchoolData(const char *studentID) {
 // College Data Management
 void saveCollegeData(const char *studentID) {
     Profile p = {0};
-    if (!readProfile(&p, studentID)) {
+    if (!getUserByID(studentID, &p)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -191,7 +194,7 @@ void loadCollegeData(const char *studentID) {
 // Hospital Data Management
 void saveHospitalData(const char *patientID) {
     Profile p = {0};
-    if (!readProfile(&p, patientID)) {
+    if (!getUserByID(&p, patientID)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -251,7 +254,7 @@ void loadHospitalData(const char *patientID) {
 // Hostel Data Management
 void saveHostelData(const char *residentID) {
     Profile p = {0};
-    if (!readProfile(&p, residentID)) {
+    if (!getUserByID(&p, residentID)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -333,11 +336,11 @@ void exportSchoolPDF(const char *studentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!readProfile(&p, studentID)) {
+    if (!getUserByID(&p, studentID)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
-    
+
     float percentage = (totalFull == 0) ? 0.0f : (total * 100.0f / totalFull);
     const char *grade = getGrade(percentage);
     
@@ -395,6 +398,12 @@ void exportSchoolPDF(const char *studentID) {
     
     char outfile[150];
     snprintf(outfile, sizeof(outfile), DATA_DIR "%s_school_report.pdf", studentID);
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
     
@@ -426,7 +435,7 @@ void exportCollegePDF(const char *studentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!readProfile(&p, studentID)) {
+    if (!getUserByID(&p, studentID)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -483,6 +492,12 @@ void exportCollegePDF(const char *studentID) {
     
     char outfile[150];
     snprintf(outfile, sizeof(outfile), DATA_DIR "%s_college_transcript.pdf", studentID);
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
     
@@ -510,7 +525,7 @@ void exportHospitalPDF(const char *patientID) {
     fclose(f);
     
     Profile p = {0};
-    if (!readProfile(&p, patientID)) {
+    if (!getUserByID(&p, patientID)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -557,6 +572,12 @@ void exportHospitalPDF(const char *patientID) {
     
     char outfile[150];
     snprintf(outfile, sizeof(outfile), DATA_DIR "%s_medical_report.pdf", patientID);
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
     
@@ -584,7 +605,7 @@ void exportHostelPDF(const char *residentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!readProfile(&p, residentID)) {
+    if (!getUserByID(&p, residentID)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -631,6 +652,12 @@ void exportHostelPDF(const char *residentID) {
     
     char outfile[150];
     snprintf(outfile, sizeof(outfile), DATA_DIR "%s_hostel_report.pdf", residentID);
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
     
@@ -640,7 +667,7 @@ void exportHostelPDF(const char *residentID) {
 
 void exportProfilePDF(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    if (!getUserByID(&p, userID)) {
         printf("Cannot load profile for PDF export\n");
         return;
     }
@@ -687,6 +714,12 @@ void exportProfilePDF(const char *userID, const char *filename) {
     HPDF_Page_TextOut(page, 50, y, buffer);
     HPDF_Page_EndText(page);
     
+    // Ensure data directory exists (for custom filename paths under data/)
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     HPDF_SaveToFile(pdf, filename);
     HPDF_Free(pdf);
     
@@ -695,11 +728,23 @@ void exportProfilePDF(const char *userID, const char *filename) {
 
 void exportProfileTXT(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    if (!getUserByID(&p, userID)) {
         printf("Cannot load profile for text export\n");
         return;
     }
     
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
     FILE *f = fopen(filename, "w");
     if (!f) {
         printf("Cannot create text file\n");
@@ -721,7 +766,7 @@ void exportProfileTXT(const char *userID, const char *filename) {
 
 void exportProfileCSV(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!readProfile(&p, userID)) {
+    if (!getUserByID(&p, userID)) {
         printf("Cannot load profile for CSV export\n");
         return;
     }

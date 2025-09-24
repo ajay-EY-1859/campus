@@ -7,10 +7,11 @@
 
 
 // Profile file handling
-int readProfile(Profile *p, const char *studentID);
+int readProfile(Profile *p, const char *userID);
 int writeProfile(const Profile *p, const char *studentID);
 
 // Profile validator
 int validateProfile(const Profile *p);
 
 #endif // FILEIO_H
+

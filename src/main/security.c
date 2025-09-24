@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 #include <ctype.h>
 #include "../include/security.h"
 #include "../include/database.h"
@@ -16,14 +21,38 @@ static int sessionCount = 0;
 
 // OTP Generation and Verification
 int generateOTP(const char *userID, char *otp) {
-    srand((unsigned int)time(NULL));
-    int otpNum = rand() % 900000 + 100000; // 6-digit OTP
+    unsigned int randomValue = 0;
+#ifdef _WIN32
+    if (rand_s(&randomValue) != 0) {
+        return 0;
+    }
+#else
+    FILE *urnd = fopen("/dev/urandom", "rb");
+    if (urnd) {
+        if (fread(&randomValue, sizeof(randomValue), 1, urnd) != 1) {
+            fclose(urnd);
+            return 0;
+        }
+        fclose(urnd);
+    } else {
+        srand((unsigned int)time(NULL));
+        randomValue = (unsigned int)rand();
+    }
+#endif
+    int otpNum = (int)(randomValue % 900000) + 100000; // 6-digit OTP
     snprintf(otp, 7, "%06d", otpNum);
     
     // Store OTP with timestamp
     char filename[200];
     snprintf(filename, sizeof(filename), "data/%s_otp.dat", userID);
     
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
+
     FILE *f = fopen(filename, "wb");
     if (!f) return 0;
     
@@ -67,14 +96,48 @@ int verifyOTP(const char *userID, const char *otp) {
 }
 
 int sendOTPSMS(const char *mobile, const char *otp) {
-    // Simulate SMS sending
-    printf("SMS sent to %s: Your Campus OTP is %s (Valid for 5 minutes)\n", mobile, otp);
+    // Do not print OTP to console; simulate delivery via outbox
+#ifdef _WIN32
+    _mkdir("data");
+    _mkdir("data\\outbox");
+#else
+    mkdir("data", 0777);
+    mkdir("data/outbox", 0777);
+#endif
+
+    FILE *f = fopen("data/outbox/sms.out", "a");
+    if (f) {
+        time_t now = time(NULL);
+        char *timeStr = ctime(&now);
+        if (timeStr) timeStr[strlen(timeStr)-1] = '\0';
+        fprintf(f, "[%s] SMS -> %s | OTP=%s | TTL=5m\n", timeStr ? timeStr : "Unknown", mobile ? mobile : "UNKNOWN", otp ? otp : "");
+        fclose(f);
+    }
+    logSecurityEvent(mobile, "OTP_SMS_DISPATCHED", "OTP sent via SMS channel");
+    printf("OTP sent to your mobile.\n");
     return 1;
 }
 
 int sendOTPEmail(const char *email, const char *otp) {
-    // Simulate email sending
-    printf("Email sent to %s: Your Campus OTP is %s (Valid for 5 minutes)\n", email, otp);
+    // Do not print OTP to console; simulate delivery via outbox
+#ifdef _WIN32
+    _mkdir("data");
+    _mkdir("data\\outbox");
+#else
+    mkdir("data", 0777);
+    mkdir("data/outbox", 0777);
+#endif
+
+    FILE *f = fopen("data/outbox/email.out", "a");
+    if (f) {
+        time_t now = time(NULL);
+        char *timeStr = ctime(&now);
+        if (timeStr) timeStr[strlen(timeStr)-1] = '\0';
+        fprintf(f, "[%s] EMAIL -> %s | OTP=%s | TTL=5m\n", timeStr ? timeStr : "Unknown", email ? email : "UNKNOWN", otp ? otp : "");
+        fclose(f);
+    }
+    logSecurityEvent(email, "OTP_EMAIL_DISPATCHED", "OTP sent via Email channel");
+    printf("OTP sent to your email.\n");
     return 1;
 }
 
@@ -256,6 +319,13 @@ void generateSecureHash(const char *input, char *hash) {
 
 // Security Monitoring
 int logSecurityEvent(const char *userID, const char *event, const char *details) {
+    // Ensure data directory exists
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0777);
+#endif
+
     FILE *f = fopen("data/security.log", "a");
     if (!f) return 0;
     
