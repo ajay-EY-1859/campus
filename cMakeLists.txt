@@ -4,14 +4,23 @@ project(campus C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+
 # Source files
 file(GLOB SOURCES "src/main/*.c")
+
 
 # Create executable
 add_executable(campus ${SOURCES})
 
+
+
 # Include directories
 target_include_directories(campus PRIVATE include)
+target_include_directories(campus PRIVATE include/curl)
+
+# Link local curl library
+target_link_directories(campus PRIVATE lib)
+target_link_libraries(campus PRIVATE libcurl)
 
 # Windows-specific setup
 if(WIN32)

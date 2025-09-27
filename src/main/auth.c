@@ -9,6 +9,11 @@
 #include "../include/student.h"
 #include "../include/database.h"
 
+// Updated export functions to return int for error handling
+int exportProfilePDF(const char *userID, const char *filename);
+int exportProfileTXT(const char *userID, const char *filename);
+int exportProfileCSV(const char *userID, const char *filename);
+
 CampusType selectCampusType(void) {
     int choice = 0;
     printf("\nSelect Campus Type:\n");
@@ -231,11 +236,11 @@ ErrorCode viewProfile(const char *userID) {
 ErrorCode changePassword(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
-    /*if (!readProfile(&p, userID)) {
+    if (!getUserByID(userID, &p)) {
         printf("Cannot open profile for password change.\n");
         logEvent(userID, "Failed to open profile for password change");
         return ERROR_FILE_IO;
-    }*/
+    }
     char oldPass[MAX_LEN] = {0}, oldHash[MAX_LEN] = {0};
     printf("Enter current password: ");
     getHiddenPassword(oldPass);
@@ -261,9 +266,9 @@ ErrorCode changePassword(const char *userID) {
     hashPassword(newPass, newHash);
     strncpy(p.passwordHash, newHash, 63);
     p.passwordHash[63] = '\0';
-    if (!writeProfile(&p, userID)) {
-        printf("Failed to write updated profile.\n");
-        logEvent(userID, "Password change failed during write");
+    if (!updateUser(&p)) {
+        printf("Failed to save updated password.\n");
+        logEvent(userID, "Password change failed during update");
         return ERROR_FILE_IO;
     }
     logEvent(userID, "Password changed successfully");
@@ -273,19 +278,19 @@ ErrorCode changePassword(const char *userID) {
 
 ErrorCode exportProfile(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
-    
+    // Diagnostic: check if user exists before export
     Profile p = {0};
-    /*if (!readProfile(&p, userID)) {
-        printf("Cannot load profile for export.\n");
+    if (!getUserByID(userID, &p)) {
+        printf("[ERROR] Profile for userID '%s' not found in database.\n", userID);
+        printf("[DIAGNOSTIC] Please check if the user is registered and campus.db is accessible.\n");
+        logEvent(userID, "Profile export failed: user not found");
         return ERROR_FILE_IO;
-    }*/
-    
+    }
     printf("\nSelect Export Format:\n");
     printf("1. PDF\n");
     printf("2. Text File\n");
     printf("3. CSV\n");
     printf("Enter choice: ");
-    
     int format = 0;
     if (scanf("%d", &format) != 1 || format < 1 || format > 3) {
         printf("Invalid format selection.\n");
@@ -293,24 +298,27 @@ ErrorCode exportProfile(const char *userID) {
         return ERROR_INVALID_INPUT;
     }
     while (getchar() != '\n');
-    
     char filename[200] = {0};
-    
+    int exportSuccess = 1;
     switch(format) {
         case 1: // PDF
             snprintf(filename, sizeof(filename), "data/%s_profile.pdf", userID);
-            exportProfilePDF(userID, filename);
+            exportSuccess = exportProfilePDF(userID, filename);
             break;
         case 2: // Text
             snprintf(filename, sizeof(filename), "data/%s_profile.txt", userID);
-            exportProfileTXT(userID, filename);
+            exportSuccess = exportProfileTXT(userID, filename);
             break;
         case 3: // CSV
             snprintf(filename, sizeof(filename), "data/%s_profile.csv", userID);
-            exportProfileCSV(userID, filename);
+            exportSuccess = exportProfileCSV(userID, filename);
             break;
     }
-    
+    if (!exportSuccess) {
+        printf("[ERROR] Export failed. See above for details.\n");
+        logEvent(userID, "Profile export failed: export function error");
+        return ERROR_FILE_IO;
+    }
     logEvent(userID, "Profile exported");
     return SUCCESS;
 }

@@ -95,28 +95,10 @@ int verifyOTP(const char *userID, const char *otp) {
     return 0;
 }
 
-int sendOTPSMS(const char *mobile, const char *otp) {
-    // Do not print OTP to console; simulate delivery via outbox
-#ifdef _WIN32
-    _mkdir("data");
-    _mkdir("data\\outbox");
-#else
-    mkdir("data", 0777);
-    mkdir("data/outbox", 0777);
-#endif
 
-    FILE *f = fopen("data/outbox/sms.out", "a");
-    if (f) {
-        time_t now = time(NULL);
-        char *timeStr = ctime(&now);
-        if (timeStr) timeStr[strlen(timeStr)-1] = '\0';
-        fprintf(f, "[%s] SMS -> %s | OTP=%s | TTL=5m\n", timeStr ? timeStr : "Unknown", mobile ? mobile : "UNKNOWN", otp ? otp : "");
-        fclose(f);
-    }
-    logSecurityEvent(mobile, "OTP_SMS_DISPATCHED", "OTP sent via SMS channel");
-    printf("OTP sent to your mobile.\n");
-    return 1;
-}
+// Use MSG91 placeholder from send_otp_sms.c
+#include "send_otp_sms.c"
+
 
 int sendOTPEmail(const char *email, const char *otp) {
     // Do not print OTP to console; simulate delivery via outbox

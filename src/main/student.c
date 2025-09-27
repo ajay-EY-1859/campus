@@ -665,17 +665,17 @@ void exportHostelPDF(const char *residentID) {
     printf("Hostel report PDF exported to %s\n", outfile);
 }
 
-void exportProfilePDF(const char *userID, const char *filename) {
+int exportProfilePDF(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!getUserByID(&p, userID)) {
-        printf("Cannot load profile for PDF export\n");
-        return;
+    if (!getUserByID(userID, &p)) {
+        printf("[ERROR] Cannot load profile for PDF export (userID: %s)\n", userID);
+        return 0;
     }
     
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
     if (!pdf) {
-        printf("Failed to create PDF\n");
-        return;
+        printf("[ERROR] Failed to create PDF\n");
+        return 0;
     }
     
     HPDF_Page page = HPDF_AddPage(pdf);
@@ -722,15 +722,15 @@ void exportProfilePDF(const char *userID, const char *filename) {
 #endif
     HPDF_SaveToFile(pdf, filename);
     HPDF_Free(pdf);
-    
     printf("Profile PDF exported to %s\n", filename);
+    return 1;
 }
 
-void exportProfileTXT(const char *userID, const char *filename) {
+int exportProfileTXT(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!getUserByID(&p, userID)) {
-        printf("Cannot load profile for text export\n");
-        return;
+    if (!getUserByID(userID, &p)) {
+        printf("[ERROR] Cannot load profile for text export (userID: %s)\n", userID);
+        return 0;
     }
     
     // Ensure data directory exists
@@ -747,8 +747,8 @@ void exportProfileTXT(const char *userID, const char *filename) {
 #endif
     FILE *f = fopen(filename, "w");
     if (!f) {
-        printf("Cannot create text file\n");
-        return;
+        printf("[ERROR] Cannot create text file: %s\n", filename);
+        return 0;
     }
     
     fprintf(f, "=== PROFILE EXPORT ===\n\n");
@@ -762,19 +762,20 @@ void exportProfileTXT(const char *userID, const char *filename) {
     
     fclose(f);
     printf("Profile text file exported to %s\n", filename);
+    return 1;
 }
 
-void exportProfileCSV(const char *userID, const char *filename) {
+int exportProfileCSV(const char *userID, const char *filename) {
     Profile p = {0};
-    if (!getUserByID(&p, userID)) {
-        printf("Cannot load profile for CSV export\n");
-        return;
+    if (!getUserByID(userID, &p)) {
+        printf("[ERROR] Cannot load profile for CSV export (userID: %s)\n", userID);
+        return 0;
     }
     
     FILE *f = fopen(filename, "w");
     if (!f) {
-        printf("Cannot create CSV file\n");
-        return;
+        printf("[ERROR] Cannot create CSV file: %s\n", filename);
+        return 0;
     }
     
     fprintf(f, "Field,Value\n");
@@ -788,6 +789,7 @@ void exportProfileCSV(const char *userID, const char *filename) {
     
     fclose(f);
     printf("Profile CSV file exported to %s\n", filename);
+    return 1;
 }
 
 void exportRecoveredProfilePDF(const Profile *p, const char *filename) {
