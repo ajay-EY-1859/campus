@@ -1,7 +1,53 @@
+#define ACCOUNT_LOCK_FILE_PREFIX "data/lock_"
+
+// Returns 1 if account is locked, 0 otherwise
+int isAccountLocked(const char *userID) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    FILE *f = fopen(filename, "rb");
+    if (!f) return 0; // Not locked
+    time_t expiry = 0;
+    fread(&expiry, sizeof(time_t), 1, f);
+    fclose(f);
+    if (time(0) < expiry) {
+        return 1; // Still locked
+    } else {
+        remove(filename); // Lock expired, cleanup
+        return 0;
+    }
+}
+
+// Locks the account for durationMinutes (writes expiry time to lock file)
+int lockAccount(const char *userID, int durationMinutes) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    FILE *f = fopen(filename, "wb");
+    if (!f) return 0;
+    time_t expiry = time(0) + durationMinutes * 60;
+    fwrite(&expiry, sizeof(time_t), 1, f);
+    fclose(f);
+    logSecurityEvent(userID, "ACCOUNT_LOCKED", "Account locked due to failed attempts");
+    return 1;
+}
+
+// Password strength checker: returns 0 (weak) to 4 (strong)
+int checkPasswordStrength(const char *password) {
+    int len = (int)strlen(password);
+    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
+    if (len < 8) return 0;
+    for (int i = 0; i < len; i++) {
+        if ('A' <= password[i] && password[i] <= 'Z') hasUpper = 1;
+        else if ('a' <= password[i] && password[i] <= 'z') hasLower = 1;
+        else if ('0' <= password[i] && password[i] <= '9') hasDigit = 1;
+        else if (ispunct((unsigned char)password[i])) hasSpecial = 1;
+    }
+    return hasUpper + hasLower + hasDigit + hasSpecial;
+}
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stddef.h> // For NULL
 #ifdef _WIN32
 #include <direct.h>
 #else
@@ -11,6 +57,78 @@
 #include "../include/security.h"
 #include "../include/database.h"
 
+// Account Lockout Mechanism
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <stddef.h> // For NULL
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+#include <ctype.h>
+#include "../include/security.h"
+#include "../include/database.h"
+
+#define ACCOUNT_LOCK_FILE_PREFIX "data/lock_"
+
+// Returns 1 if account is locked, 0 otherwise
+int isAccountLocked(const char *userID) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    FILE *f = fopen(filename, "rb");
+    if (!f) return 0; // Not locked
+    time_t expiry = 0;
+    fread(&expiry, sizeof(time_t), 1, f);
+    fclose(f);
+    if (time(0) < expiry) {
+        return 1; // Still locked
+    } else {
+        remove(filename); // Lock expired, cleanup
+        return 0;
+    }
+}
+
+// Locks the account for durationMinutes (writes expiry time to lock file)
+int lockAccount(const char *userID, int durationMinutes) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    FILE *f = fopen(filename, "wb");
+    if (!f) return 0;
+    time_t expiry = time(0) + durationMinutes * 60;
+    fwrite(&expiry, sizeof(time_t), 1, f);
+    fclose(f);
+    logSecurityEvent(userID, "ACCOUNT_LOCKED", "Account locked due to failed attempts");
+    return 1;
+}
+
+// Unlocks the account (removes lock file)
+int unlockAccount(const char *userID) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    int res = remove(filename);
+    if (res == 0) {
+        logSecurityEvent(userID, "ACCOUNT_UNLOCKED", "Account unlocked manually");
+        return 1;
+    }
+    return 0;
+}
+
+// Password strength checker: returns 0 (weak) to 4 (strong)
+int checkPasswordStrength(const char *password) {
+    int len = (int)strlen(password);
+    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
+    if (len < 8) return 0;
+    for (int i = 0; i < len; i++) {
+        if ('A' <= password[i] && password[i] <= 'Z') hasUpper = 1;
+        else if ('a' <= password[i] && password[i] <= 'z') hasLower = 1;
+        else if ('0' <= password[i] && password[i] <= '9') hasDigit = 1;
+        else if (ispunct((unsigned char)password[i])) hasSpecial = 1;
+    }
+    return hasUpper + hasLower + hasDigit + hasSpecial;
+}
 #define MAX_SESSIONS 100
 #define SESSION_TIMEOUT 1800  // 30 minutes
 #define MAX_LOGIN_ATTEMPTS 3
@@ -97,7 +215,7 @@ int verifyOTP(const char *userID, const char *otp) {
 
 
 // Use MSG91 placeholder from send_otp_sms.c
-#include "send_otp_sms.c"
+#include "../include/send_otp_sms.h"
 
 
 int sendOTPEmail(const char *email, const char *otp) {
@@ -188,6 +306,7 @@ int destroySession(const char *sessionToken) {
     return 0;
 }
 
+
 int cleanupExpiredSessions(void) {
     int cleaned = 0;
     time_t now = time(NULL);
@@ -202,79 +321,10 @@ int cleanupExpiredSessions(void) {
     return cleaned;
 }
 
-// Security Features
-int checkPasswordStrength(const char *password) {
-    size_t len = strlen(password);
-    if (len < 8) return 0; // Too short
-    
-    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
-    
-    for (size_t i = 0; i < len; i++) {
-        if (isupper(password[i])) hasUpper = 1;
-        else if (islower(password[i])) hasLower = 1;
-        else if (isdigit(password[i])) hasDigit = 1;
-        else hasSpecial = 1;
-    }
-    
-    int strength = hasUpper + hasLower + hasDigit + hasSpecial;
-    return strength; // 1=Weak, 2=Fair, 3=Good, 4=Strong
-}
-
-int isAccountLocked(const char *userID) {
-    char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_lock.dat", userID);
-    
-    FILE *f = fopen(filename, "rb");
-    if (!f) return 0;
-    
-    time_t lockTime, duration;
-    fread(&lockTime, sizeof(time_t), 1, f);
-    fread(&duration, sizeof(time_t), 1, f);
-    fclose(f);
-    
-    if (time(NULL) - lockTime < duration) {
-        return 1; // Still locked
-    }
-    
-    // Lock expired, remove lock file
-    remove(filename);
-    return 0;
-}
-
-int lockAccount(const char *userID, int durationMinutes) {
-    char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_lock.dat", userID);
-    
-    FILE *f = fopen(filename, "wb");
-    if (!f) return 0;
-    
-    time_t lockTime = time(NULL);
-    time_t duration = durationMinutes * 60;
-    
-    fwrite(&lockTime, sizeof(time_t), 1, f);
-    fwrite(&duration, sizeof(time_t), 1, f);
-    fclose(f);
-    
-    logSecurityEvent(userID, "ACCOUNT_LOCKED", "Account locked due to security policy");
-    return 1;
-}
-
-int unlockAccount(const char *userID) {
-    char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_lock.dat", userID);
-    
-    if (remove(filename) == 0) {
-        logSecurityEvent(userID, "ACCOUNT_UNLOCKED", "Account manually unlocked");
-        return 1;
-    }
-    return 0;
-}
-
-// Simple encryption (for demo - use proper encryption in production)
 void encryptData(const char *data, char *encrypted, const char *key) {
-    size_t keyLen = strlen(key);
+    // Simple XOR encryption (for demonstration only)
     size_t dataLen = strlen(data);
-    
+    size_t keyLen = strlen(key);
     for (size_t i = 0; i < dataLen; i++) {
         encrypted[i] = data[i] ^ key[i % keyLen];
     }
@@ -324,14 +374,8 @@ int logSecurityEvent(const char *userID, const char *event, const char *details)
     return 1;
 }
 
-int detectSuspiciousActivity(const char *userID) {
-    int attempts = getLoginAttempts(userID);
-    if (attempts >= MAX_LOGIN_ATTEMPTS) {
-        logSecurityEvent(userID, "SUSPICIOUS_ACTIVITY", "Multiple failed login attempts detected");
-        return 1;
-    }
-    return 0;
-}
+
+
 
 int generateSecurityReport(const char *reportPath) {
     FILE *report = fopen(reportPath, "w");

@@ -22,9 +22,9 @@ void exportHospitalPDF(const char *patientID);
 void exportHostelPDF(const char *residentID);
 
 // Profile export functions
-void exportProfilePDF(const char *userID, const char *filename);
-void exportProfileTXT(const char *userID, const char *filename);
-void exportProfileCSV(const char *userID, const char *filename);
+int exportProfilePDF(const char *userID, const char *filename);
+int exportProfileTXT(const char *userID, const char *filename);
+int exportProfileCSV(const char *userID, const char *filename);
 
 // Recovered profile export functions
 void exportRecoveredProfilePDF(const Profile *p, const char *filename);

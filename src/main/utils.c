@@ -36,7 +36,11 @@ ErrorCode getProfilePath(char *path, const char *userID) {
 // Logging function
 ErrorCode logEvent(const char *userID, const char *action) {
     if (!userID || !action) return ERROR_INVALID_INPUT;
-    
+#ifdef _WIN32
+    _mkdir("logs");
+#else
+    mkdir("logs", 0777);
+#endif
     FILE *log = fopen(LOG_DIR "login_audit.log", "a");
     if (!log) {
         // Optional fallback: stderr output if logging fails
@@ -114,3 +118,6 @@ ErrorCode getCurrentTime(char *buffer, size_t size) {
     }
     return SUCCESS;
 }
+
+
+

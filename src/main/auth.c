@@ -9,10 +9,7 @@
 #include "../include/student.h"
 #include "../include/database.h"
 
-// Updated export functions to return int for error handling
-int exportProfilePDF(const char *userID, const char *filename);
-int exportProfileTXT(const char *userID, const char *filename);
-int exportProfileCSV(const char *userID, const char *filename);
+
 
 CampusType selectCampusType(void) {
     int choice = 0;
@@ -21,14 +18,14 @@ CampusType selectCampusType(void) {
     printf("2. College\n");
     printf("3. Hospital\n");
     printf("4. Hostel\n");
-    printf("Enter choice: ");
-    
-    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 4) {
-        printf("Invalid choice. Enter 1-4: ");
-        while (getchar() != '\n');
+    while (1) {
+        printf("Enter choice: ");
+        if (safeGetInt(&choice, 1, 4) == SUCCESS) {
+            break;
+        } else {
+            printf("Invalid choice. Enter 1-4.\n");
+        }
     }
-    // Clear the input buffer after successful input
-    while (getchar() != '\n');
     return (CampusType)choice;
 }
 
@@ -57,7 +54,7 @@ ErrorCode getHiddenPassword(char *password) {
     
     printf("(input hidden): ");
     int i = 0;
-#ifdef _WIN32
+    #ifdef _WIN32
     char ch = 0;
     while ((ch = (char)_getch()) != '\r' && i < MAX_LEN - 1) {
         if (ch == '\b' && i > 0) { i--; printf("\b \b"); continue; }
@@ -67,14 +64,12 @@ ErrorCode getHiddenPassword(char *password) {
     }
     password[i] = '\0';
     printf("\n");
-#else
-    if (fgets(password, MAX_LEN, stdin) != NULL) {
-        password[strcspn(password, "\n")] = '\0';
-    } else {
+    #else
+    if (safeGetString(password, MAX_LEN) != SUCCESS) {
         password[0] = '\0';
         return ERROR_INVALID_INPUT;
     }
-#endif
+    #endif
     return SUCCESS;
 }
 
@@ -152,33 +147,32 @@ ErrorCode editProfile(const char *userID) {
     printf("\nEdit Profile\n");
     printf("Current Name: %s\n", p.name);
     printf("Enter new name (or press Enter to keep): ");
+
     char buf[MAX_LEN] = {0};
-    if (fgets(buf, MAX_LEN, stdin) != NULL && buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
+    printf("Current Name: %s\n", p.name);
+    printf("Enter new name (or press Enter to keep): ");
+    if (safeGetString(buf, MAX_LEN) == SUCCESS && buf[0] != '\0') {
         strncpy(p.name, buf, MAX_LEN - 1);
         p.name[MAX_LEN - 1] = '\0';
     }
 
     printf("Current %s: %s\n", getCampusName(p.campusType), p.instituteName);
     printf("Enter new %s (or press Enter to keep): ", getCampusName(p.campusType));
-    if (fgets(buf, MAX_LEN, stdin) != NULL && buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
+    if (safeGetString(buf, MAX_LEN) == SUCCESS && buf[0] != '\0') {
         strncpy(p.instituteName, buf, MAX_LEN - 1);
         p.instituteName[MAX_LEN - 1] = '\0';
     }
 
     printf("Current Department: %s\n", p.department);
     printf("Enter new department (or press Enter to keep): ");
-    if (fgets(buf, 50, stdin) != NULL && buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
+    if (safeGetString(buf, 50) == SUCCESS && buf[0] != '\0') {
         strncpy(p.department, buf, 49);
         p.department[49] = '\0';
     }
 
     printf("Current Email: %s\n", p.email);
     printf("Enter new email (or press Enter to keep): ");
-    if (fgets(buf, MAX_LEN, stdin) != NULL && buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
+    if (safeGetString(buf, MAX_LEN) == SUCCESS && buf[0] != '\0') {
         if (validateEmail(buf)) {
             strncpy(p.email, buf, MAX_LEN - 1);
             p.email[MAX_LEN - 1] = '\0';
@@ -189,8 +183,7 @@ ErrorCode editProfile(const char *userID) {
 
     printf("Current Mobile: %s\n", p.mobile);
     printf("Enter new mobile (or press Enter to keep): ");
-    if (fgets(buf, 15, stdin) != NULL && buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
+    if (safeGetString(buf, 15) == SUCCESS && buf[0] != '\0') {
         if (validateMobile(buf)) {
             strncpy(p.mobile, buf, 14);
             p.mobile[14] = '\0';
@@ -292,14 +285,16 @@ ErrorCode exportProfile(const char *userID) {
     printf("3. CSV\n");
     printf("Enter choice: ");
     int format = 0;
-    if (scanf("%d", &format) != 1 || format < 1 || format > 3) {
-        printf("Invalid format selection.\n");
-        while (getchar() != '\n');
-        return ERROR_INVALID_INPUT;
+    while (1) {
+        printf("Enter choice: ");
+        if (safeGetInt(&format, 1, 3) == SUCCESS) {
+            break;
+        } else {
+            printf("Invalid format selection.\n");
+        }
     }
-    while (getchar() != '\n');
     char filename[200] = {0};
-    int exportSuccess = 1;
+    int exportSuccess = 0;
     switch(format) {
         case 1: // PDF
             snprintf(filename, sizeof(filename), "data/%s_profile.pdf", userID);
@@ -320,6 +315,7 @@ ErrorCode exportProfile(const char *userID) {
         return ERROR_FILE_IO;
     }
     logEvent(userID, "Profile exported");
+    printf("Profile exported successfully!\n");
     return SUCCESS;
 }
 
@@ -330,33 +326,29 @@ ErrorCode recoverUserID(void) {
     printf("Enter choice: ");
     
     int choice = 0;
-    if (scanf("%d", &choice) != 1 || (choice != 1 && choice != 2)) {
-        printf("Invalid choice.\n");
-        while (getchar() != '\n');
-        return ERROR_INVALID_INPUT;
+    while (1) {
+        printf("Enter choice: ");
+        if (safeGetInt(&choice, 1, 2) == SUCCESS) {
+            break;
+        } else {
+            printf("Invalid choice.\n");
+        }
     }
-    while (getchar() != '\n');
-    
     char searchTerm[MAX_LEN] = {0};
-    
     if (choice == 1) {
         printf("Enter mobile number: ");
-        if (fgets(searchTerm, sizeof(searchTerm), stdin) == NULL) {
+        if (safeGetString(searchTerm, sizeof(searchTerm)) != SUCCESS) {
             return ERROR_INVALID_INPUT;
         }
-        searchTerm[strcspn(searchTerm, "\n")] = '\0';
-        
         if (validateMobile(searchTerm) != SUCCESS) {
             printf("Invalid mobile number format.\n");
             return ERROR_INVALID_INPUT;
         }
     } else {
         printf("Enter email address: ");
-        if (fgets(searchTerm, sizeof(searchTerm), stdin) == NULL) {
+        if (safeGetString(searchTerm, sizeof(searchTerm)) != SUCCESS) {
             return ERROR_INVALID_INPUT;
         }
-        searchTerm[strcspn(searchTerm, "\n")] = '\0';
-        
         if (validateEmail(searchTerm) != SUCCESS) {
             printf("Invalid email format.\n");
             return ERROR_INVALID_INPUT;
@@ -369,11 +361,11 @@ ErrorCode recoverUserID(void) {
         printf("\nUser ID found: %s\n", foundUserID);
         printf("\nWould you like to export this information? (y/n): ");
         
-        char exportChoice = 0;
-        if (scanf(" %c", &exportChoice) == 1 && (exportChoice == 'y' || exportChoice == 'Y')) {
+        char exportChoiceStr[8] = {0};
+        printf("Would you like to export this information? (y/n): ");
+        if (safeGetString(exportChoiceStr, sizeof(exportChoiceStr)) == SUCCESS && (exportChoiceStr[0] == 'y' || exportChoiceStr[0] == 'Y')) {
             exportProfile(foundUserID);
         }
-        while (getchar() != '\n');
         
         logEvent(foundUserID, "User ID recovered successfully");
         return SUCCESS;

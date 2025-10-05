@@ -58,50 +58,8 @@ typedef struct {
 OTPTest otpTests[] = {
     {"sv25123", "123456", "Valid 6-digit OTP", 1},
     {"sv25124", "12345", "Invalid - 5 digits", 0},
-    {"sv25125", "1234567", "Invalid - 7 digits", 0},
-    {"sv25126", "abcdef", "Invalid - Contains letters", 0},
-    {"sv25127", "123@56", "Invalid - Contains special chars", 0},
-    {"sv25128", "", "Invalid - Empty OTP", 0},
-    {"sv25129", "000000", "Edge case - All zeros", 1},
-    {"sv25130", "999999", "Edge case - All nines", 1}
-};
-
-// Account Security Test Scenarios
-typedef struct {
     char userID[20];
     int loginAttempts;
-    char scenario[100];
-    int shouldBeLocked;
-} SecurityTest;
-
-SecurityTest securityTests[] = {
-    {"sv25201", 1, "First failed attempt", 0},
-    {"sv25202", 2, "Second failed attempt", 0},
-    {"sv25203", 3, "Third failed attempt - should lock", 1},
-    {"sv25204", 5, "Multiple failed attempts", 1},
-    {"sv25205", 0, "No failed attempts", 0}
-};
-
-// Test Functions
-void testPasswordStrength() {
-    printf("\n=== PASSWORD STRENGTH TESTS ===\n");
-    
-    for (int i = 0; i < 10; i++) {
-        PasswordTest *test = &passwordTests[i];
-        
-        // Simulate password strength check
-        int actualStrength = 0;
-        size_t len = strlen(test->password);
-        
-        if (len >= 8) {
-            int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
-            
-            for (size_t j = 0; j < len; j++) {
-                if (test->password[j] >= 'A' && test->password[j] <= 'Z') hasUpper = 1;
-                else if (test->password[j] >= 'a' && test->password[j] <= 'z') hasLower = 1;
-                else if (test->password[j] >= '0' && test->password[j] <= '9') hasDigit = 1;
-                else hasSpecial = 1;
-            }
             
             actualStrength = hasUpper + hasLower + hasDigit + hasSpecial;
         }

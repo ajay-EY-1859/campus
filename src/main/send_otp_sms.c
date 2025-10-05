@@ -29,8 +29,19 @@ int sendOTPSMS(const char *mobile, const char *otp) {
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
+        // Force use of local CA bundle for SSL
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
+        // Suppress MSG91 API response output
+#ifdef _WIN32
+        FILE *nul = fopen("NUL", "w");
+#else
+        FILE *nul = fopen("/dev/null", "w");
+#endif
+        if (nul) {
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, nul);
+        }
         res = curl_easy_perform(curl);
+        if (nul) fclose(nul);
         if (res == CURLE_OK) {
             printf("OTP sent to mobile %s via MSG91.\n", mobile);
             success = 1;

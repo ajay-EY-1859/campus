@@ -21,8 +21,6 @@ typedef struct {
 } Session;
 
 // Advanced authentication functions
-int generateOTP(const char *userID, char *otp);
-int verifyOTP(const char *userID, const char *otp);
 int sendOTPSMS(const char *mobile, const char *otp);
 int sendOTPEmail(const char *email, const char *otp);
 

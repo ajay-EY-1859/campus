@@ -31,12 +31,13 @@ void dashboard(const char *userID) {
         printf("7. Export Profile\n");
         printf("8. Logout\n");
         printf("9. Exit Application\n");
-        printf("Select option: ");
-        
-        if (scanf("%d", &choice) != 1) {
-            printf("Invalid input\n");
-            while (getchar() != '\n');
-            continue;
+        while (1) {
+            printf("Select option: ");
+            if (safeGetInt(&choice, 1, 9) == SUCCESS) {
+                break;
+            } else {
+                printf("Invalid input\n");
+            }
         }
 
         switch (choice) {

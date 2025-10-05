@@ -64,7 +64,6 @@ ErrorCode signup() {
             printf("Block/Wing: ");
             break;
     }
-    
     do {
         if (safeGetString(p.department, sizeof(p.department)) == SUCCESS && strlen(p.department) > 0) {
             break;
@@ -91,6 +90,19 @@ ErrorCode signup() {
                     printf("Invalid subject name. Please try again: ");
                 } while (1);
             }
+            // Validation: ensure all fields are non-empty and unique
+            for (int i = 0; i < p.dataCount; i++) {
+                if (strlen(p.dataFields[i]) == 0) {
+                    printf("Error: Subject name cannot be empty.\n");
+                    return ERROR_INVALID_INPUT;
+                }
+                for (int j = i + 1; j < p.dataCount; j++) {
+                    if (strcmp(p.dataFields[i], p.dataFields[j]) == 0) {
+                        printf("Error: Duplicate subject name '%s'.\n", p.dataFields[i]);
+                        return ERROR_INVALID_INPUT;
+                    }
+                }
+            }
             break;
         case CAMPUS_COLLEGE:
             do {
@@ -108,6 +120,19 @@ ErrorCode signup() {
                     }
                     printf("Invalid course name. Please try again: ");
                 } while (1);
+            }
+            // Validation: ensure all fields are non-empty and unique
+            for (int i = 0; i < p.dataCount; i++) {
+                if (strlen(p.dataFields[i]) == 0) {
+                    printf("Error: Course name cannot be empty.\n");
+                    return ERROR_INVALID_INPUT;
+                }
+                for (int j = i + 1; j < p.dataCount; j++) {
+                    if (strcmp(p.dataFields[i], p.dataFields[j]) == 0) {
+                        printf("Error: Duplicate course name '%s'.\n", p.dataFields[i]);
+                        return ERROR_INVALID_INPUT;
+                    }
+                }
             }
             break;
         case CAMPUS_HOSPITAL:
@@ -162,7 +187,6 @@ ErrorCode signup() {
     do {
         printf("Password ");
         getHiddenPassword(password);
-        
         // Check password strength
         int strength = checkPasswordStrength(password);
         if (strength >= 3) {
@@ -171,7 +195,6 @@ ErrorCode signup() {
         printf("Password is too weak. Please try again.\n");
         printf("Requirements: 8+ chars, uppercase, lowercase, digit, special char\n");
     } while (1);
-    
     hashPassword(password, p.passwordHash);
     generateUserID(&p);
 
@@ -180,12 +203,7 @@ ErrorCode signup() {
         return ERROR_DATABASE;
     }
 
-    // Also save profile for dashboard access
-    /*if (!writeProfile(&p, p.userID)) {
-        printf("Warning: Profile file creation failed\n");
-    }
-
-*/    logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
+    logActivity(p.userID, "USER_REGISTERED", "New user registration completed");
 
     FILE *userFile = fopen(USER_STATE_FILE, "w");
     if (userFile) {

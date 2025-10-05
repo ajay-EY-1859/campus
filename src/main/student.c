@@ -56,17 +56,23 @@ void saveSchoolData(const char *studentID) {
     int marks[MAX_SUBJECTS] = {0}, fullMarks[MAX_SUBJECTS] = {0};
     printf("\nEnter marks for subjects:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        printf("%s - Marks: ", p.dataFields[i]);
-        if (!safeGetInt(&marks[i], 0, 100)) 
-            
-        {
-            printf("Invalid marks entered\n");
-            return;
+        // Loop until valid marks are entered
+        while (1) {
+            printf("%s - Marks: ", p.dataFields[i]);
+            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) {
+                break;
+            } else {
+                printf("Invalid marks entered. Please enter a value between 0 and 100.\n");
+            }
         }
-        printf("Full marks: ");
-        if (!safeGetInt(&fullMarks[i], 1, 100)) {
-            printf("Invalid full marks entered\n");
-            return;
+        // Loop until valid full marks are entered
+        while (1) {
+            printf("Full marks: ");
+            if (safeGetInt(&fullMarks[i], 1, 100) == SUCCESS) {
+                break;
+            } else {
+                printf("Invalid full marks entered. Please enter a value between 1 and 100.\n");
+            }
         }
     }
     
@@ -129,15 +135,23 @@ void saveCollegeData(const char *studentID) {
     int marks[MAX_SUBJECTS] = {0}, credits[MAX_SUBJECTS] = {0};
     printf("\nEnter semester marks:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        printf("%s - Marks: ", p.dataFields[i]);
-        if (!safeGetInt(&marks[i], 0, 100)) {
-            printf("Invalid marks entered\n");
-            return;
+        // Loop until valid marks are entered
+        while (1) {
+            printf("%s - Marks: ", p.dataFields[i]);
+            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) {
+                break;
+            } else {
+                printf("Invalid marks entered. Please enter a value between 0 and 100.\n");
+            }
         }
-        printf("Credits: ");
-        if (!safeGetInt(&credits[i], 1, 10)) {
-            printf("Invalid credits entered\n");
-            return;
+        // Loop until valid credits are entered
+        while (1) {
+            printf("Credits: ");
+            if (safeGetInt(&credits[i], 1, 10) == SUCCESS) {
+                break;
+            } else {
+                printf("Invalid credits entered. Please enter a value between 1 and 10.\n");
+            }
         }
     }
     
@@ -194,7 +208,7 @@ void loadCollegeData(const char *studentID) {
 // Hospital Data Management
 void saveHospitalData(const char *patientID) {
     Profile p = {0};
-    if (!getUserByID(&p, patientID)) {
+    if (!getUserByID(patientID, &p)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -202,10 +216,13 @@ void saveHospitalData(const char *patientID) {
     char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter medical data:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        printf("%s: ", p.dataFields[i]);
-        if (!safeGetString(values[i], sizeof(values[i]))) {
-            printf("Invalid input entered\n");
-            return;
+        while (1) {
+            printf("%s: ", p.dataFields[i]);
+            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) {
+                break;
+            } else {
+                printf("Invalid input entered. Please try again.\n");
+            }
         }
     }
     
@@ -254,7 +271,7 @@ void loadHospitalData(const char *patientID) {
 // Hostel Data Management
 void saveHostelData(const char *residentID) {
     Profile p = {0};
-    if (!getUserByID(&p, residentID)) {
+    if (!getUserByID(residentID, &p)) {
         printf("Cannot load profile\n");
         return;
     }
@@ -262,10 +279,13 @@ void saveHostelData(const char *residentID) {
     char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter hostel data:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        printf("%s: ", p.dataFields[i]);
-        if (!safeGetString(values[i], sizeof(values[i]))) {
-            printf("Invalid input entered\n");
-            return;
+        while (1) {
+            printf("%s: ", p.dataFields[i]);
+            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) {
+                break;
+            } else {
+                printf("Invalid input entered. Please try again.\n");
+            }
         }
     }
     
@@ -336,7 +356,7 @@ void exportSchoolPDF(const char *studentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!getUserByID(&p, studentID)) {
+    if (!getUserByID(studentID, &p)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -435,7 +455,7 @@ void exportCollegePDF(const char *studentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!getUserByID(&p, studentID)) {
+    if (!getUserByID(studentID, &p)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -525,7 +545,7 @@ void exportHospitalPDF(const char *patientID) {
     fclose(f);
     
     Profile p = {0};
-    if (!getUserByID(&p, patientID)) {
+    if (!getUserByID(patientID, &p)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -605,7 +625,7 @@ void exportHostelPDF(const char *residentID) {
     fclose(f);
     
     Profile p = {0};
-    if (!getUserByID(&p, residentID)) {
+    if (!getUserByID(residentID, &p)) {
         printf("Cannot load profile for PDF\n");
         return;
     }
@@ -669,51 +689,40 @@ int exportProfilePDF(const char *userID, const char *filename) {
     Profile p = {0};
     if (!getUserByID(userID, &p)) {
         printf("[ERROR] Cannot load profile for PDF export (userID: %s)\n", userID);
-        return 0;
+        return 1;
     }
-    
     HPDF_Doc pdf = HPDF_New(NULL, NULL);
     if (!pdf) {
         printf("[ERROR] Failed to create PDF\n");
-        return 0;
+        return 1;
     }
-    
     HPDF_Page page = HPDF_AddPage(pdf);
     HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
     HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
     HPDF_Page_SetFontAndSize(page, font, 12);
-    
     float y = 800;
     char buffer[256];
-    
     HPDF_Page_BeginText(page);
     HPDF_Page_TextOut(page, 200, y, "Profile Export");
     y -= 30;
-    
     snprintf(buffer, sizeof(buffer), "Name: %s", p.name);
     HPDF_Page_TextOut(page, 50, y, buffer);
     y -= 20;
-    
     snprintf(buffer, sizeof(buffer), "%s: %s", getCampusName(p.campusType), p.instituteName);
     HPDF_Page_TextOut(page, 50, y, buffer);
     y -= 20;
-    
     snprintf(buffer, sizeof(buffer), "Department: %s", p.department);
     HPDF_Page_TextOut(page, 50, y, buffer);
     y -= 20;
-    
     snprintf(buffer, sizeof(buffer), "Email: %s", p.email);
     HPDF_Page_TextOut(page, 50, y, buffer);
     y -= 20;
-    
     snprintf(buffer, sizeof(buffer), "Mobile: %s", p.mobile);
     HPDF_Page_TextOut(page, 50, y, buffer);
     y -= 20;
-    
     snprintf(buffer, sizeof(buffer), "User ID: %s", p.userID);
     HPDF_Page_TextOut(page, 50, y, buffer);
     HPDF_Page_EndText(page);
-    
     // Ensure data directory exists (for custom filename paths under data/)
 #ifdef _WIN32
     _mkdir("data");
@@ -730,15 +739,8 @@ int exportProfileTXT(const char *userID, const char *filename) {
     Profile p = {0};
     if (!getUserByID(userID, &p)) {
         printf("[ERROR] Cannot load profile for text export (userID: %s)\n", userID);
-        return 0;
+        return 1;
     }
-    
-    // Ensure data directory exists
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0777);
-#endif
     // Ensure data directory exists
 #ifdef _WIN32
     _mkdir("data");
@@ -748,9 +750,8 @@ int exportProfileTXT(const char *userID, const char *filename) {
     FILE *f = fopen(filename, "w");
     if (!f) {
         printf("[ERROR] Cannot create text file: %s\n", filename);
-        return 0;
+        return 1;
     }
-    
     fprintf(f, "=== PROFILE EXPORT ===\n\n");
     fprintf(f, "Name: %s\n", p.name);
     fprintf(f, "%s: %s\n", getCampusName(p.campusType), p.instituteName);
@@ -759,7 +760,6 @@ int exportProfileTXT(const char *userID, const char *filename) {
     fprintf(f, "Mobile: %s\n", p.mobile);
     fprintf(f, "User ID: %s\n", p.userID);
     fprintf(f, "Campus Type: %s\n", getCampusName(p.campusType));
-    
     fclose(f);
     printf("Profile text file exported to %s\n", filename);
     return 1;
@@ -769,15 +769,13 @@ int exportProfileCSV(const char *userID, const char *filename) {
     Profile p = {0};
     if (!getUserByID(userID, &p)) {
         printf("[ERROR] Cannot load profile for CSV export (userID: %s)\n", userID);
-        return 0;
+        return 1;
     }
-    
     FILE *f = fopen(filename, "w");
     if (!f) {
         printf("[ERROR] Cannot create CSV file: %s\n", filename);
-        return 0;
+        return 1;
     }
-    
     fprintf(f, "Field,Value\n");
     fprintf(f, "Name,%s\n", p.name);
     fprintf(f, "%s,%s\n", getCampusName(p.campusType), p.instituteName);
@@ -786,7 +784,6 @@ int exportProfileCSV(const char *userID, const char *filename) {
     fprintf(f, "Mobile,%s\n", p.mobile);
     fprintf(f, "User ID,%s\n", p.userID);
     fprintf(f, "Campus Type,%s\n", getCampusName(p.campusType));
-    
     fclose(f);
     printf("Profile CSV file exported to %s\n", filename);
     return 1;
