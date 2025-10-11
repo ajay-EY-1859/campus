@@ -136,13 +136,11 @@ int validateStudentID(const char *studentID) {
 ErrorCode editProfile(const char *userID) {
     if (!userID) return ERROR_INVALID_INPUT;
     Profile p = {0};
-    if (!getUserByID(userID, &p))
-    
-    /*if (!readProfile(&p, userID)) {
+    if (!getUserByID(userID, &p)) {
         printf("Cannot open profile for editing.\n");
         logEvent(userID, "Failed to open profile for editing");
         return ERROR_FILE_IO;
-    }*/
+    }
 
     printf("\nEdit Profile\n");
     printf("Current Name: %s\n", p.name);

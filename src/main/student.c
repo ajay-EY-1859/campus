@@ -82,7 +82,7 @@ void saveSchoolData(const char *studentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     
     FILE *f = fopen(datafile, "wb");
@@ -161,7 +161,7 @@ void saveCollegeData(const char *studentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     
     FILE *f = fopen(datafile, "wb");
@@ -232,7 +232,7 @@ void saveHospitalData(const char *patientID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     
     FILE *f = fopen(datafile, "wb");
@@ -295,7 +295,7 @@ void saveHostelData(const char *residentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     
     FILE *f = fopen(datafile, "wb");
@@ -422,7 +422,7 @@ void exportSchoolPDF(const char *studentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
@@ -516,7 +516,7 @@ void exportCollegePDF(const char *studentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
@@ -596,7 +596,7 @@ void exportHospitalPDF(const char *patientID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
@@ -676,7 +676,7 @@ void exportHostelPDF(const char *residentID) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     HPDF_SaveToFile(pdf, outfile);
     HPDF_Free(pdf);
@@ -727,7 +727,7 @@ int exportProfilePDF(const char *userID, const char *filename) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     HPDF_SaveToFile(pdf, filename);
     HPDF_Free(pdf);
@@ -745,7 +745,7 @@ int exportProfileTXT(const char *userID, const char *filename) {
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     FILE *f = fopen(filename, "w");
     if (!f) {

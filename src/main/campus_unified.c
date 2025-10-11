@@ -32,12 +32,13 @@ FILE* loadFileForStudent(const char* studentID, const char* mode, const char* ca
     if (!studentID || !mode) return NULL;
     
     char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
+    int written = snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
+    if (written < 0 || written >= (int)sizeof(datafile)) return NULL;
     
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
     
     FILE *f = fopen(datafile, mode);

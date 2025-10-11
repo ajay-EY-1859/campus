@@ -15,20 +15,22 @@ static const char *DB_PATH = "data/campus.db";
 #define USER_RECORD_HEADER "USER_RECORD"
 
 ErrorCode initDatabase(void) {
-    // Create data directory if not exists
 #ifdef _WIN32
-    system("if not exist data mkdir data");
+    int result = system("if not exist data mkdir data");
 #else
-    system("mkdir -p data");
+    int result = system("mkdir -p data");
 #endif
+    if (result != 0) {
+        printf("Warning: Failed to create data directory\n");
+    }
 
-    // Initialize database file
     dbFile = fopen(DB_PATH, "a+");
     if (!dbFile) {
         printf("Failed to initialize database\n");
         return ERROR_DATABASE;
     }
     fclose(dbFile);
+    dbFile = NULL;
     
     printf("Database initialized successfully\n");
     return SUCCESS;
@@ -166,7 +168,8 @@ int saveUserData(const char *userID, const char *dataType, const void *data, siz
     if (!userID || !dataType || !data || dataSize == 0) return 0;
     
     char filename[200] = {0};
-    snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
+    int written = snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
+    if (written < 0 || written >= (int)sizeof(filename)) return 0;
     
     FILE *f = fopen(filename, "wb");
     if (!f) {
@@ -189,7 +192,8 @@ int loadUserData(const char *userID, const char *dataType, void *data, size_t *d
     if (!userID || !dataType || !data || !dataSize) return 0;
     
     char filename[200] = {0};
-    snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
+    int written = snprintf(filename, sizeof(filename), "data/%s_%s.dat", userID, dataType);
+    if (written < 0 || written >= (int)sizeof(filename)) return 0;
     
     FILE *f = fopen(filename, "rb");
     if (!f) return 0;
@@ -222,24 +226,28 @@ int loadUserData(const char *userID, const char *dataType, void *data, size_t *d
 }
 
 int logActivity(const char *userID, const char *action, const char *details) {
+    if (!userID || !action || !details) return 0;
     FILE *f = fopen("data/audit.log", "a");
     if (!f) return 0;
     
     time_t now = time(NULL);
     char *timeStr = ctime(&now);
     if (timeStr) {
-        timeStr[strlen(timeStr) - 1] = '\0'; // Remove newline
+        timeStr[strlen(timeStr) - 1] = '\0';
     }
     
     fprintf(f, "[%s] User: %s | Action: %s | Details: %s\n", 
-            timeStr ? timeStr : "Unknown", userID, action, details);
+            timeStr ? timeStr : "Unknown", userID ? userID : "UNKNOWN", 
+            action ? action : "NO_ACTION", details ? details : "NO_DETAILS");
     fclose(f);
     return 1;
 }
 
 int getLoginAttempts(const char *userID) {
+    if (!userID) return 0;
     char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    int written = snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    if (written < 0 || written >= (int)sizeof(filename)) return 0;
     
     FILE *f = fopen(filename, "rb");
     if (!f) return 0;
@@ -251,8 +259,10 @@ int getLoginAttempts(const char *userID) {
 }
 
 int resetLoginAttempts(const char *userID) {
+    if (!userID) return 0;
     char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    int written = snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    if (written < 0 || written >= (int)sizeof(filename)) return 0;
     
     FILE *f = fopen(filename, "wb");
     if (!f) return 0;
@@ -264,11 +274,13 @@ int resetLoginAttempts(const char *userID) {
 }
 
 int incrementLoginAttempts(const char *userID) {
+    if (!userID) return 0;
     int attempts = getLoginAttempts(userID);
     attempts++;
     
     char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    int written = snprintf(filename, sizeof(filename), "data/%s_attempts.dat", userID);
+    if (written < 0 || written >= (int)sizeof(filename)) return 0;
     
     FILE *f = fopen(filename, "wb");
     if (!f) return 0;
@@ -279,14 +291,18 @@ int incrementLoginAttempts(const char *userID) {
 }
 
 int backupDatabase(const char *backupPath) {
+    if (!backupPath) return 0;
     char command[300];
-    snprintf(command, sizeof(command), "copy \"%s\" \"%s\"", DB_PATH, backupPath);
+    int written = snprintf(command, sizeof(command), "copy \"%s\" \"%s\"", DB_PATH, backupPath);
+    if (written < 0 || written >= (int)sizeof(command)) return 0;
     return system(command) == 0;
 }
 
 int restoreDatabase(const char *backupPath) {
+    if (!backupPath) return 0;
     char command[300];
-    snprintf(command, sizeof(command), "copy \"%s\" \"%s\"", backupPath, DB_PATH);
+    int written = snprintf(command, sizeof(command), "copy \"%s\" \"%s\"", backupPath, DB_PATH);
+    if (written < 0 || written >= (int)sizeof(command)) return 0;
     return system(command) == 0;
 }
 
@@ -358,7 +374,8 @@ int searchUserByContact(const char *contact, const char *type, char *foundUserID
             if (fread(&temp, sizeof(Profile), 1, f) == 1) {
                 if ((strcmp(type, "mobile") == 0 && strcmp(temp.mobile, contact) == 0) ||
                     (strcmp(type, "email") == 0 && strcmp(temp.email, contact) == 0)) {
-                    strcpy(foundUserID, temp.userID);
+                    strncpy(foundUserID, temp.userID, 19);
+                    foundUserID[19] = '\0';
                     fclose(f);
                     return 1; // Found
                 }

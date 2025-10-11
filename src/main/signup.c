@@ -24,7 +24,10 @@ void generateUserID(Profile *p) {
     initials[2] = '\0';
     srand((unsigned int)time(NULL));
     int serial = rand() % 900 + 100;
-    snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
+    int written = snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
+    if (written < 0 || written >= (int)sizeof(p->userID)) {
+        p->userID[0] = '\0';
+    }
 }
 
 ErrorCode signup() {
@@ -137,16 +140,23 @@ ErrorCode signup() {
             break;
         case CAMPUS_HOSPITAL:
             p.dataCount = 4;
-            strcpy(p.dataFields[0], "Blood Pressure");
-            strcpy(p.dataFields[1], "Temperature");
-            strcpy(p.dataFields[2], "Weight");
-            strcpy(p.dataFields[3], "Diagnosis");
+            strncpy(p.dataFields[0], "Blood Pressure", sizeof(p.dataFields[0]) - 1);
+            strncpy(p.dataFields[1], "Temperature", sizeof(p.dataFields[1]) - 1);
+            strncpy(p.dataFields[2], "Weight", sizeof(p.dataFields[2]) - 1);
+            strncpy(p.dataFields[3], "Diagnosis", sizeof(p.dataFields[3]) - 1);
+            p.dataFields[0][sizeof(p.dataFields[0]) - 1] = '\0';
+            p.dataFields[1][sizeof(p.dataFields[1]) - 1] = '\0';
+            p.dataFields[2][sizeof(p.dataFields[2]) - 1] = '\0';
+            p.dataFields[3][sizeof(p.dataFields[3]) - 1] = '\0';
             break;
         case CAMPUS_HOSTEL:
             p.dataCount = 3;
-            strcpy(p.dataFields[0], "Room Number");
-            strcpy(p.dataFields[1], "Floor");
-            strcpy(p.dataFields[2], "Mess Plan");
+            strncpy(p.dataFields[0], "Room Number", sizeof(p.dataFields[0]) - 1);
+            strncpy(p.dataFields[1], "Floor", sizeof(p.dataFields[1]) - 1);
+            strncpy(p.dataFields[2], "Mess Plan", sizeof(p.dataFields[2]) - 1);
+            p.dataFields[0][sizeof(p.dataFields[0]) - 1] = '\0';
+            p.dataFields[1][sizeof(p.dataFields[1]) - 1] = '\0';
+            p.dataFields[2][sizeof(p.dataFields[2]) - 1] = '\0';
             break;
     }
 

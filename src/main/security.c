@@ -1,68 +1,8 @@
-#define ACCOUNT_LOCK_FILE_PREFIX "data/lock_"
-
-// Returns 1 if account is locked, 0 otherwise
-int isAccountLocked(const char *userID) {
-    char filename[256];
-    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
-    FILE *f = fopen(filename, "rb");
-    if (!f) return 0; // Not locked
-    time_t expiry = 0;
-    fread(&expiry, sizeof(time_t), 1, f);
-    fclose(f);
-    if (time(0) < expiry) {
-        return 1; // Still locked
-    } else {
-        remove(filename); // Lock expired, cleanup
-        return 0;
-    }
-}
-
-// Locks the account for durationMinutes (writes expiry time to lock file)
-int lockAccount(const char *userID, int durationMinutes) {
-    char filename[256];
-    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
-    FILE *f = fopen(filename, "wb");
-    if (!f) return 0;
-    time_t expiry = time(0) + durationMinutes * 60;
-    fwrite(&expiry, sizeof(time_t), 1, f);
-    fclose(f);
-    logSecurityEvent(userID, "ACCOUNT_LOCKED", "Account locked due to failed attempts");
-    return 1;
-}
-
-// Password strength checker: returns 0 (weak) to 4 (strong)
-int checkPasswordStrength(const char *password) {
-    int len = (int)strlen(password);
-    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
-    if (len < 8) return 0;
-    for (int i = 0; i < len; i++) {
-        if ('A' <= password[i] && password[i] <= 'Z') hasUpper = 1;
-        else if ('a' <= password[i] && password[i] <= 'z') hasLower = 1;
-        else if ('0' <= password[i] && password[i] <= '9') hasDigit = 1;
-        else if (ispunct((unsigned char)password[i])) hasSpecial = 1;
-    }
-    return hasUpper + hasLower + hasDigit + hasSpecial;
-}
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <stddef.h> // For NULL
-#ifdef _WIN32
-#include <direct.h>
-#else
-#include <sys/stat.h>
-#endif
-#include <ctype.h>
-#include "../include/security.h"
-#include "../include/database.h"
-
-// Account Lockout Mechanism
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <stddef.h> // For NULL
+#include <stddef.h>
 #ifdef _WIN32
 #include <direct.h>
 #else
@@ -73,28 +13,54 @@ int checkPasswordStrength(const char *password) {
 #include "../include/database.h"
 
 #define ACCOUNT_LOCK_FILE_PREFIX "data/lock_"
+#define MAX_SESSIONS 100
+#define SESSION_TIMEOUT 1800
+#define MAX_LOGIN_ATTEMPTS 3
+#define ACCOUNT_LOCK_DURATION 900
 
-// Returns 1 if account is locked, 0 otherwise
+static Session activeSessions[MAX_SESSIONS];
+static int sessionCount = 0;
+
+// Sanitize userID to prevent path traversal
+static int sanitizeUserID(const char *userID, char *sanitized, size_t size) {
+    if (!userID || !sanitized || size == 0) return 0;
+    size_t len = strlen(userID);
+    if (len == 0 || len >= size) return 0;
+    for (size_t i = 0; i < len; i++) {
+        char c = userID[i];
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || 
+              (c >= '0' && c <= '9') || c == '_' || c == '-')) {
+            return 0;
+        }
+    }
+    strncpy(sanitized, userID, size - 1);
+    sanitized[size - 1] = '\0';
+    return 1;
+}
+
 int isAccountLocked(const char *userID) {
+    char sanitized[64];
+    if (!sanitizeUserID(userID, sanitized, sizeof(sanitized))) return 0;
     char filename[256];
-    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", sanitized);
     FILE *f = fopen(filename, "rb");
-    if (!f) return 0; // Not locked
+    if (!f) return 0;
     time_t expiry = 0;
     fread(&expiry, sizeof(time_t), 1, f);
     fclose(f);
     if (time(0) < expiry) {
-        return 1; // Still locked
+        return 1;
     } else {
-        remove(filename); // Lock expired, cleanup
+        remove(filename);
         return 0;
     }
 }
 
-// Locks the account for durationMinutes (writes expiry time to lock file)
 int lockAccount(const char *userID, int durationMinutes) {
+    char sanitized[64];
+    if (!sanitizeUserID(userID, sanitized, sizeof(sanitized))) return 0;
     char filename[256];
-    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", sanitized);
     FILE *f = fopen(filename, "wb");
     if (!f) return 0;
     time_t expiry = time(0) + durationMinutes * 60;
@@ -104,10 +70,11 @@ int lockAccount(const char *userID, int durationMinutes) {
     return 1;
 }
 
-// Unlocks the account (removes lock file)
 int unlockAccount(const char *userID) {
+    char sanitized[64];
+    if (!sanitizeUserID(userID, sanitized, sizeof(sanitized))) return 0;
     char filename[256];
-    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", userID);
+    snprintf(filename, sizeof(filename), ACCOUNT_LOCK_FILE_PREFIX "%s.dat", sanitized);
     int res = remove(filename);
     if (res == 0) {
         logSecurityEvent(userID, "ACCOUNT_UNLOCKED", "Account unlocked manually");
@@ -116,12 +83,11 @@ int unlockAccount(const char *userID) {
     return 0;
 }
 
-// Password strength checker: returns 0 (weak) to 4 (strong)
 int checkPasswordStrength(const char *password) {
     int len = (int)strlen(password);
     int hasUpper = 0, hasLower = 0, hasDigit = 0, hasSpecial = 0;
     if (len < 8) return 0;
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len && i < 128; i++) {
         if ('A' <= password[i] && password[i] <= 'Z') hasUpper = 1;
         else if ('a' <= password[i] && password[i] <= 'z') hasLower = 1;
         else if ('0' <= password[i] && password[i] <= '9') hasDigit = 1;
@@ -129,15 +95,7 @@ int checkPasswordStrength(const char *password) {
     }
     return hasUpper + hasLower + hasDigit + hasSpecial;
 }
-#define MAX_SESSIONS 100
-#define SESSION_TIMEOUT 1800  // 30 minutes
-#define MAX_LOGIN_ATTEMPTS 3
-#define ACCOUNT_LOCK_DURATION 900  // 15 minutes
 
-static Session activeSessions[MAX_SESSIONS];
-static int sessionCount = 0;
-
-// OTP Generation and Verification
 int generateOTP(const char *userID, char *otp) {
     unsigned int randomValue = 0;
 #ifdef _WIN32
@@ -157,24 +115,24 @@ int generateOTP(const char *userID, char *otp) {
         randomValue = (unsigned int)rand();
     }
 #endif
-    int otpNum = (int)(randomValue % 900000) + 100000; // 6-digit OTP
+    int otpNum = (int)(randomValue % 900000) + 100000;
     snprintf(otp, 7, "%06d", otpNum);
     
-    // Store OTP with timestamp
+    char sanitized[64];
+    if (!sanitizeUserID(userID, sanitized, sizeof(sanitized))) return 0;
     char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_otp.dat", userID);
+    snprintf(filename, sizeof(filename), "data/%s_otp.dat", sanitized);
     
-    // Ensure data directory exists
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
 
     FILE *f = fopen(filename, "wb");
     if (!f) return 0;
     
-    time_t expiry = time(NULL) + 300; // 5 minutes expiry
+    time_t expiry = time(NULL) + 300;
     fwrite(otp, 6, 1, f);
     fwrite(&expiry, sizeof(time_t), 1, f);
     fclose(f);
@@ -184,8 +142,10 @@ int generateOTP(const char *userID, char *otp) {
 }
 
 int verifyOTP(const char *userID, const char *otp) {
+    char sanitized[64];
+    if (!sanitizeUserID(userID, sanitized, sizeof(sanitized))) return 0;
     char filename[200];
-    snprintf(filename, sizeof(filename), "data/%s_otp.dat", userID);
+    snprintf(filename, sizeof(filename), "data/%s_otp.dat", sanitized);
     
     FILE *f = fopen(filename, "rb");
     if (!f) return 0;
@@ -213,19 +173,15 @@ int verifyOTP(const char *userID, const char *otp) {
     return 0;
 }
 
-
-// Use MSG91 placeholder from send_otp_sms.c
 #include "../include/send_otp_sms.h"
 
-
 int sendOTPEmail(const char *email, const char *otp) {
-    // Do not print OTP to console; simulate delivery via outbox
 #ifdef _WIN32
     _mkdir("data");
     _mkdir("data\\outbox");
 #else
-    mkdir("data", 0777);
-    mkdir("data/outbox", 0777);
+    mkdir("data", 0700);
+    mkdir("data/outbox", 0700);
 #endif
 
     FILE *f = fopen("data/outbox/email.out", "a");
@@ -233,7 +189,7 @@ int sendOTPEmail(const char *email, const char *otp) {
         time_t now = time(NULL);
         char *timeStr = ctime(&now);
         if (timeStr) timeStr[strlen(timeStr)-1] = '\0';
-        fprintf(f, "[%s] EMAIL -> %s | OTP=%s | TTL=5m\n", timeStr ? timeStr : "Unknown", email ? email : "UNKNOWN", otp ? otp : "");
+        fprintf(f, "[%s] EMAIL -> %s | OTP=****** | TTL=5m\n", timeStr ? timeStr : "Unknown", email ? email : "UNKNOWN");
         fclose(f);
     }
     logSecurityEvent(email, "OTP_EMAIL_DISPATCHED", "OTP sent via Email channel");
@@ -241,7 +197,6 @@ int sendOTPEmail(const char *email, const char *otp) {
     return 1;
 }
 
-// Session Management
 int createSession(const char *userID, AuthLevel level, Session *session) {
     if (sessionCount >= MAX_SESSIONS) {
         cleanupExpiredSessions();
@@ -252,7 +207,6 @@ int createSession(const char *userID, AuthLevel level, Session *session) {
     strncpy(newSession->userID, userID, 19);
     newSession->userID[19] = '\0';
     
-    // Generate session token
     srand((unsigned int)time(NULL));
     snprintf(newSession->sessionToken, 64, "%s_%lld_%d", userID, (long long)time(NULL), rand());
     
@@ -306,7 +260,6 @@ int destroySession(const char *sessionToken) {
     return 0;
 }
 
-
 int cleanupExpiredSessions(void) {
     int cleaned = 0;
     time_t now = time(NULL);
@@ -322,22 +275,21 @@ int cleanupExpiredSessions(void) {
 }
 
 void encryptData(const char *data, char *encrypted, const char *key) {
-    // Simple XOR encryption (for demonstration only)
+    if (!data || !encrypted || !key) return;
     size_t dataLen = strlen(data);
     size_t keyLen = strlen(key);
-    for (size_t i = 0; i < dataLen; i++) {
+    if (keyLen == 0) return;
+    for (size_t i = 0; i < dataLen && i < 1024; i++) {
         encrypted[i] = data[i] ^ key[i % keyLen];
     }
-    encrypted[dataLen] = '\0';
+    encrypted[dataLen < 1024 ? dataLen : 1024] = '\0';
 }
 
 void decryptData(const char *encrypted, char *data, const char *key) {
-    // XOR encryption is symmetric
     encryptData(encrypted, data, key);
 }
 
 void generateSecureHash(const char *input, char *hash) {
-    // Simple hash function (use SHA-256 in production)
     unsigned long hashValue = 5381;
     int c;
     const char *str = input;
@@ -349,13 +301,11 @@ void generateSecureHash(const char *input, char *hash) {
     snprintf(hash, 64, "%08lx", hashValue);
 }
 
-// Security Monitoring
 int logSecurityEvent(const char *userID, const char *event, const char *details) {
-    // Ensure data directory exists
 #ifdef _WIN32
     _mkdir("data");
 #else
-    mkdir("data", 0777);
+    mkdir("data", 0700);
 #endif
 
     FILE *f = fopen("data/security.log", "a");
@@ -374,9 +324,6 @@ int logSecurityEvent(const char *userID, const char *event, const char *details)
     return 1;
 }
 
-
-
-
 int generateSecurityReport(const char *reportPath) {
     FILE *report = fopen(reportPath, "w");
     if (!report) return 0;
@@ -386,8 +333,6 @@ int generateSecurityReport(const char *reportPath) {
     char *timeStr = ctime(&now);
     fprintf(report, "Generated: %s\n", timeStr ? timeStr : "Unknown time");
     fprintf(report, "Active Sessions: %d\n", sessionCount);
-    
-    // Add more security metrics here
     
     fclose(report);
     return 1;

@@ -33,8 +33,7 @@ ErrorCode safeGetInt(int *value, int min, int max) {
     
     temp = strtol(buffer, &endptr, 10);
     
-    // Check for conversion errors
-    if (endptr == buffer || *endptr != '\0') {
+    if (!endptr || endptr == buffer || *endptr != '\0') {
         return ERROR_INVALID_INPUT;
     }
     
@@ -53,6 +52,7 @@ ErrorCode safeGetString(char *buffer, size_t size) {
     }
     
     if (!fgets(buffer, (int)size, stdin)) {
+        buffer[0] = '\0';
         return ERROR_INVALID_INPUT;
     }
     

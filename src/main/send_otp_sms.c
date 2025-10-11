@@ -18,9 +18,10 @@ int sendOTPSMS(const char *mobile, const char *otp) {
     struct curl_slist *headers = NULL;
     char postData[256];
 
-    snprintf(postData, sizeof(postData),
+    int written = snprintf(postData, sizeof(postData),
         "{\"mobile\":\"%s\",\"otp\":\"%s\",\"authkey\":\"%s\"}",
-        mobile, otp, MSG91_AUTH_KEY);
+        mobile ? mobile : "", otp ? otp : "", MSG91_AUTH_KEY);
+    if (written < 0 || written >= (int)sizeof(postData)) return 0;
 
     curl = curl_easy_init();
     if (curl) {
@@ -43,12 +44,12 @@ int sendOTPSMS(const char *mobile, const char *otp) {
         res = curl_easy_perform(curl);
         if (nul) fclose(nul);
         if (res == CURLE_OK) {
-            printf("OTP sent to mobile %s via MSG91.\n", mobile);
+            printf("OTP sent to mobile %s via MSG91.\n", mobile ? mobile : "UNKNOWN");
             success = 1;
         } else {
             fprintf(stderr, "MSG91 API failed: %s\n", curl_easy_strerror(res));
         }
-        curl_slist_free_all(headers);
+        if (headers) curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
     return success;

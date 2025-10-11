@@ -32,14 +32,10 @@ ErrorCode signin() {
         return ERROR_PERMISSION;
     }
 
-    // Try to load profile from database first, then from file
     if (!getUserByID(userID, &p)) {
-        // Fallback to file-based profile reading
-        /*if (!readProfile(&p, userID)) {
-            printf("Login failed! Profile not found for ID: %s\n", userID);
-            return ERROR_NOT_FOUND;
-        }
-*/    }
+        printf("Login failed! Profile not found for ID: %s\n", userID);
+        return ERROR_NOT_FOUND;
+    }
 
     while (attempts < 3) {
         printf("Mobile Number: ");
