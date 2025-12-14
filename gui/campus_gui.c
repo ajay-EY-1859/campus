@@ -11,6 +11,8 @@ typedef struct {
     GtkWidget *register_page;
     GtkWidget *dashboard_page;
     GtkWidget *data_entry_page;
+    GtkWidget *view_data_page;
+    GtkWidget *profile_page;
     
     GtkWidget *login_user_entry;
     GtkWidget *login_mobile_entry;
@@ -32,8 +34,38 @@ typedef struct {
     GtkWidget *dash_mobile_label;
     GtkWidget *dash_data_view;
     
+    GtkWidget *data_form_container;
+    GtkWidget *data_status_label;
+    
+    GtkWidget *school_subject_entries[MAX_SUBJECTS];
+    GtkWidget *school_marks_entries[MAX_SUBJECTS];
+    GtkWidget *school_max_entries[MAX_SUBJECTS];
+    int school_subject_count;
+    
+    GtkWidget *college_course_entry;
+    GtkWidget *college_credits_entry;
+    GtkWidget *college_gpa_entry;
+    
+    GtkWidget *hospital_patient_entry;
+    GtkWidget *hospital_diagnosis_entry;
+    GtkWidget *hospital_doctor_entry;
+    GtkWidget *hospital_treatment_entry;
+    
+    GtkWidget *hostel_room_entry;
+    GtkWidget *hostel_block_entry;
+    GtkWidget *hostel_floor_entry;
+    GtkWidget *hostel_type_entry;
+    GtkWidget *hostel_rent_entry;
+    
+    GtkWidget *view_data_content;
+    
     Profile current_user;
     int is_logged_in;
+    
+    SchoolData school_data;
+    CollegeData college_data;
+    HospitalData hospital_data;
+    HostelData hostel_data;
 } AppData;
 
 static AppData *app_data = NULL;
@@ -56,6 +88,21 @@ static void switch_to_page(const char *page_name) {
                  get_campus_name(app_data->current_user.campusType));
         gtk_header_bar_set_title_widget(GTK_HEADER_BAR(app_data->header_bar),
             gtk_label_new(title));
+    } else if (strcmp(page_name, "data_entry") == 0) {
+        char title[256];
+        snprintf(title, sizeof(title), "%s - Add %s Data", APP_NAME, 
+                 get_campus_name(app_data->current_user.campusType));
+        gtk_header_bar_set_title_widget(GTK_HEADER_BAR(app_data->header_bar),
+            gtk_label_new(title));
+    } else if (strcmp(page_name, "view_data") == 0) {
+        char title[256];
+        snprintf(title, sizeof(title), "%s - View %s Data", APP_NAME, 
+                 get_campus_name(app_data->current_user.campusType));
+        gtk_header_bar_set_title_widget(GTK_HEADER_BAR(app_data->header_bar),
+            gtk_label_new(title));
+    } else if (strcmp(page_name, "profile") == 0) {
+        gtk_header_bar_set_title_widget(GTK_HEADER_BAR(app_data->header_bar),
+            gtk_label_new("User Profile"));
     }
 }
 
@@ -192,6 +239,562 @@ static void on_goto_register(GtkButton *button, gpointer user_data) {
 
 static void on_goto_login(GtkButton *button, gpointer user_data) {
     switch_to_page("login");
+}
+
+static void on_back_to_dashboard(GtkButton *button, gpointer user_data) {
+    switch_to_page("dashboard");
+}
+
+static void on_save_school_data(GtkButton *button, gpointer user_data) {
+    memset(&app_data->school_data, 0, sizeof(SchoolData));
+    app_data->school_data.numSubjects = 0;
+    
+    for (int i = 0; i < MAX_SUBJECTS && app_data->school_subject_entries[i]; i++) {
+        const char *subject = gtk_editable_get_text(GTK_EDITABLE(app_data->school_subject_entries[i]));
+        const char *marks_str = gtk_editable_get_text(GTK_EDITABLE(app_data->school_marks_entries[i]));
+        const char *max_str = gtk_editable_get_text(GTK_EDITABLE(app_data->school_max_entries[i]));
+        
+        if (strlen(subject) > 0 && strlen(marks_str) > 0 && strlen(max_str) > 0) {
+            strncpy(app_data->school_data.subjects[app_data->school_data.numSubjects].subjectName, 
+                    subject, MAX_LEN - 1);
+            app_data->school_data.subjects[app_data->school_data.numSubjects].marks = atoi(marks_str);
+            app_data->school_data.subjects[app_data->school_data.numSubjects].maxMarks = atoi(max_str);
+            app_data->school_data.numSubjects++;
+        }
+    }
+    
+    if (app_data->school_data.numSubjects == 0) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Please enter at least one subject");
+        return;
+    }
+    
+    calculate_school_grade(&app_data->school_data);
+    
+    ErrorCode result = save_campus_data(app_data->current_user.userID, CAMPUS_SCHOOL, &app_data->school_data);
+    
+    if (result == SUCCESS) {
+        char msg[256];
+        snprintf(msg, sizeof(msg), "Data saved! Grade: %s (%.1f%%)", 
+                 app_data->school_data.grade, app_data->school_data.percentage);
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), msg);
+    } else {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Failed to save data");
+    }
+}
+
+static void on_save_college_data(GtkButton *button, gpointer user_data) {
+    const char *course = gtk_editable_get_text(GTK_EDITABLE(app_data->college_course_entry));
+    const char *credits_str = gtk_editable_get_text(GTK_EDITABLE(app_data->college_credits_entry));
+    const char *gpa_str = gtk_editable_get_text(GTK_EDITABLE(app_data->college_gpa_entry));
+    
+    if (strlen(course) == 0 || strlen(credits_str) == 0 || strlen(gpa_str) == 0) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Please fill all fields");
+        return;
+    }
+    
+    memset(&app_data->college_data, 0, sizeof(CollegeData));
+    strncpy(app_data->college_data.courseName, course, MAX_LEN - 1);
+    app_data->college_data.credits = atoi(credits_str);
+    app_data->college_data.gpa = atof(gpa_str);
+    calculate_college_cgpa(&app_data->college_data);
+    
+    ErrorCode result = save_campus_data(app_data->current_user.userID, CAMPUS_COLLEGE, &app_data->college_data);
+    
+    if (result == SUCCESS) {
+        char msg[256];
+        snprintf(msg, sizeof(msg), "Data saved! CGPA: %.2f", app_data->college_data.cgpa);
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), msg);
+    } else {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Failed to save data");
+    }
+}
+
+static void on_save_hospital_data(GtkButton *button, gpointer user_data) {
+    const char *patient = gtk_editable_get_text(GTK_EDITABLE(app_data->hospital_patient_entry));
+    const char *diagnosis = gtk_editable_get_text(GTK_EDITABLE(app_data->hospital_diagnosis_entry));
+    const char *doctor = gtk_editable_get_text(GTK_EDITABLE(app_data->hospital_doctor_entry));
+    const char *treatment = gtk_editable_get_text(GTK_EDITABLE(app_data->hospital_treatment_entry));
+    
+    if (strlen(patient) == 0 || strlen(diagnosis) == 0 || strlen(doctor) == 0) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Please fill required fields");
+        return;
+    }
+    
+    memset(&app_data->hospital_data, 0, sizeof(HospitalData));
+    strncpy(app_data->hospital_data.patientID, patient, MAX_LEN - 1);
+    strncpy(app_data->hospital_data.diagnosis, diagnosis, MAX_LEN - 1);
+    strncpy(app_data->hospital_data.doctorName, doctor, MAX_LEN - 1);
+    strncpy(app_data->hospital_data.treatment, treatment, MAX_LEN - 1);
+    app_data->hospital_data.admissionDate = time(NULL);
+    
+    ErrorCode result = save_campus_data(app_data->current_user.userID, CAMPUS_HOSPITAL, &app_data->hospital_data);
+    
+    if (result == SUCCESS) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Hospital data saved successfully!");
+    } else {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Failed to save data");
+    }
+}
+
+static void on_save_hostel_data(GtkButton *button, gpointer user_data) {
+    const char *room = gtk_editable_get_text(GTK_EDITABLE(app_data->hostel_room_entry));
+    const char *block = gtk_editable_get_text(GTK_EDITABLE(app_data->hostel_block_entry));
+    const char *floor_str = gtk_editable_get_text(GTK_EDITABLE(app_data->hostel_floor_entry));
+    const char *type = gtk_editable_get_text(GTK_EDITABLE(app_data->hostel_type_entry));
+    const char *rent_str = gtk_editable_get_text(GTK_EDITABLE(app_data->hostel_rent_entry));
+    
+    if (strlen(room) == 0 || strlen(block) == 0 || strlen(floor_str) == 0) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Please fill required fields");
+        return;
+    }
+    
+    memset(&app_data->hostel_data, 0, sizeof(HostelData));
+    strncpy(app_data->hostel_data.roomNumber, room, MAX_LEN - 1);
+    strncpy(app_data->hostel_data.blockName, block, MAX_LEN - 1);
+    app_data->hostel_data.floorNumber = atoi(floor_str);
+    strncpy(app_data->hostel_data.roomType, type, MAX_LEN - 1);
+    app_data->hostel_data.monthlyRent = atof(rent_str);
+    
+    ErrorCode result = save_campus_data(app_data->current_user.userID, CAMPUS_HOSTEL, &app_data->hostel_data);
+    
+    if (result == SUCCESS) {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Hostel data saved successfully!");
+    } else {
+        gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "Failed to save data");
+    }
+}
+
+static GtkWidget* create_school_form(void) {
+    GtkWidget *form = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    
+    GtkWidget *title = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(title), "<span weight='bold'>Enter Subject Data</span>");
+    gtk_widget_set_halign(title, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), title);
+    
+    GtkWidget *grid = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
+    
+    GtkWidget *hdr_subject = gtk_label_new("Subject");
+    GtkWidget *hdr_marks = gtk_label_new("Marks");
+    GtkWidget *hdr_max = gtk_label_new("Max Marks");
+    gtk_widget_add_css_class(hdr_subject, "dim-label");
+    gtk_widget_add_css_class(hdr_marks, "dim-label");
+    gtk_widget_add_css_class(hdr_max, "dim-label");
+    gtk_grid_attach(GTK_GRID(grid), hdr_subject, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), hdr_marks, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), hdr_max, 2, 0, 1, 1);
+    
+    for (int i = 0; i < 5; i++) {
+        app_data->school_subject_entries[i] = gtk_entry_new();
+        gtk_widget_set_size_request(app_data->school_subject_entries[i], 200, -1);
+        gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->school_subject_entries[i]), "Subject name");
+        gtk_grid_attach(GTK_GRID(grid), app_data->school_subject_entries[i], 0, i + 1, 1, 1);
+        
+        app_data->school_marks_entries[i] = gtk_entry_new();
+        gtk_widget_set_size_request(app_data->school_marks_entries[i], 80, -1);
+        gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->school_marks_entries[i]), "0");
+        gtk_grid_attach(GTK_GRID(grid), app_data->school_marks_entries[i], 1, i + 1, 1, 1);
+        
+        app_data->school_max_entries[i] = gtk_entry_new();
+        gtk_widget_set_size_request(app_data->school_max_entries[i], 80, -1);
+        gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->school_max_entries[i]), "100");
+        gtk_grid_attach(GTK_GRID(grid), app_data->school_max_entries[i], 2, i + 1, 1, 1);
+    }
+    
+    gtk_box_append(GTK_BOX(form), grid);
+    
+    GtkWidget *save_btn = gtk_button_new_with_label("Save School Data");
+    gtk_widget_add_css_class(save_btn, "suggested-action");
+    gtk_widget_set_margin_top(save_btn, 16);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_school_data), NULL);
+    gtk_box_append(GTK_BOX(form), save_btn);
+    
+    return form;
+}
+
+static GtkWidget* create_college_form(void) {
+    GtkWidget *form = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_widget_set_size_request(form, 400, -1);
+    
+    GtkWidget *title = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(title), "<span weight='bold'>Enter College Data</span>");
+    gtk_widget_set_halign(title, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), title);
+    
+    GtkWidget *course_label = gtk_label_new("Course Name");
+    gtk_widget_set_halign(course_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), course_label);
+    app_data->college_course_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->college_course_entry), "Enter course name");
+    gtk_box_append(GTK_BOX(form), app_data->college_course_entry);
+    
+    GtkWidget *credits_label = gtk_label_new("Total Credits");
+    gtk_widget_set_halign(credits_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), credits_label);
+    app_data->college_credits_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->college_credits_entry), "Enter credits");
+    gtk_box_append(GTK_BOX(form), app_data->college_credits_entry);
+    
+    GtkWidget *gpa_label = gtk_label_new("GPA (0.0 - 4.0)");
+    gtk_widget_set_halign(gpa_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), gpa_label);
+    app_data->college_gpa_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->college_gpa_entry), "Enter GPA");
+    gtk_box_append(GTK_BOX(form), app_data->college_gpa_entry);
+    
+    GtkWidget *save_btn = gtk_button_new_with_label("Save College Data");
+    gtk_widget_add_css_class(save_btn, "suggested-action");
+    gtk_widget_set_margin_top(save_btn, 16);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_college_data), NULL);
+    gtk_box_append(GTK_BOX(form), save_btn);
+    
+    return form;
+}
+
+static GtkWidget* create_hospital_form(void) {
+    GtkWidget *form = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_widget_set_size_request(form, 400, -1);
+    
+    GtkWidget *title = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(title), "<span weight='bold'>Enter Hospital Data</span>");
+    gtk_widget_set_halign(title, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), title);
+    
+    GtkWidget *patient_label = gtk_label_new("Patient ID");
+    gtk_widget_set_halign(patient_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), patient_label);
+    app_data->hospital_patient_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hospital_patient_entry), "Enter patient ID");
+    gtk_box_append(GTK_BOX(form), app_data->hospital_patient_entry);
+    
+    GtkWidget *diagnosis_label = gtk_label_new("Diagnosis");
+    gtk_widget_set_halign(diagnosis_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), diagnosis_label);
+    app_data->hospital_diagnosis_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hospital_diagnosis_entry), "Enter diagnosis");
+    gtk_box_append(GTK_BOX(form), app_data->hospital_diagnosis_entry);
+    
+    GtkWidget *doctor_label = gtk_label_new("Doctor Name");
+    gtk_widget_set_halign(doctor_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), doctor_label);
+    app_data->hospital_doctor_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hospital_doctor_entry), "Enter doctor name");
+    gtk_box_append(GTK_BOX(form), app_data->hospital_doctor_entry);
+    
+    GtkWidget *treatment_label = gtk_label_new("Treatment");
+    gtk_widget_set_halign(treatment_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), treatment_label);
+    app_data->hospital_treatment_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hospital_treatment_entry), "Enter treatment");
+    gtk_box_append(GTK_BOX(form), app_data->hospital_treatment_entry);
+    
+    GtkWidget *save_btn = gtk_button_new_with_label("Save Hospital Data");
+    gtk_widget_add_css_class(save_btn, "suggested-action");
+    gtk_widget_set_margin_top(save_btn, 16);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_hospital_data), NULL);
+    gtk_box_append(GTK_BOX(form), save_btn);
+    
+    return form;
+}
+
+static GtkWidget* create_hostel_form(void) {
+    GtkWidget *form = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_widget_set_size_request(form, 400, -1);
+    
+    GtkWidget *title = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(title), "<span weight='bold'>Enter Hostel Data</span>");
+    gtk_widget_set_halign(title, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), title);
+    
+    GtkWidget *room_label = gtk_label_new("Room Number");
+    gtk_widget_set_halign(room_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), room_label);
+    app_data->hostel_room_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hostel_room_entry), "Enter room number");
+    gtk_box_append(GTK_BOX(form), app_data->hostel_room_entry);
+    
+    GtkWidget *block_label = gtk_label_new("Block Name");
+    gtk_widget_set_halign(block_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), block_label);
+    app_data->hostel_block_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hostel_block_entry), "Enter block name");
+    gtk_box_append(GTK_BOX(form), app_data->hostel_block_entry);
+    
+    GtkWidget *floor_label = gtk_label_new("Floor Number");
+    gtk_widget_set_halign(floor_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), floor_label);
+    app_data->hostel_floor_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hostel_floor_entry), "Enter floor number");
+    gtk_box_append(GTK_BOX(form), app_data->hostel_floor_entry);
+    
+    GtkWidget *type_label = gtk_label_new("Room Type");
+    gtk_widget_set_halign(type_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), type_label);
+    app_data->hostel_type_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hostel_type_entry), "Single/Double/Triple");
+    gtk_box_append(GTK_BOX(form), app_data->hostel_type_entry);
+    
+    GtkWidget *rent_label = gtk_label_new("Monthly Rent");
+    gtk_widget_set_halign(rent_label, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(form), rent_label);
+    app_data->hostel_rent_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(app_data->hostel_rent_entry), "Enter rent amount");
+    gtk_box_append(GTK_BOX(form), app_data->hostel_rent_entry);
+    
+    GtkWidget *save_btn = gtk_button_new_with_label("Save Hostel Data");
+    gtk_widget_add_css_class(save_btn, "suggested-action");
+    gtk_widget_set_margin_top(save_btn, 16);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_hostel_data), NULL);
+    gtk_box_append(GTK_BOX(form), save_btn);
+    
+    return form;
+}
+
+static void update_data_entry_form(void) {
+    GtkWidget *child = gtk_widget_get_first_child(app_data->data_form_container);
+    while (child) {
+        GtkWidget *next = gtk_widget_get_next_sibling(child);
+        gtk_box_remove(GTK_BOX(app_data->data_form_container), child);
+        child = next;
+    }
+    
+    GtkWidget *form = NULL;
+    switch (app_data->current_user.campusType) {
+        case CAMPUS_SCHOOL:
+            form = create_school_form();
+            break;
+        case CAMPUS_COLLEGE:
+            form = create_college_form();
+            break;
+        case CAMPUS_HOSPITAL:
+            form = create_hospital_form();
+            break;
+        case CAMPUS_HOSTEL:
+            form = create_hostel_form();
+            break;
+        default:
+            form = gtk_label_new("Unknown campus type");
+            break;
+    }
+    
+    gtk_box_append(GTK_BOX(app_data->data_form_container), form);
+}
+
+static void on_add_data_clicked(GtkButton *button, gpointer user_data) {
+    update_data_entry_form();
+    gtk_label_set_text(GTK_LABEL(app_data->data_status_label), "");
+    switch_to_page("data_entry");
+}
+
+static void update_view_data_content(void) {
+    GtkWidget *child = gtk_widget_get_first_child(app_data->view_data_content);
+    while (child) {
+        GtkWidget *next = gtk_widget_get_next_sibling(child);
+        gtk_box_remove(GTK_BOX(app_data->view_data_content), child);
+        child = next;
+    }
+    
+    char buf[1024];
+    GtkWidget *info;
+    
+    switch (app_data->current_user.campusType) {
+        case CAMPUS_SCHOOL: {
+            SchoolData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_SCHOOL, &data) == SUCCESS) {
+                snprintf(buf, sizeof(buf), "<span weight='bold'>School Report Card</span>");
+                info = gtk_label_new(NULL);
+                gtk_label_set_markup(GTK_LABEL(info), buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+                
+                for (int i = 0; i < data.numSubjects; i++) {
+                    snprintf(buf, sizeof(buf), "%s: %d / %d", 
+                             data.subjects[i].subjectName, 
+                             data.subjects[i].marks, 
+                             data.subjects[i].maxMarks);
+                    info = gtk_label_new(buf);
+                    gtk_widget_set_halign(info, GTK_ALIGN_START);
+                    gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+                }
+                
+                snprintf(buf, sizeof(buf), "\nPercentage: %.1f%%\nGrade: %s", 
+                         data.percentage, data.grade);
+                info = gtk_label_new(buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            } else {
+                info = gtk_label_new("No school data found. Please add data first.");
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            }
+            break;
+        }
+        case CAMPUS_COLLEGE: {
+            CollegeData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_COLLEGE, &data) == SUCCESS) {
+                snprintf(buf, sizeof(buf), "<span weight='bold'>College Record</span>");
+                info = gtk_label_new(NULL);
+                gtk_label_set_markup(GTK_LABEL(info), buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+                
+                snprintf(buf, sizeof(buf), "Course: %s\nCredits: %d\nGPA: %.2f\nCGPA: %.2f",
+                         data.courseName, data.credits, data.gpa, data.cgpa);
+                info = gtk_label_new(buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            } else {
+                info = gtk_label_new("No college data found. Please add data first.");
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            }
+            break;
+        }
+        case CAMPUS_HOSPITAL: {
+            HospitalData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_HOSPITAL, &data) == SUCCESS) {
+                snprintf(buf, sizeof(buf), "<span weight='bold'>Hospital Record</span>");
+                info = gtk_label_new(NULL);
+                gtk_label_set_markup(GTK_LABEL(info), buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+                
+                char timeStr[64];
+                strftime(timeStr, sizeof(timeStr), "%Y-%m-%d", localtime(&data.admissionDate));
+                snprintf(buf, sizeof(buf), "Patient ID: %s\nDiagnosis: %s\nDoctor: %s\nTreatment: %s\nAdmission Date: %s",
+                         data.patientID, data.diagnosis, data.doctorName, data.treatment, timeStr);
+                info = gtk_label_new(buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            } else {
+                info = gtk_label_new("No hospital data found. Please add data first.");
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            }
+            break;
+        }
+        case CAMPUS_HOSTEL: {
+            HostelData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_HOSTEL, &data) == SUCCESS) {
+                snprintf(buf, sizeof(buf), "<span weight='bold'>Hostel Record</span>");
+                info = gtk_label_new(NULL);
+                gtk_label_set_markup(GTK_LABEL(info), buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+                
+                snprintf(buf, sizeof(buf), "Room: %s\nBlock: %s\nFloor: %d\nType: %s\nMonthly Rent: %.2f",
+                         data.roomNumber, data.blockName, data.floorNumber, data.roomType, data.monthlyRent);
+                info = gtk_label_new(buf);
+                gtk_widget_set_halign(info, GTK_ALIGN_START);
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            } else {
+                info = gtk_label_new("No hostel data found. Please add data first.");
+                gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            }
+            break;
+        }
+        default:
+            info = gtk_label_new("Unknown campus type");
+            gtk_box_append(GTK_BOX(app_data->view_data_content), info);
+            break;
+    }
+}
+
+static void on_view_data_clicked(GtkButton *button, gpointer user_data) {
+    update_view_data_content();
+    switch_to_page("view_data");
+}
+
+static void on_view_profile_clicked(GtkButton *button, gpointer user_data) {
+    show_message(app_data->window, "Profile", "Profile details are shown on the dashboard.", GTK_MESSAGE_INFO);
+}
+
+static void on_export_pdf_clicked(GtkButton *button, gpointer user_data) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), "data/%s_report.txt", app_data->current_user.userID);
+    
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        show_message(app_data->window, "Export", "Failed to create export file.", GTK_MESSAGE_ERROR);
+        return;
+    }
+    
+    fprintf(f, "=== Campus Management System Report ===\n\n");
+    fprintf(f, "User: %s\n", app_data->current_user.name);
+    fprintf(f, "User ID: %s\n", app_data->current_user.userID);
+    fprintf(f, "Campus: %s\n", get_campus_name(app_data->current_user.campusType));
+    fprintf(f, "Email: %s\n", app_data->current_user.email);
+    fprintf(f, "Mobile: %s\n\n", app_data->current_user.mobile);
+    
+    switch (app_data->current_user.campusType) {
+        case CAMPUS_SCHOOL: {
+            SchoolData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_SCHOOL, &data) == SUCCESS) {
+                fprintf(f, "=== School Report Card ===\n");
+                for (int i = 0; i < data.numSubjects; i++) {
+                    fprintf(f, "%s: %d / %d\n", data.subjects[i].subjectName, 
+                            data.subjects[i].marks, data.subjects[i].maxMarks);
+                }
+                fprintf(f, "\nPercentage: %.1f%%\n", data.percentage);
+                fprintf(f, "Grade: %s\n", data.grade);
+            }
+            break;
+        }
+        case CAMPUS_COLLEGE: {
+            CollegeData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_COLLEGE, &data) == SUCCESS) {
+                fprintf(f, "=== College Record ===\n");
+                fprintf(f, "Course: %s\n", data.courseName);
+                fprintf(f, "Credits: %d\n", data.credits);
+                fprintf(f, "GPA: %.2f\n", data.gpa);
+                fprintf(f, "CGPA: %.2f\n", data.cgpa);
+            }
+            break;
+        }
+        case CAMPUS_HOSPITAL: {
+            HospitalData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_HOSPITAL, &data) == SUCCESS) {
+                fprintf(f, "=== Hospital Record ===\n");
+                fprintf(f, "Patient ID: %s\n", data.patientID);
+                fprintf(f, "Diagnosis: %s\n", data.diagnosis);
+                fprintf(f, "Doctor: %s\n", data.doctorName);
+                fprintf(f, "Treatment: %s\n", data.treatment);
+            }
+            break;
+        }
+        case CAMPUS_HOSTEL: {
+            HostelData data;
+            if (load_campus_data(app_data->current_user.userID, CAMPUS_HOSTEL, &data) == SUCCESS) {
+                fprintf(f, "=== Hostel Record ===\n");
+                fprintf(f, "Room: %s\n", data.roomNumber);
+                fprintf(f, "Block: %s\n", data.blockName);
+                fprintf(f, "Floor: %d\n", data.floorNumber);
+                fprintf(f, "Type: %s\n", data.roomType);
+                fprintf(f, "Monthly Rent: %.2f\n", data.monthlyRent);
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    
+    time_t now = time(NULL);
+    char timeStr[64];
+    strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", localtime(&now));
+    fprintf(f, "\n\nGenerated: %s\n", timeStr);
+    
+    fclose(f);
+    
+    log_activity(app_data->current_user.userID, "EXPORT", "Report exported");
+    
+    char msg[512];
+    snprintf(msg, sizeof(msg), "Report exported to: %s", filename);
+    show_message(app_data->window, "Export", msg, GTK_MESSAGE_INFO);
+}
+
+static void on_change_password_clicked(GtkButton *button, gpointer user_data) {
+    show_message(app_data->window, "Change Password", 
+                 "Password change feature coming soon. Contact administrator for assistance.", 
+                 GTK_MESSAGE_INFO);
 }
 
 static GtkWidget* create_login_page(void) {
@@ -412,6 +1015,7 @@ static GtkWidget* create_dashboard_page(void) {
     
     GtkWidget *view_profile_btn = gtk_button_new_with_label("View Profile");
     gtk_widget_set_size_request(view_profile_btn, 150, 60);
+    g_signal_connect(view_profile_btn, "clicked", G_CALLBACK(on_view_profile_clicked), NULL);
     gtk_grid_attach(GTK_GRID(actions_grid), view_profile_btn, 0, 0, 1, 1);
     
     GtkWidget *edit_profile_btn = gtk_button_new_with_label("Edit Profile");
@@ -420,18 +1024,22 @@ static GtkWidget* create_dashboard_page(void) {
     
     GtkWidget *add_data_btn = gtk_button_new_with_label("Add Data");
     gtk_widget_set_size_request(add_data_btn, 150, 60);
+    g_signal_connect(add_data_btn, "clicked", G_CALLBACK(on_add_data_clicked), NULL);
     gtk_grid_attach(GTK_GRID(actions_grid), add_data_btn, 2, 0, 1, 1);
     
     GtkWidget *view_data_btn = gtk_button_new_with_label("View Data");
     gtk_widget_set_size_request(view_data_btn, 150, 60);
+    g_signal_connect(view_data_btn, "clicked", G_CALLBACK(on_view_data_clicked), NULL);
     gtk_grid_attach(GTK_GRID(actions_grid), view_data_btn, 0, 1, 1, 1);
     
-    GtkWidget *export_pdf_btn = gtk_button_new_with_label("Export PDF");
+    GtkWidget *export_pdf_btn = gtk_button_new_with_label("Export Report");
     gtk_widget_set_size_request(export_pdf_btn, 150, 60);
+    g_signal_connect(export_pdf_btn, "clicked", G_CALLBACK(on_export_pdf_clicked), NULL);
     gtk_grid_attach(GTK_GRID(actions_grid), export_pdf_btn, 1, 1, 1, 1);
     
     GtkWidget *change_pass_btn = gtk_button_new_with_label("Change Password");
     gtk_widget_set_size_request(change_pass_btn, 150, 60);
+    g_signal_connect(change_pass_btn, "clicked", G_CALLBACK(on_change_password_clicked), NULL);
     gtk_grid_attach(GTK_GRID(actions_grid), change_pass_btn, 2, 1, 1, 1);
     
     gtk_box_append(GTK_BOX(page), actions_grid);
@@ -464,6 +1072,61 @@ static GtkWidget* create_dashboard_page(void) {
     return page;
 }
 
+static GtkWidget* create_data_entry_page(void) {
+    GtkWidget *scroll = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
+                                   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    
+    GtkWidget *page = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_widget_set_halign(page, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_start(page, 40);
+    gtk_widget_set_margin_end(page, 40);
+    gtk_widget_set_margin_top(page, 20);
+    gtk_widget_set_margin_bottom(page, 20);
+    
+    GtkWidget *back_btn = gtk_button_new_with_label("Back to Dashboard");
+    gtk_widget_add_css_class(back_btn, "flat");
+    gtk_widget_set_halign(back_btn, GTK_ALIGN_START);
+    g_signal_connect(back_btn, "clicked", G_CALLBACK(on_back_to_dashboard), NULL);
+    gtk_box_append(GTK_BOX(page), back_btn);
+    
+    app_data->data_form_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_box_append(GTK_BOX(page), app_data->data_form_container);
+    
+    app_data->data_status_label = gtk_label_new("");
+    gtk_widget_set_margin_top(app_data->data_status_label, 12);
+    gtk_box_append(GTK_BOX(page), app_data->data_status_label);
+    
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), page);
+    return scroll;
+}
+
+static GtkWidget* create_view_data_page(void) {
+    GtkWidget *scroll = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
+                                   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    
+    GtkWidget *page = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_widget_set_halign(page, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_start(page, 40);
+    gtk_widget_set_margin_end(page, 40);
+    gtk_widget_set_margin_top(page, 20);
+    gtk_widget_set_margin_bottom(page, 20);
+    
+    GtkWidget *back_btn = gtk_button_new_with_label("Back to Dashboard");
+    gtk_widget_add_css_class(back_btn, "flat");
+    gtk_widget_set_halign(back_btn, GTK_ALIGN_START);
+    g_signal_connect(back_btn, "clicked", G_CALLBACK(on_back_to_dashboard), NULL);
+    gtk_box_append(GTK_BOX(page), back_btn);
+    
+    app_data->view_data_content = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_widget_set_size_request(app_data->view_data_content, 400, -1);
+    gtk_box_append(GTK_BOX(page), app_data->view_data_content);
+    
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), page);
+    return scroll;
+}
+
 static void activate(GtkApplication *app, gpointer user_data) {
     app_data = g_malloc0(sizeof(AppData));
     app_data->app = app;
@@ -492,6 +1155,12 @@ static void activate(GtkApplication *app, gpointer user_data) {
     
     app_data->dashboard_page = create_dashboard_page();
     gtk_stack_add_named(GTK_STACK(app_data->stack), app_data->dashboard_page, "dashboard");
+    
+    app_data->data_entry_page = create_data_entry_page();
+    gtk_stack_add_named(GTK_STACK(app_data->stack), app_data->data_entry_page, "data_entry");
+    
+    app_data->view_data_page = create_view_data_page();
+    gtk_stack_add_named(GTK_STACK(app_data->stack), app_data->view_data_page, "view_data");
     
     gtk_window_set_child(GTK_WINDOW(app_data->window), app_data->stack);
     
