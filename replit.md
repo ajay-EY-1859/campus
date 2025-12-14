@@ -1,13 +1,14 @@
 # Campus Management System
 
 ## Project Overview
-This is a comprehensive C-based Campus Management System that supports multiple campus types including Schools, Colleges, Hospitals, and Hostels. The system features user authentication, data management, PDF report generation, and secure file-based database operations.
+This is a comprehensive C-based Campus Management System with a **GTK4 Desktop GUI** that supports multiple campus types including Schools, Colleges, Hospitals, and Hostels. The system features user authentication, data management, PDF report generation, and secure file-based database operations.
 
 ## Current Status
-- **Import Date**: September 18, 2025
-- **Status**: Successfully imported and configured for Replit environment
-- **Build System**: CMake with fallback to simple GCC compilation
-- **Running Version**: Demo version using `simple_campus` executable
+- **Last Updated**: December 14, 2025
+- **Status**: Full GTK4 Desktop GUI Application implemented
+- **Build System**: CMake with GTK4
+- **Running Version**: Desktop GUI at `gui/build/campus_gui`
+- **Display**: VNC output for desktop GUI
 
 ## Architecture
 - **Language**: C (C11 standard)

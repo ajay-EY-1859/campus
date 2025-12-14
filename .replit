@@ -2,7 +2,7 @@ modules = ["c-clang14", "python-3.12", "cpp-clang"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cmake", "pkg-config", "libharu"]
+packages = ["cmake", "pkg-config", "libharu", "gtk4", "glib", "pango", "cairo", "gdk-pixbuf", "xorg.libX11", "xorg.libXcursor", "xorg.libXrandr", "xorg.libXi"]
 
 [agent]
 expertMode = true
@@ -23,9 +23,9 @@ args = "Campus Management System"
 name = "Campus Management System"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "vnc"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "./simple_campus"
-
-[workflows.workflow.metadata]
-outputType = "console"
+args = "export DBUS_SESSION_BUS_ADDRESS=disabled; ./gui/build/campus_gui"
