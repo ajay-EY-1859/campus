@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <time.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 #include "../include/utils.h"
 #include "../include/config.h"
 #include "../include/student.h"
@@ -118,6 +122,26 @@ ErrorCode getCurrentTime(char *buffer, size_t size) {
     }
     return SUCCESS;
 }
+
+// Generate User ID based on campus type and initials
+void generateUserID(Profile *p) {
+    char initials[3] = {0};
+    if (strlen(p->instituteName) >= 2) {
+        initials[0] = (char)tolower(p->instituteName[0]);
+        initials[1] = (char)tolower(p->instituteName[1]);
+    } else {
+        initials[0] = 'x';
+        initials[1] = 'x';
+    }
+    initials[2] = '\0';
+    
+    int serial = rand() % 900 + 100;
+    int written = snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
+    if (written < 0 || written >= (int)sizeof(p->userID)) {
+        p->userID[0] = '\0';
+    }
+}
+
 
 
 

@@ -6,7 +6,7 @@
 #include "ui.h"
 #include "fileio.h"
 #include "database.h"
-#include "security.h"
+#include "campus_security.h"
 #include "hpdf/hpdf.h"
 
 // Function declarations

@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "config.h"
+#include "auth.h"
 
 // Safe input functions
 ErrorCode safeGetInt(int *value, int min, int max);
@@ -18,5 +19,6 @@ ErrorCode isValidEmail(const char *email);
 ErrorCode isValidMobile(const char *mobile);
 ErrorCode getProfilePath(char *path, const char *userID);
 ErrorCode sanitizeFilename(char *str);
+void generateUserID(Profile *p);
 
 #endif // UTILS_H

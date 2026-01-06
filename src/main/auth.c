@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "../include/auth.h"
+#include "../include/sha256.h"
 #include "../include/fileio.h"
 #include "../include/utils.h"
 #include "../include/config.h"
@@ -30,18 +31,21 @@ CampusType selectCampusType(void) {
 }
 
 // Simple password hash using XOR and hex encoding (for demo only)
+// Strong SHA-256 password hashing
 ErrorCode hashPassword(const char *password, char *hashOut) {
     if (!password || !hashOut) return ERROR_INVALID_INPUT;
-    unsigned char key = 0x5A;
-    int i = 0;
-    size_t len = strlen(password);
-    if (len > 31) len = 31; // Prevent buffer overflow
     
-    for (i = 0; i < (int)len; i++) {
-        unsigned char c = password[i] ^ key;
-        snprintf(hashOut + i * 2, 3, "%02X", c);
+    SHA256_CTX ctx;
+    uint8_t digest[SHA256_BLOCK_SIZE];
+    
+    sha256_init(&ctx);
+    sha256_update(&ctx, (const uint8_t*)password, strlen(password));
+    sha256_final(&ctx, digest);
+    
+    for(int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+        sprintf(hashOut + (i * 2), "%02x", digest[i]);
     }
-    hashOut[i * 2] = '\0';
+    hashOut[64] = '\0';
     return SUCCESS;
 }
 
@@ -65,10 +69,24 @@ ErrorCode getHiddenPassword(char *password) {
     password[i] = '\0';
     printf("\n");
     #else
+    #include <termios.h>
+    #include <unistd.h>
+    struct termios oldt, newt;
+    // Get current terminal settings
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    // Disable echo
+    newt.c_lflag &= ~(ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    
     if (safeGetString(password, MAX_LEN) != SUCCESS) {
         password[0] = '\0';
-        return ERROR_INVALID_INPUT;
     }
+    
+    // Restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    printf("\n");
+    if (password[0] == '\0') return ERROR_INVALID_INPUT;
     #endif
     return SUCCESS;
 }

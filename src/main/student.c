@@ -9,6 +9,11 @@
 #include "../include/student.h"
 #include "../include/auth.h"
 #include "../include/config.h"
+
+#ifndef HPDF_DISABLED
+#include "../include/hpdf/hpdf.h"
+#endif
+#include "../include/config.h"
 #include "../include/fileio.h"
 #include "../include/utils.h"
 #include "../include/hpdf/hpdf.h"
@@ -56,71 +61,58 @@ void saveSchoolData(const char *studentID) {
     int marks[MAX_SUBJECTS] = {0}, fullMarks[MAX_SUBJECTS] = {0};
     printf("\nEnter marks for subjects:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        // Loop until valid marks are entered
         while (1) {
             printf("%s - Marks: ", p.dataFields[i]);
-            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) {
-                break;
-            } else {
-                printf("Invalid marks entered. Please enter a value between 0 and 100.\n");
-            }
+            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) break;
+            printf("Invalid marks. 0-100.\n");
         }
-        // Loop until valid full marks are entered
         while (1) {
             printf("Full marks: ");
-            if (safeGetInt(&fullMarks[i], 1, 100) == SUCCESS) {
-                break;
-            } else {
-                printf("Invalid full marks entered. Please enter a value between 1 and 100.\n");
-            }
+            if (safeGetInt(&fullMarks[i], 1, 100) == SUCCESS) break;
+            printf("Invalid full marks. 1-100.\n");
         }
     }
     
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
+    // Pack data
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int fullMarks[MAX_SUBJECTS];
+    } data;
     
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0700);
-#endif
+    data.count = p.dataCount;
+    memcpy(data.subjects, p.dataFields, sizeof(data.subjects));
+    memcpy(data.marks, marks, sizeof(marks));
+    memcpy(data.fullMarks, fullMarks, sizeof(fullMarks));
     
-    FILE *f = fopen(datafile, "wb");
-    if (f) {
-        fwrite(&p.dataCount, sizeof(int), 1, f);
-        for (int i = 0; i < p.dataCount; i++) {
-            fwrite(&p.dataFields[i], sizeof(p.dataFields[i]), 1, f);
-            fwrite(&marks[i], sizeof(int), 1, f);
-            fwrite(&fullMarks[i], sizeof(int), 1, f);
-        }
-        fclose(f);
-        printf("School marks saved\n");
+    if (saveUserData(studentID, "SCHOOL_DATA", &data, sizeof(data))) {
+        printf("School marks saved to database.\n");
+    } else {
+        printf("Failed to save data.\n");
     }
 }
 
 void loadSchoolData(const char *studentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int fullMarks[MAX_SUBJECTS];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(studentID, "SCHOOL_DATA", &data, &size)) {
         printf("No school data found\n");
         return;
     }
     
-    int count = 0, marks[MAX_SUBJECTS] = {0}, fullMarks[MAX_SUBJECTS] = {0};
-    char subjects[MAX_SUBJECTS][MAX_LEN] = {0};
     int total = 0, totalFull = 0;
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&subjects[i], sizeof(subjects[i]), 1, f);
-        fread(&marks[i], sizeof(int), 1, f);
-        fread(&fullMarks[i], sizeof(int), 1, f);
-        printf("%d. %s - %d/%d\n", i+1, subjects[i], marks[i], fullMarks[i]);
-        total += marks[i];
-        totalFull += fullMarks[i];
+    for (int i = 0; i < data.count; i++) {
+        printf("%d. %s - %d/%d\n", i+1, data.subjects[i], data.marks[i], data.fullMarks[i]);
+        total += data.marks[i];
+        totalFull += data.fullMarks[i];
     }
-    fclose(f);
     printSummary(total, totalFull, CAMPUS_SCHOOL);
 }
 
@@ -135,72 +127,57 @@ void saveCollegeData(const char *studentID) {
     int marks[MAX_SUBJECTS] = {0}, credits[MAX_SUBJECTS] = {0};
     printf("\nEnter semester marks:\n");
     for (int i = 0; i < p.dataCount; i++) {
-        // Loop until valid marks are entered
         while (1) {
             printf("%s - Marks: ", p.dataFields[i]);
-            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) {
-                break;
-            } else {
-                printf("Invalid marks entered. Please enter a value between 0 and 100.\n");
-            }
+            if (safeGetInt(&marks[i], 0, 100) == SUCCESS) break;
+            printf("Invalid marks. 0-100.\n");
         }
-        // Loop until valid credits are entered
         while (1) {
             printf("Credits: ");
-            if (safeGetInt(&credits[i], 1, 10) == SUCCESS) {
-                break;
-            } else {
-                printf("Invalid credits entered. Please enter a value between 1 and 10.\n");
-            }
+            if (safeGetInt(&credits[i], 1, 10) == SUCCESS) break;
+            printf("Invalid credits. 1-10.\n");
         }
     }
     
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int credits[MAX_SUBJECTS];
+    } data;
     
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0700);
-#endif
+    data.count = p.dataCount;
+    memcpy(data.subjects, p.dataFields, sizeof(data.subjects));
+    memcpy(data.marks, marks, sizeof(marks));
+    memcpy(data.credits, credits, sizeof(credits));
     
-    FILE *f = fopen(datafile, "wb");
-    if (f) {
-        fwrite(&p.dataCount, sizeof(int), 1, f);
-        for (int i = 0; i < p.dataCount; i++) {
-            fwrite(&p.dataFields[i], sizeof(p.dataFields[i]), 1, f);
-            fwrite(&marks[i], sizeof(int), 1, f);
-            fwrite(&credits[i], sizeof(int), 1, f);
-        }
-        fclose(f);
-        printf("College marks saved\n");
+    if (saveUserData(studentID, "COLLEGE_DATA", &data, sizeof(data))) {
+        printf("College marks saved to database.\n");
+    } else {
+        printf("Failed to save data.\n");
     }
 }
 
 void loadCollegeData(const char *studentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int credits[MAX_SUBJECTS];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(studentID, "COLLEGE_DATA", &data, &size)) {
         printf("No college data found\n");
         return;
     }
     
-    int count = 0, marks[MAX_SUBJECTS] = {0}, credits[MAX_SUBJECTS] = {0};
-    char subjects[MAX_SUBJECTS][MAX_LEN] = {0};
     int totalMarks = 0, totalCredits = 0;
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&subjects[i], sizeof(subjects[i]), 1, f);
-        fread(&marks[i], sizeof(int), 1, f);
-        fread(&credits[i], sizeof(int), 1, f);
-        printf("%d. %s - %d marks (%d credits)\n", i+1, subjects[i], marks[i], credits[i]);
-        totalMarks += marks[i] * credits[i];
-        totalCredits += credits[i];
+    for (int i = 0; i < data.count; i++) {
+        printf("%d. %s - %d marks (%d credits)\n", i+1, data.subjects[i], data.marks[i], data.credits[i]);
+        totalMarks += data.marks[i] * data.credits[i];
+        totalCredits += data.credits[i];
     }
-    fclose(f);
-    
     float cgpa = totalCredits > 0 ? (float)totalMarks / (totalCredits * 10.0f) : 0.0f;
     printf("CGPA: %.2f\n", cgpa);
 }
@@ -208,152 +185,120 @@ void loadCollegeData(const char *studentID) {
 // Hospital Data Management
 void saveHospitalData(const char *patientID) {
     Profile p = {0};
-    if (!getUserByID(patientID, &p)) {
-        printf("Cannot load profile\n");
-        return;
-    }
+    if (!getUserByID(patientID, &p)) { printf("Cannot load profile\n"); return; }
     
     char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter medical data:\n");
     for (int i = 0; i < p.dataCount; i++) {
         while (1) {
             printf("%s: ", p.dataFields[i]);
-            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) {
-                break;
-            } else {
-                printf("Invalid input entered. Please try again.\n");
-            }
+            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) break;
+            printf("Invalid input.\n");
         }
     }
     
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", patientID);
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
     
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0700);
-#endif
+    data.count = p.dataCount;
+    memcpy(data.fields, p.dataFields, sizeof(data.fields));
+    memcpy(data.values, values, sizeof(data.values));
     
-    FILE *f = fopen(datafile, "wb");
-    if (f) {
-        fwrite(&p.dataCount, sizeof(int), 1, f);
-        for (int i = 0; i < p.dataCount; i++) {
-            fwrite(&p.dataFields[i], sizeof(p.dataFields[i]), 1, f);
-            fwrite(&values[i], sizeof(values[i]), 1, f);
-        }
-        fclose(f);
-        printf("Medical data saved\n");
-    }
+    if (saveUserData(patientID, "HOSPITAL_DATA", &data, sizeof(data))) {
+        printf("Medical data saved to database.\n");
+    } else { printf("Failed to save data.\n"); }
 }
 
 void loadHospitalData(const char *patientID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", patientID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(patientID, "HOSPITAL_DATA", &data, &size)) {
         printf("No medical data found\n");
         return;
     }
     
-    int count = 0;
-    char fields[MAX_SUBJECTS][MAX_LEN] = {0}, values[MAX_SUBJECTS][MAX_LEN] = {0};
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&fields[i], sizeof(fields[i]), 1, f);
-        fread(&values[i], sizeof(values[i]), 1, f);
-        printf("%s: %s\n", fields[i], values[i]);
+    for (int i = 0; i < data.count; i++) {
+        printf("%s: %s\n", data.fields[i], data.values[i]);
     }
-    fclose(f);
 }
 
-// Hostel Data Management
 void saveHostelData(const char *residentID) {
     Profile p = {0};
-    if (!getUserByID(residentID, &p)) {
-        printf("Cannot load profile\n");
-        return;
-    }
+    if (!getUserByID(residentID, &p)) { printf("Cannot load profile\n"); return; }
     
     char values[MAX_SUBJECTS][MAX_LEN] = {0};
     printf("\nEnter hostel data:\n");
     for (int i = 0; i < p.dataCount; i++) {
         while (1) {
             printf("%s: ", p.dataFields[i]);
-            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) {
-                break;
-            } else {
-                printf("Invalid input entered. Please try again.\n");
-            }
+            if (safeGetString(values[i], sizeof(values[i])) == SUCCESS && strlen(values[i]) > 0) break;
+            printf("Invalid input.\n");
         }
     }
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
     
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", residentID);
+    data.count = p.dataCount;
+    memcpy(data.fields, p.dataFields, sizeof(data.fields));
+    memcpy(data.values, values, sizeof(data.values));
     
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0700);
-#endif
-    
-    FILE *f = fopen(datafile, "wb");
-    if (f) {
-        fwrite(&p.dataCount, sizeof(int), 1, f);
-        for (int i = 0; i < p.dataCount; i++) {
-            fwrite(&p.dataFields[i], sizeof(p.dataFields[i]), 1, f);
-            fwrite(&values[i], sizeof(values[i]), 1, f);
-        }
-        fclose(f);
-        printf("Hostel data saved\n");
-    }
+    if (saveUserData(residentID, "HOSTEL_DATA", &data, sizeof(data))) {
+        printf("Hostel data saved to database.\n");
+    } else { printf("Failed to save data.\n"); }
 }
 
 void loadHostelData(const char *residentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", residentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(residentID, "HOSTEL_DATA", &data, &size)) {
         printf("No hostel data found\n");
         return;
     }
-    
-    int count = 0;
-    char fields[MAX_SUBJECTS][MAX_LEN] = {0}, values[MAX_SUBJECTS][MAX_LEN] = {0};
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&fields[i], sizeof(fields[i]), 1, f);
-        fread(&values[i], sizeof(values[i]), 1, f);
-        printf("%s: %s\n", fields[i], values[i]);
+    for (int i = 0; i < data.count; i++) {
+        printf("%s: %s\n", data.fields[i], data.values[i]);
     }
-    fclose(f);
 }
 
 // PDF Export Functions
+#ifndef HPDF_DISABLED
 void exportSchoolPDF(const char *studentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int fullMarks[MAX_SUBJECTS];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(studentID, "SCHOOL_DATA", &data, &size)) {
         printf("No school data found for PDF export\n");
         return;
     }
     
-    int count, marks[MAX_SUBJECTS], fullMarks[MAX_SUBJECTS];
-    char subjects[MAX_SUBJECTS][MAX_LEN];
+    int count = data.count;
+    // Unpack data for local usage if needed, or use directly
+    // Using direct access from data struct for cleaner code
     int total = 0, totalFull = 0;
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&subjects[i], sizeof(subjects[i]), 1, f);
-        fread(&marks[i], sizeof(int), 1, f);
-        fread(&fullMarks[i], sizeof(int), 1, f);
-        total += marks[i];
-        totalFull += fullMarks[i];
+    for(int i=0; i<count; i++) {
+        total += data.marks[i];
+        totalFull += data.fullMarks[i];
     }
-    fclose(f);
     
     Profile p = {0};
     if (!getUserByID(studentID, &p)) {
@@ -398,7 +343,7 @@ void exportSchoolPDF(const char *studentID) {
     y -= 20;
     
     for (int i = 0; i < count; i++) {
-        snprintf(buffer, sizeof(buffer), "%-20s %5d   %5d", subjects[i], marks[i], fullMarks[i]);
+        snprintf(buffer, sizeof(buffer), "%-20s %5d   %5d", data.subjects[i], data.marks[i], data.fullMarks[i]);
         HPDF_Page_TextOut(page, 50, y, buffer);
         y -= 20;
     }
@@ -432,27 +377,25 @@ void exportSchoolPDF(const char *studentID) {
 }
 
 void exportCollegePDF(const char *studentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", studentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char subjects[MAX_SUBJECTS][MAX_LEN];
+        int marks[MAX_SUBJECTS];
+        int credits[MAX_SUBJECTS];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(studentID, "COLLEGE_DATA", &data, &size)) {
         printf("No college data found for PDF export\n");
         return;
     }
     
-    int count, marks[MAX_SUBJECTS], credits[MAX_SUBJECTS];
-    char subjects[MAX_SUBJECTS][MAX_LEN];
+    int count = data.count;
     int totalMarks = 0, totalCredits = 0;
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&subjects[i], sizeof(subjects[i]), 1, f);
-        fread(&marks[i], sizeof(int), 1, f);
-        fread(&credits[i], sizeof(int), 1, f);
-        totalMarks += marks[i] * credits[i];
-        totalCredits += credits[i];
+    for(int i=0; i<count; i++) {
+        totalMarks += data.marks[i] * data.credits[i];
+        totalCredits += data.credits[i];
     }
-    fclose(f);
     
     Profile p = {0};
     if (!getUserByID(studentID, &p)) {
@@ -496,7 +439,7 @@ void exportCollegePDF(const char *studentID) {
     y -= 20;
     
     for (int i = 0; i < count; i++) {
-        snprintf(buffer, sizeof(buffer), "%-20s %5d   %5d", subjects[i], marks[i], credits[i]);
+        snprintf(buffer, sizeof(buffer), "%-20s %5d   %5d", data.subjects[i], data.marks[i], data.credits[i]);
         HPDF_Page_TextOut(page, 50, y, buffer);
         y -= 20;
     }
@@ -526,23 +469,18 @@ void exportCollegePDF(const char *studentID) {
 }
 
 void exportHospitalPDF(const char *patientID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", patientID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(patientID, "HOSPITAL_DATA", &data, &size)) {
         printf("No medical data found for PDF export\n");
         return;
     }
-    
-    int count;
-    char fields[MAX_SUBJECTS][MAX_LEN], values[MAX_SUBJECTS][MAX_LEN];
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&fields[i], sizeof(fields[i]), 1, f);
-        fread(&values[i], sizeof(values[i]), 1, f);
-    }
-    fclose(f);
+    int count = data.count;
     
     Profile p = {0};
     if (!getUserByID(patientID, &p)) {
@@ -584,7 +522,7 @@ void exportHospitalPDF(const char *patientID) {
     y -= 20;
     
     for (int i = 0; i < count; i++) {
-        snprintf(buffer, sizeof(buffer), "%s: %s", fields[i], values[i]);
+        snprintf(buffer, sizeof(buffer), "%s: %s", data.fields[i], data.values[i]);
         HPDF_Page_TextOut(page, 50, y, buffer);
         y -= 20;
     }
@@ -606,23 +544,18 @@ void exportHospitalPDF(const char *patientID) {
 }
 
 void exportHostelPDF(const char *residentID) {
-    char datafile[150];
-    snprintf(datafile, sizeof(datafile), DATA_DIR "%s.data", residentID);
-    FILE *f = fopen(datafile, "rb");
-    if (!f) {
+    struct {
+        int count;
+        char fields[MAX_SUBJECTS][MAX_LEN];
+        char values[MAX_SUBJECTS][MAX_LEN];
+    } data;
+    size_t size = sizeof(data);
+    
+    if (!loadUserData(residentID, "HOSTEL_DATA", &data, &size)) {
         printf("No hostel data found for PDF export\n");
         return;
     }
-    
-    int count;
-    char fields[MAX_SUBJECTS][MAX_LEN], values[MAX_SUBJECTS][MAX_LEN];
-    
-    fread(&count, sizeof(int), 1, f);
-    for (int i = 0; i < count; i++) {
-        fread(&fields[i], sizeof(fields[i]), 1, f);
-        fread(&values[i], sizeof(values[i]), 1, f);
-    }
-    fclose(f);
+    int count = data.count;
     
     Profile p = {0};
     if (!getUserByID(residentID, &p)) {
@@ -664,7 +597,7 @@ void exportHostelPDF(const char *residentID) {
     y -= 20;
     
     for (int i = 0; i < count; i++) {
-        snprintf(buffer, sizeof(buffer), "%s: %s", fields[i], values[i]);
+        snprintf(buffer, sizeof(buffer), "%s: %s", data.fields[i], data.values[i]);
         HPDF_Page_TextOut(page, 50, y, buffer);
         y -= 20;
     }
@@ -877,3 +810,129 @@ void exportRecoveredProfileCSV(const Profile *p, const char *filename) {
     fclose(f);
     printf("Recovered profile CSV file exported to %s\n", filename);
 }
+#else
+// Fallback implementations when HPDF is disabled — generate plain text files
+void ensure_data_dir(void) {
+#ifdef _WIN32
+    _mkdir("data");
+#else
+    mkdir("data", 0700);
+#endif
+}
+
+void exportSchoolPDF(const char *studentID) {
+    ensure_data_dir();
+    char out[256];
+    snprintf(out, sizeof(out), "data/%s_school_report.txt", studentID);
+    FILE *f = fopen(out, "w");
+    if (!f) { printf("Cannot create report file: %s\n", out); return; }
+    fprintf(f, "=== School Report (text fallback) ===\n\n");
+    fprintf(f, "Student ID: %s\n", studentID);
+    fprintf(f, "(Detailed per-subject data not available in fallback export)\n");
+    fclose(f);
+    printf("School report exported to %s\n", out);
+}
+
+void exportCollegePDF(const char *studentID) {
+    ensure_data_dir();
+    char out[256];
+    snprintf(out, sizeof(out), "data/%s_college_transcript.txt", studentID);
+    FILE *f = fopen(out, "w");
+    if (!f) { printf("Cannot create report file: %s\n", out); return; }
+    fprintf(f, "=== College Transcript (text fallback) ===\n\n");
+    fprintf(f, "Student ID: %s\n", studentID);
+    fprintf(f, "(Detailed transcript data not available in fallback export)\n");
+    fclose(f);
+    printf("College transcript exported to %s\n", out);
+}
+
+void exportHospitalPDF(const char *patientID) {
+    ensure_data_dir();
+    char out[256];
+    snprintf(out, sizeof(out), "data/%s_medical_report.txt", patientID);
+    FILE *f = fopen(out, "w");
+    if (!f) { printf("Cannot create report file: %s\n", out); return; }
+    fprintf(f, "=== Medical Report (text fallback) ===\n\n");
+    fprintf(f, "Patient ID: %s\n", patientID);
+    fprintf(f, "(Detailed medical data not available in fallback export)\n");
+    fclose(f);
+    printf("Medical report exported to %s\n", out);
+}
+
+void exportHostelPDF(const char *residentID) {
+    ensure_data_dir();
+    char out[256];
+    snprintf(out, sizeof(out), "data/%s_hostel_report.txt", residentID);
+    FILE *f = fopen(out, "w");
+    if (!f) { printf("Cannot create report file: %s\n", out); return; }
+    fprintf(f, "=== Hostel Report (text fallback) ===\n\n");
+    fprintf(f, "Resident ID: %s\n", residentID);
+    fprintf(f, "(Detailed accommodation data not available in fallback export)\n");
+    fclose(f);
+    printf("Hostel report exported to %s\n", out);
+}
+
+int exportProfilePDF(const char *userID, const char *filename) {
+    // Write profile information to the requested filename as plain text
+    Profile p = {0};
+    if (!getUserByID(userID, &p)) {
+        printf("[ERROR] Cannot load profile for export (userID: %s)\n", userID);
+        return 0;
+    }
+    ensure_data_dir();
+    FILE *f = fopen(filename, "w");
+    if (!f) { printf("[ERROR] Cannot create file: %s\n", filename); return 0; }
+    fprintf(f, "=== PROFILE EXPORT ===\n\n");
+    fprintf(f, "Name: %s\n", p.name);
+    fprintf(f, "%s: %s\n", getCampusName(p.campusType), p.instituteName);
+    fprintf(f, "Department: %s\n", p.department);
+    fprintf(f, "Email: %s\n", p.email);
+    fprintf(f, "Mobile: %s\n", p.mobile);
+    fprintf(f, "User ID: %s\n", p.userID);
+    fprintf(f, "Campus Type: %s\n", getCampusName(p.campusType));
+    fclose(f);
+    printf("Profile exported to %s\n", filename);
+    return 1;
+}
+
+// When HPDF is disabled, keep TXT/CSV functions (they already exist), but
+// ensure fallback returns success when called directly here for safety.
+int exportProfileTXT(const char *userID, const char *filename) {
+    Profile p = {0};
+    if (!getUserByID(userID, &p)) { printf("[ERROR] Cannot load profile\n"); return 0; }
+    ensure_data_dir();
+    FILE *f = fopen(filename, "w");
+    if (!f) { printf("[ERROR] Cannot create file: %s\n", filename); return 0; }
+    fprintf(f, "=== PROFILE EXPORT ===\n\n");
+    fprintf(f, "Name: %s\n", p.name);
+    fprintf(f, "%s: %s\n", getCampusName(p.campusType), p.instituteName);
+    fprintf(f, "Department: %s\n", p.department);
+    fprintf(f, "Email: %s\n", p.email);
+    fprintf(f, "Mobile: %s\n", p.mobile);
+    fprintf(f, "User ID: %s\n", p.userID);
+    fprintf(f, "Campus Type: %s\n", getCampusName(p.campusType));
+    fclose(f);
+    printf("Profile text exported to %s\n", filename);
+    return 1;
+}
+
+int exportProfileCSV(const char *userID, const char *filename) {
+    Profile p = {0};
+    if (!getUserByID(userID, &p)) { printf("[ERROR] Cannot load profile\n"); return 0; }
+    ensure_data_dir();
+    FILE *f = fopen(filename, "w");
+    if (!f) { printf("[ERROR] Cannot create file: %s\n", filename); return 0; }
+    fprintf(f, "Field,Value\n");
+    fprintf(f, "Name,%s\n", p.name);
+    fprintf(f, "%s,%s\n", getCampusName(p.campusType), p.instituteName);
+    fprintf(f, "Department,%s\n", p.department);
+    fprintf(f, "Email,%s\n", p.email);
+    fprintf(f, "Mobile,%s\n", p.mobile);
+    fprintf(f, "User ID,%s\n", p.userID);
+    fprintf(f, "Campus Type,%s\n", getCampusName(p.campusType));
+    fclose(f);
+    printf("Profile CSV exported to %s\n", filename);
+    return 1;
+}
+
+#endif // HPDF_DISABLED

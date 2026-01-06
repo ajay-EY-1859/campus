@@ -1,6 +1,8 @@
 
 
 
+#ifndef CURL_DISABLED
+
 // MSG91 SMS API real implementation for OTP delivery
 #define CURL_STATICLIB
 #include <stdio.h>
@@ -54,3 +56,15 @@ int sendOTPSMS(const char *mobile, const char *otp) {
     }
     return success;
 }
+
+#else
+
+// Stub implementation when curl is not available (e.g., Windows builds)
+#include <stdio.h>
+
+int sendOTPSMS(const char *mobile, const char *otp) {
+    fprintf(stderr, "OTP service currently unavailable. Please try again later.\n");
+    return 0;
+}
+
+#endif

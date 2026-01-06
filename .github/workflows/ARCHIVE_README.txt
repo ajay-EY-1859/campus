@@ -1,1 +1,0 @@
-This folder contains archived workflows (debug.yml, test.yml, minimal.yml) for reference. Only build-test.yml is used for production CI/CD.

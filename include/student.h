@@ -5,6 +5,44 @@
 #include "config.h"
 #include "auth.h"
 
+typedef struct {
+    char subjectName[MAX_LEN];
+    int marks;
+    int maxMarks;
+} Subject;
+
+typedef struct {
+    Subject subjects[MAX_SUBJECTS];
+    int numSubjects;
+    float percentage;
+    char grade[5];
+} SchoolData;
+
+typedef struct {
+    char courseName[MAX_LEN];
+    int credits;
+    float gpa;
+    float cgpa;
+} CollegeData;
+
+typedef struct {
+    char patientID[MAX_LEN];
+    char diagnosis[MAX_LEN];
+    char doctorName[MAX_LEN];
+    char treatment[MAX_LEN];
+    time_t admissionDate;
+} HospitalData;
+
+typedef struct {
+    char roomNumber[MAX_LEN];
+    char blockName[MAX_LEN];
+    int floorNumber;
+    char roomType[20];
+    double monthlyRent;
+} HostelData;
+
+// Campus-specific data management
+
 // Campus-specific data management
 void saveSchoolData(const char *studentID);
 void saveCollegeData(const char *studentID);

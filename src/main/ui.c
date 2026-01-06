@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/auth.h"
+#include "../include/utils.h"
 #include "../include/student.h"
 #include "../include/config.h"
 #include "../include/ui.h"

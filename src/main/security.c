@@ -1,3 +1,4 @@
+#define _CRT_RAND_S
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,8 +10,9 @@
 #include <sys/stat.h>
 #endif
 #include <ctype.h>
-#include "../include/security.h"
+#include "../include/campus_security.h"
 #include "../include/database.h"
+#include "../include/sha256.h"
 
 #define ACCOUNT_LOCK_FILE_PREFIX "data/lock_"
 #define MAX_SESSIONS 100
@@ -290,38 +292,20 @@ void decryptData(const char *encrypted, char *data, const char *key) {
 }
 
 void generateSecureHash(const char *input, char *hash) {
-    unsigned long hashValue = 5381;
-    int c;
-    const char *str = input;
+    SHA256_CTX ctx;
+    uint8_t digest[SHA256_BLOCK_SIZE];
+    sha256_init(&ctx);
+    sha256_update(&ctx, (const uint8_t*)input, strlen(input));
+    sha256_final(&ctx, digest);
     
-    while ((c = *str++)) {
-        hashValue = ((hashValue << 5) + hashValue) + c;
+    for(int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+        sprintf(hash + (i * 2), "%02x", digest[i]);
     }
-    
-    snprintf(hash, 64, "%08lx", hashValue);
+    hash[64] = '\0';
 }
 
 int logSecurityEvent(const char *userID, const char *event, const char *details) {
-#ifdef _WIN32
-    _mkdir("data");
-#else
-    mkdir("data", 0700);
-#endif
-
-    FILE *f = fopen("data/security.log", "a");
-    if (!f) return 0;
-    
-    time_t now = time(NULL);
-    char *timeStr = ctime(&now);
-    if (timeStr) {
-        timeStr[strlen(timeStr) - 1] = '\0';
-    }
-    
-    fprintf(f, "[%s] SECURITY | User: %s | Event: %s | Details: %s\n", 
-            timeStr ? timeStr : "Unknown", userID ? userID : "UNKNOWN", 
-            event ? event : "NO_EVENT", details ? details : "NO_DETAILS");
-    fclose(f);
-    return 1;
+    return logActivity(userID, event, details);
 }
 
 int generateSecurityReport(const char *reportPath) {

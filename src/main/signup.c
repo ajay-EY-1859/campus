@@ -10,25 +10,9 @@
 #include "../include/student.h"
 #include "../include/ui.h"
 #include "../include/database.h"
-#include "../include/security.h"
+#include "../include/campus_security.h"
 
-void generateUserID(Profile *p) {
-    char initials[3] = {0};
-    if (strlen(p->instituteName) >= 2) {
-        initials[0] = (char)tolower(p->instituteName[0]);
-        initials[1] = (char)tolower(p->instituteName[1]);
-    } else {
-        initials[0] = 'x';
-        initials[1] = 'x';
-    }
-    initials[2] = '\0';
-    srand((unsigned int)time(NULL));
-    int serial = rand() % 900 + 100;
-    int written = snprintf(p->userID, sizeof(p->userID), "%s25%d", initials, serial);
-    if (written < 0 || written >= (int)sizeof(p->userID)) {
-        p->userID[0] = '\0';
-    }
-}
+
 
 ErrorCode signup() {
     Profile p = {0};

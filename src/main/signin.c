@@ -11,7 +11,7 @@
 #include "../include/utils.h"
 #include "../include/hpdf/hpdf.h"
 #include "../include/database.h"
-#include "../include/security.h"
+#include "../include/campus_security.h"
 
 ErrorCode signin() {
     Profile p = {0};
@@ -49,16 +49,34 @@ ErrorCode signin() {
         hashPassword(inputPassword, hashedInput);
 
         if (authenticateUser(userID, mobileInput, hashedInput)) {
-            // OTP resend loop
+            if (!generateOTP(userID, otp)) {
+                printf("Failed to generate OTP. Please try again.\n");
+                return ERROR_NETWORK;
+            }
+            
+            
+            // Try sending via SMS
+            int smsSent = sendOTPSMS(mobileInput, otp);
+            
+            // Try sending via Email
+            int emailSent = sendOTPEmail(p.email, otp);
+
+            // If both channels fail, deny login
+            if (!smsSent && !emailSent) {
+                printf("Error: Failed to send OTP via SMS or Email. Login denied.\n");
+                return ERROR_NETWORK;
+            }
+            
+            if (!smsSent) {
+                printf("Warning: SMS delivery failed. Please check your email for OTP.\n");
+            }
+            
+
+            
+            // OTP resend loop - only if at least one channel worked
             int otpVerified = 0;
             int resendCount = 0;
             while (!otpVerified && resendCount < 3) {
-                if (!generateOTP(userID, otp)) {
-                    printf("Failed to generate OTP. Please try again.\n");
-                    return ERROR_NETWORK;
-                }
-                sendOTPSMS(mobileInput, otp);
-                sendOTPEmail(p.email, otp);
                 printf("OTP sent to your mobile and email.\n");
                 while (1) {
                     printf("Enter OTP (or type 'r' to resend): ");
@@ -69,6 +87,12 @@ ErrorCode signin() {
                     }
                     if (strcmp(otpInput, "r") == 0 || strcmp(otpInput, "R") == 0) {
                         resendCount++;
+                        if (!generateOTP(userID, otp)) {
+                            printf("Failed to generate OTP. Please try again.\n");
+                            return ERROR_NETWORK;
+                        }
+                        sendOTPSMS(mobileInput, otp);
+                        sendOTPEmail(p.email, otp);
                         break; // break inner loop, resend OTP
                     }
                     if (verifyOTP(userID, otpInput)) {

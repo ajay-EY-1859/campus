@@ -191,8 +191,8 @@ local_config.*
 gmon.out
 
 # Core dumps
-core
-core.*
+# core
+# core.*
 
 # Valgrind
 *.memcheck
